@@ -258,3 +258,4 @@ node_modules
 /node-red/settings.js
 /node-red/lib
 
+/AR.Drone/FFmpeg.AutoGen/
