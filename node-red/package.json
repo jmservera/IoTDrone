@@ -1,0 +1,17 @@
+{
+  "name": "node-red",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node-red flows.json -u ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-red-dashboard": "^2.3.6",
+    "node-red-drone": "^1.0.0",
+    "node-red-node-base64": "0.0.4"
+  }
+}

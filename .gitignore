@@ -250,3 +250,11 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+#node-red-ignores
+
+node_modules
+/node-red/.config.json
+/node-red/settings.js
+/node-red/lib
+
