@@ -45,13 +45,16 @@
             this.tbHighV = new System.Windows.Forms.TrackBar();
             this.tbLowV = new System.Windows.Forms.TrackBar();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.simulatorBtn = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.pbOpenCV3 = new System.Windows.Forms.PictureBox();
+            this.pbOpenCV2 = new System.Windows.Forms.PictureBox();
             this.pbVideo = new System.Windows.Forms.PictureBox();
             this.pbOpenCV = new System.Windows.Forms.PictureBox();
-            this.pbOpenCV2 = new System.Windows.Forms.PictureBox();
-            this.pbOpenCV3 = new System.Windows.Forms.PictureBox();
-            this.simulatorBtn = new System.Windows.Forms.Button();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lbLowH = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tbLowH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbHighH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbLowS)).BeginInit();
@@ -61,10 +64,12 @@
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbVideo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV3)).BeginInit();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStart
@@ -151,55 +156,57 @@
             // 
             // tbLowH
             // 
-            this.tbLowH.Location = new System.Drawing.Point(14, 17);
+            this.tbLowH.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbLowH.Location = new System.Drawing.Point(0, 0);
             this.tbLowH.Maximum = 255;
             this.tbLowH.Name = "tbLowH";
-            this.tbLowH.Size = new System.Drawing.Size(502, 69);
+            this.tbLowH.Size = new System.Drawing.Size(372, 65);
             this.tbLowH.TabIndex = 27;
             this.tbLowH.Value = 170;
+            this.tbLowH.ValueChanged += new System.EventHandler(this.tbLowH_ValueChanged);
             // 
             // tbHighH
             // 
-            this.tbHighH.Location = new System.Drawing.Point(632, 17);
+            this.tbHighH.Location = new System.Drawing.Point(432, 3);
             this.tbHighH.Maximum = 255;
             this.tbHighH.Name = "tbHighH";
-            this.tbHighH.Size = new System.Drawing.Size(502, 69);
+            this.tbHighH.Size = new System.Drawing.Size(424, 65);
             this.tbHighH.TabIndex = 28;
             this.tbHighH.Value = 179;
             // 
             // tbLowS
             // 
-            this.tbLowS.Location = new System.Drawing.Point(14, 82);
+            this.tbLowS.Location = new System.Drawing.Point(3, 74);
             this.tbLowS.Maximum = 255;
             this.tbLowS.Name = "tbLowS";
-            this.tbLowS.Size = new System.Drawing.Size(502, 69);
+            this.tbLowS.Size = new System.Drawing.Size(423, 65);
             this.tbLowS.TabIndex = 29;
             this.tbLowS.Value = 150;
             // 
             // tbHighS
             // 
-            this.tbHighS.Location = new System.Drawing.Point(632, 82);
+            this.tbHighS.Location = new System.Drawing.Point(432, 74);
             this.tbHighS.Maximum = 255;
             this.tbHighS.Name = "tbHighS";
-            this.tbHighS.Size = new System.Drawing.Size(502, 69);
+            this.tbHighS.Size = new System.Drawing.Size(424, 65);
             this.tbHighS.TabIndex = 29;
             this.tbHighS.Value = 255;
             // 
             // tbHighV
             // 
-            this.tbHighV.Location = new System.Drawing.Point(632, 151);
+            this.tbHighV.Location = new System.Drawing.Point(432, 145);
             this.tbHighV.Maximum = 255;
             this.tbHighV.Name = "tbHighV";
-            this.tbHighV.Size = new System.Drawing.Size(502, 69);
+            this.tbHighV.Size = new System.Drawing.Size(424, 67);
             this.tbHighV.TabIndex = 29;
             this.tbHighV.Value = 255;
             // 
             // tbLowV
             // 
-            this.tbLowV.Location = new System.Drawing.Point(14, 151);
+            this.tbLowV.Location = new System.Drawing.Point(3, 145);
             this.tbLowV.Maximum = 255;
             this.tbLowV.Name = "tbLowV";
-            this.tbLowV.Size = new System.Drawing.Size(502, 69);
+            this.tbLowV.Size = new System.Drawing.Size(423, 67);
             this.tbLowV.TabIndex = 29;
             this.tbLowV.Value = 60;
             // 
@@ -216,21 +223,26 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1555, 58);
+            this.panel2.Size = new System.Drawing.Size(1468, 58);
             this.panel2.TabIndex = 30;
+            // 
+            // simulatorBtn
+            // 
+            this.simulatorBtn.Location = new System.Drawing.Point(1383, 4);
+            this.simulatorBtn.Name = "simulatorBtn";
+            this.simulatorBtn.Size = new System.Drawing.Size(160, 37);
+            this.simulatorBtn.TabIndex = 25;
+            this.simulatorBtn.Text = "simulator";
+            this.simulatorBtn.UseVisualStyleBackColor = true;
+            this.simulatorBtn.Click += new System.EventHandler(this.simulatorBtn_Click);
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.tbLowH);
-            this.panel3.Controls.Add(this.tbHighH);
-            this.panel3.Controls.Add(this.tbLowS);
-            this.panel3.Controls.Add(this.tbLowV);
-            this.panel3.Controls.Add(this.tbHighS);
-            this.panel3.Controls.Add(this.tbHighV);
+            this.panel3.Controls.Add(this.tableLayoutPanel2);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 556);
+            this.panel3.Location = new System.Drawing.Point(0, 674);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1555, 215);
+            this.panel3.Size = new System.Drawing.Size(1468, 215);
             this.panel3.TabIndex = 31;
             // 
             // tableLayoutPanel1
@@ -248,8 +260,32 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1555, 498);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1468, 616);
             this.tableLayoutPanel1.TabIndex = 32;
+            // 
+            // pbOpenCV3
+            // 
+            this.pbOpenCV3.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbOpenCV3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbOpenCV3.Location = new System.Drawing.Point(4, 313);
+            this.pbOpenCV3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbOpenCV3.Name = "pbOpenCV3";
+            this.pbOpenCV3.Size = new System.Drawing.Size(726, 298);
+            this.pbOpenCV3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbOpenCV3.TabIndex = 7;
+            this.pbOpenCV3.TabStop = false;
+            // 
+            // pbOpenCV2
+            // 
+            this.pbOpenCV2.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbOpenCV2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbOpenCV2.Location = new System.Drawing.Point(738, 313);
+            this.pbOpenCV2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbOpenCV2.Name = "pbOpenCV2";
+            this.pbOpenCV2.Size = new System.Drawing.Size(726, 298);
+            this.pbOpenCV2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbOpenCV2.TabIndex = 6;
+            this.pbOpenCV2.TabStop = false;
             // 
             // pbVideo
             // 
@@ -258,7 +294,8 @@
             this.pbVideo.Location = new System.Drawing.Point(4, 5);
             this.pbVideo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pbVideo.Name = "pbVideo";
-            this.pbVideo.Size = new System.Drawing.Size(769, 239);
+            this.pbVideo.Size = new System.Drawing.Size(726, 298);
+            this.pbVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbVideo.TabIndex = 4;
             this.pbVideo.TabStop = false;
             // 
@@ -266,50 +303,59 @@
             // 
             this.pbOpenCV.BackColor = System.Drawing.SystemColors.ControlDark;
             this.pbOpenCV.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbOpenCV.Location = new System.Drawing.Point(781, 5);
+            this.pbOpenCV.Location = new System.Drawing.Point(738, 5);
             this.pbOpenCV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pbOpenCV.Name = "pbOpenCV";
-            this.pbOpenCV.Size = new System.Drawing.Size(770, 239);
+            this.pbOpenCV.Size = new System.Drawing.Size(726, 298);
+            this.pbOpenCV.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbOpenCV.TabIndex = 5;
             this.pbOpenCV.TabStop = false;
             // 
-            // pbOpenCV2
+            // tableLayoutPanel2
             // 
-            this.pbOpenCV2.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbOpenCV2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbOpenCV2.Location = new System.Drawing.Point(781, 254);
-            this.pbOpenCV2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbOpenCV2.Name = "pbOpenCV2";
-            this.pbOpenCV2.Size = new System.Drawing.Size(770, 239);
-            this.pbOpenCV2.TabIndex = 6;
-            this.pbOpenCV2.TabStop = false;
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.tbHighV, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.tbLowV, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.tbLowS, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.tbHighS, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.tbHighH, 1, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(859, 215);
+            this.tableLayoutPanel2.TabIndex = 30;
             // 
-            // pbOpenCV3
+            // panel1
             // 
-            this.pbOpenCV3.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbOpenCV3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbOpenCV3.Location = new System.Drawing.Point(4, 254);
-            this.pbOpenCV3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbOpenCV3.Name = "pbOpenCV3";
-            this.pbOpenCV3.Size = new System.Drawing.Size(769, 239);
-            this.pbOpenCV3.TabIndex = 7;
-            this.pbOpenCV3.TabStop = false;
+            this.panel1.Controls.Add(this.tbLowH);
+            this.panel1.Controls.Add(this.lbLowH);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(423, 65);
+            this.panel1.TabIndex = 31;
             // 
-            // simulatorBtn
+            // lbLowH
             // 
-            this.simulatorBtn.Location = new System.Drawing.Point(1383, 4);
-            this.simulatorBtn.Name = "simulatorBtn";
-            this.simulatorBtn.Size = new System.Drawing.Size(160, 37);
-            this.simulatorBtn.TabIndex = 25;
-            this.simulatorBtn.Text = "simulator";
-            this.simulatorBtn.UseVisualStyleBackColor = true;
-            this.simulatorBtn.Click += new System.EventHandler(this.simulatorBtn_Click);
+            this.lbLowH.Dock = System.Windows.Forms.DockStyle.Right;
+            this.lbLowH.Location = new System.Drawing.Point(372, 0);
+            this.lbLowH.Name = "lbLowH";
+            this.lbLowH.Size = new System.Drawing.Size(51, 65);
+            this.lbLowH.TabIndex = 28;
+            this.lbLowH.Text = "label1";
+            this.lbLowH.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1555, 771);
+            this.ClientSize = new System.Drawing.Size(1468, 889);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
@@ -324,12 +370,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbLowV)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbVideo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbOpenCV3)).EndInit();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -359,6 +408,9 @@
         private System.Windows.Forms.PictureBox pbOpenCV2;
         private System.Windows.Forms.PictureBox pbVideo;
         private System.Windows.Forms.PictureBox pbOpenCV;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lbLowH;
     }
 }
 
