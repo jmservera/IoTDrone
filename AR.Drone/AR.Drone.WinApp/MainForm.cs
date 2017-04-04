@@ -322,9 +322,5 @@ namespace AR.Drone.WinApp
             }
         }
 
-        private void tbLowH_ValueChanged(object sender, EventArgs e)
-        {
-            lbLowH.Text = tbLowH.Value.ToString();
-        }
     }
 }

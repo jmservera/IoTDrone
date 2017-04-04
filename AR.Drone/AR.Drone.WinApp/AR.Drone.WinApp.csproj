@@ -90,6 +90,12 @@
     <Compile Include="ControlForm.Designer.cs">
       <DependentUpon>ControlForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NumberSlider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\NumberSlider.Designer.cs">
+      <DependentUpon>NumberSlider.cs</DependentUpon>
+    </Compile>
     <Compile Include="FilePlayer.cs" />
     <Compile Include="PlayerForm.cs">
       <SubType>Form</SubType>
@@ -109,6 +115,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ControlForm.resx">
       <DependentUpon>ControlForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\NumberSlider.resx">
+      <DependentUpon>NumberSlider.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
