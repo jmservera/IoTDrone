@@ -41,7 +41,7 @@ namespace AR.Drone.WinApp
         private uint _frameNumber;
         private PacketRecorder _packetRecorderWorker;
         private FileStream _recorderStream;
-
+        ControlForm controlForm;
         public MainForm()
         {
             InitializeComponent();
@@ -65,6 +65,9 @@ namespace AR.Drone.WinApp
             _playerForms = new List<PlayerForm>();
 
             _videoPacketDecoderWorker.UnhandledException += UnhandledException;
+            controlForm = new WinApp.ControlForm(_droneClient);
+            controlForm.Show(this);
+
         }
 
         private void UnhandledException(object sender, Exception exception)
