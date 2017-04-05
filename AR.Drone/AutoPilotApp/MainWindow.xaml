@@ -1,0 +1,108 @@
+﻿<Window x:Class="AutoPilotApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoPilotApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" >
+    <Grid Margin="5">
+        <Grid.Resources>
+            <local:ColorToSolidColorBrushValueConverter x:Key="colorConverter"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Width="100">Stream</Button>
+            <Button Width="100" Click="Button_Click">Simulator</Button>
+        </StackPanel>
+        <Grid Grid.Row="1" DataContext="{DynamicResource Bitmaps}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Image Name="Original" Source="{Binding Original}" />
+            <Image Name="First" Source="{Binding First}" Grid.Column="1"/>
+            <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
+            <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
+        </Grid>
+        <Grid Grid.Row="2" DataContext="{DynamicResource Config}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="Slider">
+                    <Setter Property="SmallChange" Value="1"/>
+                    <Setter Property="TickPlacement" Value="BottomRight"/>
+                    <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                    <Setter Property="Maximum" Value="255"/>
+                </Style>
+            </Grid.Resources>
+            <TextBlock>Red</TextBlock>
+            <Grid Grid.Row="1" Margin="5" DataContext="{Binding RedConfig}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Vertical">
+                    <Rectangle Fill="{Binding Low, Mode=OneWay, Converter={StaticResource colorConverter}}" Height="10" Stroke="#FFDE1F1F"></Rectangle>
+                    <TextBlock>Low H: <Run Text="{Binding Value, ElementName=RedLowH}" /></TextBlock>
+                    <Slider Name="RedLowH" Maximum="179" Value="{Binding LowH}"  />
+                    <TextBlock>Low S: <Run Text="{Binding Value, ElementName=RedLowS}" /></TextBlock>
+                    <Slider Name="RedLowS" Maximum="255" Value="{Binding LowS}" />
+                    <TextBlock>Low V: <Run Text="{Binding Value, ElementName=RedLowV}" /></TextBlock>
+                    <Slider Name="RedLowV" Maximum="255" Value="{Binding LowV}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <Rectangle Fill="{Binding High, Mode=OneWay, Converter={StaticResource colorConverter}}" Height="10"></Rectangle>
+                    <TextBlock>High H: <Run Text="{Binding Value, ElementName=RedHighH}" /></TextBlock>
+                    <Slider Name="RedHighH" Maximum="179" Value="{Binding HighH}" />
+                    <TextBlock>High S: <Run Text="{Binding Value, ElementName=RedHighS}" /></TextBlock>
+                    <Slider Name="RedHighS" Maximum="255" Value="{Binding HighS}"/>
+                    <TextBlock>High V: <Run Text="{Binding Value, ElementName=RedHighV}" /></TextBlock>
+                    <Slider Name="RedHighV" Maximum="255" Value="{Binding HighV}" />
+                </StackPanel>
+            </Grid>
+            <TextBlock Grid.Column="1">Green</TextBlock>
+            <Grid Grid.Row="1" Grid.Column="1" Margin="5" DataContext="{Binding GreenConfig}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock>Low H: <Run Text="{Binding Value, ElementName=GreenLowH}" /></TextBlock>
+                    <Slider Name="GreenLowH" Maximum="179" Value="{Binding LowH}"  />
+                    <TextBlock>Low S: <Run Text="{Binding Value, ElementName=GreenLowS}" /></TextBlock>
+                    <Slider Name="GreenLowS" Maximum="255" Value="{Binding LowS}"/>
+                    <TextBlock>Low V: <Run Text="{Binding Value, ElementName=GreenLowV}" /></TextBlock>
+                    <Slider Name="GreenLowV" Maximum="255" Value="{Binding LowV}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock>High H: <Run Text="{Binding Value, ElementName=GreenHighH}" /></TextBlock>
+                    <Slider Name="GreenHighH" Maximum="179"  Value="{Binding HighH}"/>
+                    <TextBlock>High S: <Run Text="{Binding Value, ElementName=GreenHighS}" /></TextBlock>
+                    <Slider Name="GreenHighS" Maximum="255" Value="{Binding HighS}"/>
+                    <TextBlock>High V: <Run Text="{Binding Value, ElementName=GreenHighV}" /></TextBlock>
+                    <Slider Name="GreenHighV" Maximum="255" Value="{Binding HighV}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
