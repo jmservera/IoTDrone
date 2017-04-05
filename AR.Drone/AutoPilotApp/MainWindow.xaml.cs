@@ -27,6 +27,7 @@ using AR.Drone.Data;
 using AR.Drone.Video;
 using AR.Drone.WinApp;
 using System.Windows.Threading;
+using Emgu.CV.Util;
 
 namespace AutoPilotApp
 {
@@ -269,11 +270,14 @@ namespace AutoPilotApp
                 //calculate the position of the ball
                 int posX = (int)(dM10 / dArea);
                 int posY = (int)(dM01 / dArea);
-
-                var blank = img.CopyBlank();
-                CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), 20, new MCvScalar(255, 0, 0), -1);
-                //img = img + blank;
+                CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea/100000d), new MCvScalar(255, 0, 0), -1);
             }
+
+            Mat hierarchy = new Mat();
+            VectorOfVectorOfPoint result = new VectorOfVectorOfPoint();
+            //CvInvoke.FindContours(imgThresholded, result, hierarchy, RetrType.Tree, ChainApproxMethod.ChainCode);
+
+            //CvInvoke.DrawContours(img, result, -1, new MCvScalar(255, 0, 0), 3);
 
             bitmaps.Bitmap = bitmap;
             setPic(bitmap, (o) => bitmaps.Original = o);
