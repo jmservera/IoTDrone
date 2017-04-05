@@ -1,4 +1,5 @@
 ﻿using Emgu.CV;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -65,6 +66,7 @@ namespace AutoPilotApp
     }
     public class ColorConfig : ObservableObject
     {
+        [JsonIgnore]
         public Color Low
         {
             get
@@ -74,6 +76,7 @@ namespace AutoPilotApp
             }
         }
 
+        [JsonIgnore]
         public Color High
         {
             get
@@ -145,28 +148,36 @@ namespace AutoPilotApp
 
     public class Config:ObservableObject
     {
+        public Config()
+        {
+            RedConfig = new ColorConfig();
+            GreenConfig = new ColorConfig();
+        }
         private bool direction;
-
+        [JsonIgnore]
         public bool Direction
         {
             get { return direction; }
             set { Set(ref direction , value); }
         }
 
-        private ColorConfig redConfig=new ColorConfig();
+        private ColorConfig redConfig;
 
         public ColorConfig RedConfig
         {
             get { return redConfig; }
-            set { Set(ref redConfig , value); }
+            set {
+                Set(ref redConfig , value);
+            }
         }
 
-        private ColorConfig greenConfig=new ColorConfig();
+        private ColorConfig greenConfig;
 
         public ColorConfig GreenConfig
         {
             get { return greenConfig; }
-            set { Set(ref greenConfig , value); }
+            set { Set(ref greenConfig , value);
+            }
         }
     }
 

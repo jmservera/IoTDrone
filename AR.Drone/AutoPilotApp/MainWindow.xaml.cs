@@ -20,6 +20,8 @@ using System.Windows.Shapes;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
+using Newtonsoft.Json;
+using Microsoft.Win32;
 
 namespace AutoPilotApp
 {
@@ -263,6 +265,52 @@ namespace AutoPilotApp
                         currentConfig.LowS = pix.Data[0, 0, 1];
                         currentConfig.LowV = pix.Data[0, 0, 2];
                     }
+                }
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.FileName = "config";
+            dlg.DefaultExt = ".json";
+            dlg.Filter = "Config Files (.json)|*.json";
+            if (dlg.ShowDialog()??false)
+            {
+                using (StreamWriter w = new StreamWriter( dlg.FileName))
+                {
+                    using (JsonTextWriter jw = new JsonTextWriter(w))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        serializer.Serialize(jw, config,typeof(Config));
+                    }
+                    
+                }
+            }
+        }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            dlg.FileName = "config";
+            dlg.DefaultExt = ".json";
+            dlg.Filter = "Config Files (.json)|*.json";
+            if (dlg.ShowDialog() ?? false)
+            {
+                using (StreamReader w = new StreamReader(dlg.FileName))
+                {
+                    using (JsonTextReader jw = new JsonTextReader(w))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        var newConfig= serializer.Deserialize<Config>(jw);
+                        if (newConfig != null)
+                        {
+                            Application.Current.Resources["Config"] = newConfig;
+                            config = newConfig;
+                        }
+                    }
+
                 }
             }
         }
