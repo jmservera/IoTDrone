@@ -14,16 +14,20 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="170"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <StackPanel.Resources>
-                <Style TargetType="Button">
+                <Style x:Key="Margined" TargetType="Control">
                     <Setter Property="Margin" Value="2"/>
                 </Style>
+                <Style TargetType="ToggleButton" BasedOn="{StaticResource Margined}">
+                </Style>
+                <Style TargetType="Button" BasedOn="{StaticResource Margined}">
+                </Style>
             </StackPanel.Resources>
-            <Button Width="100">Stream</Button>
-            <Button Width="100" Click="Button_Click">Simulator</Button>
+            <Button Name="StreamButton" Width="100" Click="StreamButton_Click">Stream</Button>
+            <Button Name="SimulatorButton" Width="100" Click="SimulatorButton_Click">Simulator</Button>
             <ToggleButton Name="Toggle" Content="Green" IsChecked="{Binding Direction, Source={StaticResource Config}}"></ToggleButton>
             <Button Name="SaveButton" Click="SaveButton_Click">Save</Button>
             <Button Name="LoadButton" Click="LoadButton_Click">Load</Button>
@@ -59,21 +63,25 @@
                     <Setter Property="Maximum" Value="255"/>
                 </Style>
             </Grid.Resources>
-            <TextBlock>Red</TextBlock>
-            <Grid Grid.Row="1" Margin="5" DataContext="{Binding RedConfig}">
+            <TextBlock Margin="10 0 0 0">Red</TextBlock>
+            <Grid Grid.Row="1" Margin="10" DataContext="{Binding RedConfig}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="1" Orientation="Vertical">
-                    <Rectangle Height="10">
-                        <Rectangle.Fill>
-                            <MultiBinding Converter="{StaticResource configColorConverter}">
-                                <Binding Path="Low"/>
-                                <Binding Path="High"/>
-                            </MultiBinding>
-                        </Rectangle.Fill>
-                    </Rectangle>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Rectangle Height="10" Grid.ColumnSpan="2">
+                    <Rectangle.Fill>
+                        <MultiBinding Converter="{StaticResource configColorConverter}">
+                            <Binding Path="Low"/>
+                            <Binding Path="High"/>
+                        </MultiBinding>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <StackPanel Grid.Row="1">
                     <TextBlock>Low H: <Run Text="{Binding Value, ElementName=RedLowH}" /></TextBlock>
                     <Slider Name="RedLowH" Maximum="179" Value="{Binding LowH}"  />
                     <TextBlock>Low S: <Run Text="{Binding Value, ElementName=RedLowS}" /></TextBlock>
@@ -82,7 +90,6 @@
                     <Slider Name="RedLowV" Maximum="255" Value="{Binding LowV}" />
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="1">
-                    <Rectangle Height="10"></Rectangle>
                     <TextBlock>High H: <Run Text="{Binding Value, ElementName=RedHighH}" /></TextBlock>
                     <Slider Name="RedHighH" Maximum="179" Value="{Binding HighH}" />
                     <TextBlock>High S: <Run Text="{Binding Value, ElementName=RedHighS}" /></TextBlock>
@@ -91,21 +98,25 @@
                     <Slider Name="RedHighV" Maximum="255" Value="{Binding HighV}" />
                 </StackPanel>
             </Grid>
-            <TextBlock Grid.Column="1">Green</TextBlock>
-            <Grid Grid.Row="1" Grid.Column="1" Margin="5" DataContext="{Binding GreenConfig}">
+            <TextBlock Margin="10 0 0 0" Grid.Column="1">Green</TextBlock>
+            <Grid Grid.Row="1" Grid.Column="1" Margin="10" DataContext="{Binding GreenConfig}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Vertical">
-                    <Rectangle Height="10">
-                        <Rectangle.Fill>
-                            <MultiBinding Converter="{StaticResource configColorConverter}">
-                                <Binding Path="Low"/>
-                                <Binding Path="High"/>
-                            </MultiBinding>
-                        </Rectangle.Fill>
-                    </Rectangle>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Rectangle Height="10" Grid.ColumnSpan="2">
+                    <Rectangle.Fill>
+                        <MultiBinding Converter="{StaticResource configColorConverter}">
+                            <Binding Path="Low"/>
+                            <Binding Path="High"/>
+                        </MultiBinding>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <StackPanel Orientation="Vertical" Grid.Row="1">
                     <TextBlock>Low H: <Run Text="{Binding Value, ElementName=GreenLowH}" /></TextBlock>
                     <Slider Name="GreenLowH" Maximum="179" Value="{Binding LowH}"  />
                     <TextBlock>Low S: <Run Text="{Binding Value, ElementName=GreenLowS}" /></TextBlock>
@@ -113,8 +124,7 @@
                     <TextBlock>Low V: <Run Text="{Binding Value, ElementName=GreenLowV}" /></TextBlock>
                     <Slider Name="GreenLowV" Maximum="255" Value="{Binding LowV}"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <Rectangle Height="10"></Rectangle>
+                <StackPanel Grid.Column="1" Grid.Row="1">
                     <TextBlock>High H: <Run Text="{Binding Value, ElementName=GreenHighH}" /></TextBlock>
                     <Slider Name="GreenHighH" Maximum="179"  Value="{Binding HighH}"/>
                     <TextBlock>High S: <Run Text="{Binding Value, ElementName=GreenHighS}" /></TextBlock>

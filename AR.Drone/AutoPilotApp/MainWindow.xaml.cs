@@ -22,6 +22,11 @@ using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using Microsoft.Win32;
+using AR.Drone.Client;
+using AR.Drone.Data;
+using AR.Drone.Video;
+using AR.Drone.WinApp;
+using System.Windows.Threading;
 
 namespace AutoPilotApp
 {
@@ -32,6 +37,9 @@ namespace AutoPilotApp
     {
         Config config;
         Bitmaps bitmaps;
+        private readonly DroneClient _droneClient;
+        private readonly VideoPacketDecoderWorker _videoPacketDecoderWorker;
+
 
         public MainWindow()
         {
@@ -53,16 +61,60 @@ namespace AutoPilotApp
                 System.Diagnostics.Debug.WriteLine(e.Property.Name);
             };
             Closed += MainWindow_Closed;
+
+            _droneClient = new DroneClient("192.168.2.1");
+            _droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
+
+            _videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
+            _videoPacketDecoderWorker.Start();
+
+            frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
+        }
+
+        private void timerElapsed(object sender, EventArgs e)
+        {
+            if (_frame != null)
+            {
+                bitmaps.Bitmap = VideoHelper.CreateBitmap(ref _frame);
+                analyze(bitmaps.Bitmap);
+            }
+        }
+
+        DispatcherTimer frameTimer;
+        VideoFrame _frame;
+        private void OnVideoPacketDecoded(VideoFrame frame)
+        {
+            _frame = frame;
+        }
+
+        private void OnVideoPacketAcquired(VideoPacket packet)
+        {
+            if (_videoPacketDecoderWorker.IsAlive)
+                _videoPacketDecoderWorker.EnqueuePacket(packet);
         }
 
         private async void MainWindow_Closed(object sender, EventArgs e)
         {
+            if (frameTimer != null)
+            {
+                frameTimer.Stop();
+            }
+            if (_droneClient != null)
+            {
+                _droneClient.Stop();
+                _droneClient.Dispose();
+            }
+            if (_videoPacketDecoderWorker != null)
+            {
+                _videoPacketDecoderWorker.Stop();
+                _videoPacketDecoderWorker.Dispose();
+            }
             await closeSource();
         }
 
         VideoCaptureDevice videoSource;
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void SimulatorButton_Click(object sender, RoutedEventArgs e)
         {
             await closeSource();
             //List all available video sources. (That can be webcams as well as tv cards, etc)
@@ -193,13 +245,10 @@ namespace AutoPilotApp
             foreach (LineSegment2D line in lines)
                 img.Draw(line, new Bgr(System.Drawing.Color.Green), 2);
 
-
             //use image pyr to remove noise
             UMat pyrDown = new UMat();
             CvInvoke.PyrDown(uimage, pyrDown);
             CvInvoke.PyrUp(pyrDown, uimage);
-
-            
 
             UMat imgThresholded = new UMat();
             MCvScalar lower = new MCvScalar(currentConfig.LowH, currentConfig.LowS, currentConfig.LowV);
@@ -310,9 +359,13 @@ namespace AutoPilotApp
                             config = newConfig;
                         }
                     }
-
                 }
             }
+        }
+
+        private void StreamButton_Click(object sender, RoutedEventArgs e)
+        {
+            _droneClient.Start();
         }
     }
 }

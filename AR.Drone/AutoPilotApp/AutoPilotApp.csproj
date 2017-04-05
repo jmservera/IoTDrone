@@ -27,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -168,6 +169,10 @@
     <ProjectReference Include="..\AR.Drone.Video\AR.Drone.Video.csproj">
       <Project>{36c63293-4c2d-41ec-b231-faf55845c014}</Project>
       <Name>AR.Drone.Video</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AR.Drone.WinApp\AR.Drone.WinApp.csproj">
+      <Project>{78C83708-BF89-4A5D-B823-21D06EED6A6B}</Project>
+      <Name>AR.Drone.WinApp</Name>
     </ProjectReference>
     <ProjectReference Include="..\FFmpeg.AutoGen\FFmpeg.AutoGen\FFmpeg.AutoGen.csproj">
       <Project>{a536b02a-b0b1-4753-8328-17369ef09976}</Project>
