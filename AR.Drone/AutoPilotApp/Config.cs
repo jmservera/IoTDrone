@@ -145,6 +145,14 @@ namespace AutoPilotApp
 
     public class Config:ObservableObject
     {
+        private bool direction;
+
+        public bool Direction
+        {
+            get { return direction; }
+            set { Set(ref direction , value); }
+        }
+
         private ColorConfig redConfig=new ColorConfig();
 
         public ColorConfig RedConfig
@@ -195,6 +203,8 @@ namespace AutoPilotApp
             get { return final; }
             set { Set(ref final , value); }
         }
+
+        public System.Drawing.Bitmap Bitmap { get; set; }
     }
 
     public static class BitmapExtensions

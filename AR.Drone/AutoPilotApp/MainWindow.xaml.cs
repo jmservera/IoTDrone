@@ -118,19 +118,17 @@ namespace AutoPilotApp
         {
             try
             {
-                BitmapImage bi;
-                
-                    bi = new BitmapImage();
-                    bi.BeginInit();
-                    MemoryStream ms = new MemoryStream();
+                BitmapImage bi = new BitmapImage();
+                using (MemoryStream ms = new MemoryStream())
+                {
                     bitmap.Save(ms, ImageFormat.Bmp);
+                    bi.BeginInit();
                     bi.StreamSource = ms;
                     bi.CacheOption = BitmapCacheOption.OnLoad;
                     bi.EndInit();
-                bi.Freeze();
+                    bi.Freeze();
+                }
                 Dispatcher.BeginInvoke(new ThreadStart(delegate { setter(bi); }));
-
-
             }
             catch (Exception ex)
             {
@@ -150,6 +148,22 @@ namespace AutoPilotApp
                 while (videoSource.IsRunning)
                     await Task.Delay(100);
                 videoSource = null;
+            }
+        }
+
+        public ColorConfig currentConfig
+        {
+            get
+            {
+                if (!config.Direction)
+                {
+                    return config.RedConfig;
+                }
+                else
+                {
+                    return config.GreenConfig;
+                }
+                
             }
         }
 
@@ -183,7 +197,8 @@ namespace AutoPilotApp
             CvInvoke.PyrDown(uimage, pyrDown);
             CvInvoke.PyrUp(pyrDown, uimage);
 
-            var currentConfig = config.RedConfig;
+            
+
             UMat imgThresholded = new UMat();
             MCvScalar lower = new MCvScalar(currentConfig.LowH, currentConfig.LowS, currentConfig.LowV);
             MCvScalar upper = new MCvScalar(currentConfig.HighH, currentConfig.HighS, currentConfig.HighV);
@@ -209,27 +224,47 @@ namespace AutoPilotApp
                 //img = img + blank;
             }
 
-            //if (bitmaps.Original == null)
-            //{
-            //    PixelFormat pf = PixelFormats.Rgb24;
-            //    int width = bitmap.Width;
-            //    int height = bitmap.Height;
-            //    int rawStride = (width * pf.BitsPerPixel + 7) / 8;
-            //    byte[] rawImage = new byte[rawStride * height];
-            //    bitmaps.Original = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, bitmap., rawStride);
-            //    bitmaps.First= BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, rawImage, rawStride);
-            //    bitmaps.Second= BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, rawImage, rawStride);
-            //    bitmaps.Final= BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, rawImage, rawStride);
-            //}
-
+            bitmaps.Bitmap = bitmap;
             setPic(bitmap, (o) => bitmaps.Original = o);
             setPic(img.ToBitmap(), (o) => bitmaps.First = o);
             setPic(uimage.Bitmap, (o) => bitmaps.Second = o);
             setPic(imgThresholded.Bitmap, (o) => bitmaps.Final = o);
-            //bitmaps.Original = bitmap.ToBitmapSource();
-            //bitmaps.First= img.ToBitmap().ToBitmapSource();
-            //bitmaps.Second = uimage.Bitmap.ToBitmapSource();
-            //bitmaps.Final = imgThresholded.Bitmap.ToBitmapSource();
+        }
+
+        private void Original_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+            {
+                var input = (System.Windows.Controls.Image)sender;
+                var w = input.ActualWidth;
+                var h = input.ActualHeight;
+                var position = e.GetPosition((IInputElement)sender);
+                var bmpSize = bitmaps.Bitmap.Size;
+
+                var x = position.X * bmpSize.Width / w;
+                var y = position.Y * bmpSize.Height / h;
+                var color = bitmaps.Bitmap.GetPixel((int)x, (int)y);
+                UMat uimage = new UMat();
+                using (Bitmap bmp = new Bitmap(1, 1))
+                {
+                    bmp.SetPixel(0, 0, color);
+                    Image<Bgr, byte> img = new Image<Bgr, byte>(bmp);
+                    var pix = new Image<Hsv, byte>(new System.Drawing.Size(1, 1));
+                    CvInvoke.CvtColor(img, pix, ColorConversion.Bgr2Hsv);
+                    if (e.RightButton == MouseButtonState.Pressed)
+                    {
+                        currentConfig.HighH= pix.Data[0, 0, 0];
+                        currentConfig.HighS= pix.Data[0, 0, 1];
+                        currentConfig.HighV= pix.Data[0, 0, 2];
+                    }
+                    else if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        currentConfig.LowH = pix.Data[0, 0, 0];
+                        currentConfig.LowS = pix.Data[0, 0, 1];
+                        currentConfig.LowV = pix.Data[0, 0, 2];
+                    }
+                }
+            }
         }
     }
 }
