@@ -234,6 +234,7 @@ namespace AutoPilotApp
 
         private void analyze(System.Drawing.Bitmap bitmap)
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmap))
             {
 
@@ -289,12 +290,15 @@ namespace AutoPilotApp
                 //CvInvoke.FindContours(imgThresholded, result, hierarchy, RetrType.Tree, ChainApproxMethod.ChainCode);
 
                 //CvInvoke.DrawContours(img, result, -1, new MCvScalar(255, 0, 0), 3);
-
+                bitmaps.Calculations = sw.ElapsedMilliseconds;
+                sw.Restart();
                 bitmaps.Bitmap = bitmap;
                 setPic(bitmap, (o) => bitmaps.Original = o);
                 setPic(img.ToBitmap(), (o) => bitmaps.First = o);
                 setPic(uimage.Bitmap, (o) => bitmaps.Second = o);
                 setPic(imgThresholded.Bitmap, (o) => bitmaps.Final = o);
+                bitmaps.ImageSet = sw.ElapsedMilliseconds;
+                bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
             }
         }
 

@@ -41,6 +41,9 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            <TextBlock Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
+            </TextBlock>
             <Image Name="Original" Source="{Binding Original}" MouseDown="Original_MouseDown" />
             <Image Name="First" Source="{Binding First}" Grid.Column="1"/>
             <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
