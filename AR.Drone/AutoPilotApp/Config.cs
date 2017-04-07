@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -55,7 +56,7 @@ namespace AutoPilotApp
         /// <param name="args">The arguments. </param>
         protected virtual void RaisePropertyChanged(PropertyChangedEventArgs args)
         {
-            PropertyChanged?.Invoke(this,args);
+            PropertyChanged?.Invoke(this, args);
         }
 
         /// <summary>Raises the property changed event for all properties (string.Empty). </summary>
@@ -72,7 +73,7 @@ namespace AutoPilotApp
             get
             {
                 return
-                ColorUtils.HsvToRgb(this.lowH * 2, this.lowS  / 255d, this.lowV  / 255d);
+                ColorUtils.HsvToRgb(this.lowH * 2, this.lowS / 255d, this.lowV / 255d);
             }
         }
 
@@ -81,7 +82,7 @@ namespace AutoPilotApp
         {
             get
             {
-               return ColorUtils.HsvToRgb(this.highH * 2, this.highS / 255d, this.highV  / 255d);
+                return ColorUtils.HsvToRgb(this.highH * 2, this.highS / 255d, this.highV / 255d);
             }
         }
 
@@ -90,8 +91,10 @@ namespace AutoPilotApp
         public int LowH
         {
             get { return lowH; }
-            set { Set(ref lowH, value);
-            RaisePropertyChanged(new PropertyChangedEventArgs(nameof(Low)));
+            set
+            {
+                Set(ref lowH, value);
+                RaisePropertyChanged(new PropertyChangedEventArgs(nameof(Low)));
             }
         }
 
@@ -100,8 +103,10 @@ namespace AutoPilotApp
         public int HighH
         {
             get { return highH; }
-            set { Set(ref highH , value);
-            RaisePropertyChanged(new PropertyChangedEventArgs(nameof(High)));
+            set
+            {
+                Set(ref highH, value);
+                RaisePropertyChanged(new PropertyChangedEventArgs(nameof(High)));
             }
         }
 
@@ -110,8 +115,10 @@ namespace AutoPilotApp
         public int LowS
         {
             get { return lowS; }
-            set { Set(ref lowS , value);
-            RaisePropertyChanged(new PropertyChangedEventArgs(nameof(Low)));
+            set
+            {
+                Set(ref lowS, value);
+                RaisePropertyChanged(new PropertyChangedEventArgs(nameof(Low)));
             }
         }
 
@@ -120,8 +127,10 @@ namespace AutoPilotApp
         public int HighS
         {
             get { return highS; }
-            set { Set(ref highS , value);
-            RaisePropertyChanged(new PropertyChangedEventArgs(nameof(High)));
+            set
+            {
+                Set(ref highS, value);
+                RaisePropertyChanged(new PropertyChangedEventArgs(nameof(High)));
             }
         }
 
@@ -130,8 +139,10 @@ namespace AutoPilotApp
         public int LowV
         {
             get { return lowV; }
-            set { Set(ref lowV , value);
-            RaisePropertyChanged(new PropertyChangedEventArgs(nameof(Low)));
+            set
+            {
+                Set(ref lowV, value);
+                RaisePropertyChanged(new PropertyChangedEventArgs(nameof(Low)));
             }
         }
 
@@ -140,13 +151,15 @@ namespace AutoPilotApp
         public int HighV
         {
             get { return highV; }
-            set { Set(ref highV , value);
-            RaisePropertyChanged(new PropertyChangedEventArgs(nameof(High)));
+            set
+            {
+                Set(ref highV, value);
+                RaisePropertyChanged(new PropertyChangedEventArgs(nameof(High)));
             }
         }
     }
 
-    public class Config:ObservableObject
+    public class Config : ObservableObject
     {
         public Config()
         {
@@ -158,7 +171,7 @@ namespace AutoPilotApp
         public bool Direction
         {
             get { return direction; }
-            set { Set(ref direction , value); }
+            set { Set(ref direction, value); }
         }
 
         private ColorConfig redConfig;
@@ -166,8 +179,9 @@ namespace AutoPilotApp
         public ColorConfig RedConfig
         {
             get { return redConfig; }
-            set {
-                Set(ref redConfig , value);
+            set
+            {
+                Set(ref redConfig, value);
             }
         }
 
@@ -176,19 +190,21 @@ namespace AutoPilotApp
         public ColorConfig GreenConfig
         {
             get { return greenConfig; }
-            set { Set(ref greenConfig , value);
+            set
+            {
+                Set(ref greenConfig, value);
             }
         }
     }
 
-    public class Bitmaps: ObservableObject
+    public class Bitmaps : ObservableObject
     {
         private long calculations;
 
         public long Calculations
         {
             get { return calculations; }
-            set { Set(ref calculations , value); }
+            set { Set(ref calculations, value); }
         }
 
         private long imageSet;
@@ -196,16 +212,17 @@ namespace AutoPilotApp
         public long ImageSet
         {
             get { return imageSet; }
-            set { Set(ref imageSet , value); }
+            set { Set(ref imageSet, value); }
         }
 
-        private long[] fps=new long[5];
+        private long[] fps = new long[5];
         long index;
         public long FPS
         {
-            get {
+            get
+            {
                 long count = index < fps.Length ? index : fps.Length;
-                return count>0? 1000/(fps.Take((int)count).Sum() / count):0;
+                return count > 0 ? 1000 / (fps.Take((int)count).Sum() / count) : 0;
             }
             set
             {
@@ -215,39 +232,99 @@ namespace AutoPilotApp
         }
 
 
-        private BitmapSource original;
-
         public BitmapSource Original
         {
-            get { return original; }
-            set { Set(ref original , value); }
+            get { return wbitmaps[0]; }
         }
-
-        private BitmapSource first;
 
         public BitmapSource First
         {
-            get { return first; }
-            set { Set(ref first , value); }
+            get { return wbitmaps[1]; }
         }
-
-        private BitmapSource second;
 
         public BitmapSource Second
         {
-            get { return second; }
-            set { Set(ref second , value); }
+            get { return wbitmaps[2]; }
         }
-
-        private BitmapSource final;
 
         public BitmapSource Final
         {
-            get { return final; }
-            set { Set(ref final , value); }
+            get { return wbitmaps[3]; }
         }
 
         public System.Drawing.Bitmap Bitmap { get; set; }
+
+        //WriteableBitmap ConvertBitmap(System.Drawing.Bitmap bitmap)
+        //{
+        //    using (MemoryStream memory = new MemoryStream())
+        //    {
+        //        bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+        //        memory.Position = 0;
+        //        BitmapImage bitmapimage = new BitmapImage();
+        //        bitmapimage.BeginInit();
+        //        bitmapimage.StreamSource = memory;
+        //        bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+        //        bitmapimage.EndInit();
+        //        bitmapimage.Freeze();
+        //        return new WriteableBitmap(bitmapimage);
+        //    }
+        //}
+        WriteableBitmap[] wbitmaps = new WriteableBitmap[4];
+        public void UpdateImages(params System.Drawing.Bitmap[] bitmaps)
+        {
+            if (wbitmaps[0] == null)
+            {
+                for (int i = 0; i < bitmaps.Length; i++)
+                {
+                    var bmp = bitmaps[i];
+                    wbitmaps[i] = new WriteableBitmap(
+                        bmp.Width, bmp.Height, bmp.HorizontalResolution, bmp.VerticalResolution, ConvertPixelFormat(bmp.PixelFormat), null);
+                }
+            }
+            for (int i = 0; i < bitmaps.Length; i++)
+            {
+                DrawImage(wbitmaps[i], bitmaps[i], bitmaps[i].PixelFormat);
+            }
+            RaiseAllPropertiesChanged();
+        }
+
+        private static System.Windows.Media.PixelFormat ConvertPixelFormat(System.Drawing.Imaging.PixelFormat sourceFormat)
+        {
+            switch (sourceFormat)
+            {
+                case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+                    return PixelFormats.Bgr24;
+                case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
+                    return PixelFormats.Bgra32;
+                case System.Drawing.Imaging.PixelFormat.Format32bppRgb:
+                    return PixelFormats.Bgr32;
+                case System.Drawing.Imaging.PixelFormat.Format8bppIndexed:
+                    return PixelFormats.Gray8;
+
+                    // .. as many as you need...
+            }
+            return new System.Windows.Media.PixelFormat();
+        }
+
+        public void DrawImage(WriteableBitmap writeableBitmap, System.Drawing.Bitmap bitmap, System.Drawing.Imaging.PixelFormat format)
+        {
+            
+            System.Drawing.Imaging.BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), 
+                System.Drawing.Imaging.ImageLockMode.ReadOnly, format);
+            try
+            {
+                writeableBitmap.Lock();
+                writeableBitmap.WritePixels(new Int32Rect(0, 0, bitmap.Width, bitmap.Height),
+                    data.Scan0,
+                    data.Height * data.Stride, data.Stride,0, 0);
+                writeableBitmap.Unlock();
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+                bitmap.Dispose();
+            }
+        }
     }
 
     public class ColorUtils

@@ -281,10 +281,10 @@ namespace AutoPilotApp
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
                 bitmaps.Bitmap = bitmap;
-                bitmaps.Original = ConvertBitmap(bitmap);
-                bitmaps.First = ConvertBitmap(img.ToBitmap());
-                bitmaps.Second = ConvertBitmap(uimage.Bitmap);
-                bitmaps.Final = ConvertBitmap(imgThresholded.Bitmap);
+                bitmaps.UpdateImages(bitmap,
+                    img.ToBitmap(),
+                    uimage.Bitmap,
+                    imgThresholded.Bitmap);
 
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
                 bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
