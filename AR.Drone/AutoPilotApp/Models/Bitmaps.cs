@@ -62,21 +62,32 @@ namespace AutoPilotApp.Models
         public System.Drawing.Bitmap Bitmap { get; private set; }
 
         WriteableBitmap[] wbitmaps = new WriteableBitmap[4];
+        int init;
         public void UpdateImages(params System.Drawing.Bitmap[] bitmaps)
         {
-            Bitmap =(System.Drawing.Bitmap) bitmaps[0].Clone();
-            if (wbitmaps[0] == null)
+            if (bitmaps[0] != null)
+            {
+                Bitmap = (System.Drawing.Bitmap)bitmaps[0].Clone();
+            }
+            if (init<15)
             {
                 for (int i = 0; i < bitmaps.Length; i++)
                 {
-                    var bmp = bitmaps[i];
-                    wbitmaps[i] = new WriteableBitmap(
-                        bmp.Width, bmp.Height, bmp.HorizontalResolution, bmp.VerticalResolution, ConvertPixelFormat(bmp.PixelFormat), null);
+                    if (bitmaps[i]!=null)
+                    {
+                        init = init | (1 << i);
+                        var bmp = bitmaps[i];
+                        wbitmaps[i] = new WriteableBitmap(
+                            bmp.Width, bmp.Height, bmp.HorizontalResolution, bmp.VerticalResolution, ConvertPixelFormat(bmp.PixelFormat), null);
+                    }
                 }
             }
             for (int i = 0; i < bitmaps.Length; i++)
             {
-                DrawImage(wbitmaps[i], bitmaps[i], bitmaps[i].PixelFormat);
+                if (bitmaps[i] != null)
+                {
+                    DrawImage(wbitmaps[i], bitmaps[i], bitmaps[i].PixelFormat);
+                }
             }
 
             RaiseAllPropertiesChanged();

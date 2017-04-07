@@ -224,7 +224,8 @@ namespace AutoPilotApp
         private void analyze(System.Drawing.Bitmap bitmap)
         {
             System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmap))
+            bitmaps.UpdateImages(bitmap);
+            using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmaps.Bitmap))
             {
                 UMat uimage = new UMat();
                 CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Hsv);
@@ -273,7 +274,7 @@ namespace AutoPilotApp
 
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
-                bitmaps.UpdateImages(bitmap,img.ToBitmap(),
+                bitmaps.UpdateImages(null,img.ToBitmap(),
                     cannyEdges.Bitmap,
                     imgThresholded.Bitmap);
 
