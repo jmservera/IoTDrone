@@ -111,6 +111,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ColorToSolidColorBrushValueConverter.cs" />
+    <Compile Include="CV\Analyzer.cs" />
     <Compile Include="Models\Bitmaps.cs" />
     <Compile Include="Models\ColorConfig.cs" />
     <Compile Include="Models\ColorUtils.cs" />
