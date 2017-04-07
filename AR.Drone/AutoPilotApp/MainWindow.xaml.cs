@@ -41,6 +41,16 @@ namespace AutoPilotApp
         private readonly DroneClient _droneClient;
         private readonly VideoPacketDecoderWorker _videoPacketDecoderWorker;
 
+        bool first = true;
+        protected override void OnActivated(EventArgs e)
+        {
+            if (first)
+            {
+                first = false;
+                SimulatorButton_Click(this, null);
+            }
+            base.OnActivated(e);
+        }
 
         public MainWindow()
         {
@@ -218,72 +228,74 @@ namespace AutoPilotApp
                 {
                     return config.GreenConfig;
                 }
-                
+
             }
         }
 
         private void analyze(System.Drawing.Bitmap bitmap)
         {
-            Image<Bgr, byte> img = new Image<Bgr, byte>(bitmap);
-
-            UMat uimage = new UMat();
-
-            CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Hsv);
-
-
-            double cannyThreshold = 180.0;
-            double cannyThresholdLinking = 120.0;
-            UMat cannyEdges = new UMat();
-            CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
-            LineSegment2D[] lines = CvInvoke.HoughLinesP(
-               cannyEdges,
-               1, //Distance resolution in pixel-related units
-               Math.PI / 45.0, //Angle resolution measured in radians.
-               20, //threshold
-               30, //min Line width
-               10); //gap between lines
-
-            foreach (LineSegment2D line in lines)
-                img.Draw(line, new Bgr(System.Drawing.Color.Green), 2);
-
-            //use image pyr to remove noise
-            UMat pyrDown = new UMat();
-            CvInvoke.PyrDown(uimage, pyrDown);
-            CvInvoke.PyrUp(pyrDown, uimage);
-
-            UMat imgThresholded = new UMat();
-            MCvScalar lower = new MCvScalar(currentConfig.LowH, currentConfig.LowS, currentConfig.LowV);
-            MCvScalar upper = new MCvScalar(currentConfig.HighH, currentConfig.HighS, currentConfig.HighV);
-
-            CvInvoke.InRange(uimage, new ScalarArray(lower), new ScalarArray(upper), imgThresholded);
-
-            //Calculate the moments of the thresholded image
-            var oMoments = CvInvoke.Moments(imgThresholded);
-
-            double dM01 = oMoments.M01;
-            double dM10 = oMoments.M10;
-            double dArea = oMoments.M00;
-
-            // if the area <= 10000, I consider that the there are no object in the image and it's because of the noise, the area is not zero 
-            if (dArea > 10000)
+            using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmap))
             {
-                //calculate the position of the ball
-                int posX = (int)(dM10 / dArea);
-                int posY = (int)(dM01 / dArea);
-                CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea/100000d), new MCvScalar(255, 0, 0), -1);
+
+                UMat uimage = new UMat();
+
+                CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Hsv);
+
+
+                double cannyThreshold = 180.0;
+                double cannyThresholdLinking = 120.0;
+                UMat cannyEdges = new UMat();
+                CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
+                LineSegment2D[] lines = CvInvoke.HoughLinesP(
+                   cannyEdges,
+                   1, //Distance resolution in pixel-related units
+                   Math.PI / 45.0, //Angle resolution measured in radians.
+                   20, //threshold
+                   30, //min Line width
+                   10); //gap between lines
+
+                foreach (LineSegment2D line in lines)
+                    img.Draw(line, new Bgr(System.Drawing.Color.Green), 2);
+
+                //use image pyr to remove noise
+                UMat pyrDown = new UMat();
+                CvInvoke.PyrDown(uimage, pyrDown);
+                CvInvoke.PyrUp(pyrDown, uimage);
+
+                UMat imgThresholded = new UMat();
+                MCvScalar lower = new MCvScalar(currentConfig.LowH, currentConfig.LowS, currentConfig.LowV);
+                MCvScalar upper = new MCvScalar(currentConfig.HighH, currentConfig.HighS, currentConfig.HighV);
+
+                CvInvoke.InRange(uimage, new ScalarArray(lower), new ScalarArray(upper), imgThresholded);
+
+                //Calculate the moments of the thresholded image
+                var oMoments = CvInvoke.Moments(imgThresholded);
+
+                double dM01 = oMoments.M01;
+                double dM10 = oMoments.M10;
+                double dArea = oMoments.M00;
+
+                // if the area <= 10000, I consider that the there are no object in the image and it's because of the noise, the area is not zero 
+                if (dArea > 10000)
+                {
+                    //calculate the position of the ball
+                    int posX = (int)(dM10 / dArea);
+                    int posY = (int)(dM01 / dArea);
+                    CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea / 100000d), new MCvScalar(255, 0, 0), -1);
+                }
+
+                Mat hierarchy = new Mat();
+                VectorOfVectorOfPoint result = new VectorOfVectorOfPoint();
+                //CvInvoke.FindContours(imgThresholded, result, hierarchy, RetrType.Tree, ChainApproxMethod.ChainCode);
+
+                //CvInvoke.DrawContours(img, result, -1, new MCvScalar(255, 0, 0), 3);
+
+                bitmaps.Bitmap = bitmap;
+                setPic(bitmap, (o) => bitmaps.Original = o);
+                setPic(img.ToBitmap(), (o) => bitmaps.First = o);
+                setPic(uimage.Bitmap, (o) => bitmaps.Second = o);
+                setPic(imgThresholded.Bitmap, (o) => bitmaps.Final = o);
             }
-
-            Mat hierarchy = new Mat();
-            VectorOfVectorOfPoint result = new VectorOfVectorOfPoint();
-            //CvInvoke.FindContours(imgThresholded, result, hierarchy, RetrType.Tree, ChainApproxMethod.ChainCode);
-
-            //CvInvoke.DrawContours(img, result, -1, new MCvScalar(255, 0, 0), 3);
-
-            bitmaps.Bitmap = bitmap;
-            setPic(bitmap, (o) => bitmaps.Original = o);
-            setPic(img.ToBitmap(), (o) => bitmaps.First = o);
-            setPic(uimage.Bitmap, (o) => bitmaps.Second = o);
-            setPic(imgThresholded.Bitmap, (o) => bitmaps.Final = o);
         }
 
         private void Original_MouseDown(object sender, MouseButtonEventArgs e)
@@ -308,9 +320,9 @@ namespace AutoPilotApp
                     CvInvoke.CvtColor(img, pix, ColorConversion.Bgr2Hsv);
                     if (e.RightButton == MouseButtonState.Pressed)
                     {
-                        currentConfig.HighH= pix.Data[0, 0, 0];
-                        currentConfig.HighS= pix.Data[0, 0, 1];
-                        currentConfig.HighV= pix.Data[0, 0, 2];
+                        currentConfig.HighH = pix.Data[0, 0, 0];
+                        currentConfig.HighS = pix.Data[0, 0, 1];
+                        currentConfig.HighV = pix.Data[0, 0, 2];
                     }
                     else if (e.LeftButton == MouseButtonState.Pressed)
                     {
@@ -328,16 +340,16 @@ namespace AutoPilotApp
             dlg.FileName = "config";
             dlg.DefaultExt = ".json";
             dlg.Filter = "Config Files (.json)|*.json";
-            if (dlg.ShowDialog()??false)
+            if (dlg.ShowDialog() ?? false)
             {
-                using (StreamWriter w = new StreamWriter( dlg.FileName))
+                using (StreamWriter w = new StreamWriter(dlg.FileName))
                 {
                     using (JsonTextWriter jw = new JsonTextWriter(w))
                     {
                         JsonSerializer serializer = new JsonSerializer();
-                        serializer.Serialize(jw, config,typeof(Config));
+                        serializer.Serialize(jw, config, typeof(Config));
                     }
-                    
+
                 }
             }
         }
@@ -356,7 +368,7 @@ namespace AutoPilotApp
                     using (JsonTextReader jw = new JsonTextReader(w))
                     {
                         JsonSerializer serializer = new JsonSerializer();
-                        var newConfig= serializer.Deserialize<Config>(jw);
+                        var newConfig = serializer.Deserialize<Config>(jw);
                         if (newConfig != null)
                         {
                             Application.Current.Resources["Config"] = newConfig;
