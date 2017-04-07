@@ -28,7 +28,14 @@ namespace AutoPilotApp.Models
         public string DroneIP
         {
             get { return droneIP; }
-            set { Set(ref droneIP , value); }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    value = "192.168.2.1";
+                }
+                Set(ref droneIP, value);
+            }
         }
 
 

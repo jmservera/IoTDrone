@@ -112,8 +112,7 @@ namespace AutoPilotApp
         {
             if (_frame != null)
             {
-                bitmaps.Bitmap = VideoHelper.CreateBitmap(ref _frame);
-                analyze(bitmaps.Bitmap);
+                analyze(VideoHelper.CreateBitmap(ref _frame));
             }
         }
 
@@ -274,7 +273,6 @@ namespace AutoPilotApp
 
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
-                bitmaps.Bitmap = bitmap;
                 bitmaps.UpdateImages(bitmap,img.ToBitmap(),
                     cannyEdges.Bitmap,
                     imgThresholded.Bitmap);

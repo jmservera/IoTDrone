@@ -59,11 +59,12 @@ namespace AutoPilotApp.Models
             get { return wbitmaps[3]; }
         }
 
-        public System.Drawing.Bitmap Bitmap { get; set; }
+        public System.Drawing.Bitmap Bitmap { get; private set; }
 
         WriteableBitmap[] wbitmaps = new WriteableBitmap[4];
         public void UpdateImages(params System.Drawing.Bitmap[] bitmaps)
         {
+            Bitmap =(System.Drawing.Bitmap) bitmaps[0].Clone();
             if (wbitmaps[0] == null)
             {
                 for (int i = 0; i < bitmaps.Length; i++)
@@ -77,6 +78,7 @@ namespace AutoPilotApp.Models
             {
                 DrawImage(wbitmaps[i], bitmaps[i], bitmaps[i].PixelFormat);
             }
+
             RaiseAllPropertiesChanged();
         }
 
@@ -100,7 +102,6 @@ namespace AutoPilotApp.Models
 
         public void DrawImage(WriteableBitmap writeableBitmap, System.Drawing.Bitmap bitmap, System.Drawing.Imaging.PixelFormat format)
         {
-
             System.Drawing.Imaging.BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 System.Drawing.Imaging.ImageLockMode.ReadOnly, format);
             try
