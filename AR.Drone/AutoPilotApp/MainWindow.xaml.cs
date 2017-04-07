@@ -179,27 +179,20 @@ namespace AutoPilotApp
             }
         }
 
-        void setPic(Bitmap bitmap, Action<BitmapImage> setter)
+        BitmapSource ConvertBitmap(Bitmap bitmap)
         {
-            try
+            using (MemoryStream memory = new MemoryStream())
             {
-                BitmapImage bi = new BitmapImage();
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    bitmap.Save(ms, ImageFormat.Bmp);
-                    bi.BeginInit();
-                    bi.StreamSource = ms;
-                    bi.CacheOption = BitmapCacheOption.OnLoad;
-                    bi.EndInit();
-                    bi.Freeze();
-                }
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { setter(bi); }));
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                memory.Position = 0;
+                BitmapImage bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+                bitmapimage.Freeze();
+                return new WriteableBitmap(bitmapimage);
             }
-            catch (Exception ex)
-            {
-                //catch your error here
-            }
-
         }
 
         private async Task closeSource()
@@ -285,18 +278,14 @@ namespace AutoPilotApp
                     CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea / 100000d), new MCvScalar(255, 0, 0), -1);
                 }
 
-                Mat hierarchy = new Mat();
-                VectorOfVectorOfPoint result = new VectorOfVectorOfPoint();
-                //CvInvoke.FindContours(imgThresholded, result, hierarchy, RetrType.Tree, ChainApproxMethod.ChainCode);
-
-                //CvInvoke.DrawContours(img, result, -1, new MCvScalar(255, 0, 0), 3);
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
                 bitmaps.Bitmap = bitmap;
-                setPic(bitmap, (o) => bitmaps.Original = o);
-                setPic(img.ToBitmap(), (o) => bitmaps.First = o);
-                setPic(uimage.Bitmap, (o) => bitmaps.Second = o);
-                setPic(imgThresholded.Bitmap, (o) => bitmaps.Final = o);
+                bitmaps.Original = ConvertBitmap(bitmap);
+                bitmaps.First = ConvertBitmap(img.ToBitmap());
+                bitmaps.Second = ConvertBitmap(uimage.Bitmap);
+                bitmaps.Final = ConvertBitmap(imgThresholded.Bitmap);
+
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
                 bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
             }

@@ -215,33 +215,33 @@ namespace AutoPilotApp
         }
 
 
-        private BitmapImage original;
+        private BitmapSource original;
 
-        public BitmapImage Original
+        public BitmapSource Original
         {
             get { return original; }
             set { Set(ref original , value); }
         }
 
-        private BitmapImage first;
+        private BitmapSource first;
 
-        public BitmapImage First
+        public BitmapSource First
         {
             get { return first; }
             set { Set(ref first , value); }
         }
 
-        private BitmapImage second;
+        private BitmapSource second;
 
-        public BitmapImage Second
+        public BitmapSource Second
         {
             get { return second; }
             set { Set(ref second , value); }
         }
 
-        private BitmapImage final;
+        private BitmapSource final;
 
-        public BitmapImage Final
+        public BitmapSource Final
         {
             get { return final; }
             set { Set(ref final , value); }
