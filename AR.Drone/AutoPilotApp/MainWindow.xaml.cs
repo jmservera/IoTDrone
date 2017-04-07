@@ -28,6 +28,8 @@ using AR.Drone.Video;
 using AR.Drone.WinApp;
 using System.Windows.Threading;
 using Emgu.CV.Util;
+using AutoPilotApp.Models;
+using System.ComponentModel;
 
 namespace AutoPilotApp
 {
@@ -37,9 +39,24 @@ namespace AutoPilotApp
     public partial class MainWindow : Window
     {
         Config config;
+        ColorConfig currentConfig
+        {
+            get
+            {
+                if (!config.Direction)
+                {
+                    return config.RedConfig;
+                }
+                else
+                {
+                    return config.GreenConfig;
+                }
+            }
+        }
+
         Bitmaps bitmaps;
-        private readonly DroneClient _droneClient;
-        private readonly VideoPacketDecoderWorker _videoPacketDecoderWorker;
+        DroneClient _droneClient;
+        VideoPacketDecoderWorker _videoPacketDecoderWorker;
 
         bool first = true;
         protected override void OnActivated(EventArgs e)
@@ -56,33 +73,42 @@ namespace AutoPilotApp
         {
             InitializeComponent();
             var configObj = Application.Current.Resources["Config"];
-            config = configObj as Config;
-            if (config != null)
-            {
-                config.RedConfig.LowH = 141;
-                config.RedConfig.HighH = 255;
-                config.RedConfig.LowS = 56;
-                config.RedConfig.HighS = 130;
-                config.RedConfig.LowV = 145;
-                config.RedConfig.HighV = 255;
-            }
-            configObj = Application.Current.Resources["Bitmaps"];
-            bitmaps = configObj as Bitmaps;
+            udpateConfig(configObj as Config);
+
+            var bmpsObj = Application.Current.Resources["Bitmaps"];
+            bitmaps = bmpsObj as Bitmaps;
+
             this.DataContextChanged += (o, e) => {
                 System.Diagnostics.Debug.WriteLine(e.Property.Name);
             };
             Closed += MainWindow_Closed;
 
-            _droneClient = new DroneClient("192.168.2.1");
-            _droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
-
-            _videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
-            _videoPacketDecoderWorker.Start();
+            configDrone();
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
         }
 
-        private void timerElapsed(object sender, EventArgs e)
+
+        void configDrone()
+        {
+            if (_droneClient != null)
+            {
+                _droneClient.VideoPacketAcquired -= OnVideoPacketAcquired;
+                _droneClient.Dispose();
+            }
+            _droneClient = new DroneClient(config.DroneIP);
+            _droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
+
+            if (_videoPacketDecoderWorker != null)
+            {
+                _videoPacketDecoderWorker.Stop();
+                _videoPacketDecoderWorker.Dispose();
+            }
+            _videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
+            _videoPacketDecoderWorker.Start();
+        }
+
+        void timerElapsed(object sender, EventArgs e)
         {
             if (_frame != null)
             {
@@ -153,7 +179,10 @@ namespace AutoPilotApp
                         videoSource.VideoResolution = videoSource.VideoCapabilities[Convert.ToInt32(highestSolution.Split(';')[1])];
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError(ex.Message);
+                }
 
                 //Create NewFrame event handler
                 //(This one triggers every time a new frame/image is captured
@@ -179,22 +208,6 @@ namespace AutoPilotApp
             }
         }
 
-        BitmapSource ConvertBitmap(Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-                bitmapimage.Freeze();
-                return new WriteableBitmap(bitmapimage);
-            }
-        }
-
         private async Task closeSource()
         {
             if (videoSource != null)
@@ -209,21 +222,7 @@ namespace AutoPilotApp
             }
         }
 
-        public ColorConfig currentConfig
-        {
-            get
-            {
-                if (!config.Direction)
-                {
-                    return config.RedConfig;
-                }
-                else
-                {
-                    return config.GreenConfig;
-                }
 
-            }
-        }
 
         private void analyze(System.Drawing.Bitmap bitmap)
         {
@@ -281,8 +280,7 @@ namespace AutoPilotApp
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
                 bitmaps.Bitmap = bitmap;
-                bitmaps.UpdateImages(bitmap,
-                    img.ToBitmap(),
+                bitmaps.UpdateImages(bitmap,img.ToBitmap(),
                     uimage.Bitmap,
                     imgThresholded.Bitmap);
 
@@ -335,17 +333,11 @@ namespace AutoPilotApp
             dlg.Filter = "Config Files (.json)|*.json";
             if (dlg.ShowDialog() ?? false)
             {
-                using (StreamWriter w = new StreamWriter(dlg.FileName))
-                {
-                    using (JsonTextWriter jw = new JsonTextWriter(w))
-                    {
-                        JsonSerializer serializer = new JsonSerializer();
-                        serializer.Serialize(jw, config, typeof(Config));
-                    }
-
-                }
+                config.Save(dlg.FileName);
             }
         }
+
+
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
@@ -356,19 +348,37 @@ namespace AutoPilotApp
             dlg.Filter = "Config Files (.json)|*.json";
             if (dlg.ShowDialog() ?? false)
             {
-                using (StreamReader w = new StreamReader(dlg.FileName))
+                using (StreamReader r = new StreamReader(dlg.FileName))
                 {
-                    using (JsonTextReader jw = new JsonTextReader(w))
+                    Config newConfig = Config.Load(r);
+
+                    if (newConfig != null)
                     {
-                        JsonSerializer serializer = new JsonSerializer();
-                        var newConfig = serializer.Deserialize<Config>(jw);
-                        if (newConfig != null)
-                        {
-                            Application.Current.Resources["Config"] = newConfig;
-                            config = newConfig;
-                        }
+                        Application.Current.Resources["Config"] = newConfig;
+                        udpateConfig(newConfig);
                     }
                 }
+            }
+        }
+
+        private void udpateConfig(Config newConfig)
+        {
+            if (config!=null)
+            {
+                config.PropertyChanged -= configChanged;
+            }
+            config = newConfig;
+            if (newConfig != null)
+            {
+                config.PropertyChanged += configChanged;
+            }
+        }
+
+        private void configChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Config.DroneIP))
+            {
+                configDrone();
             }
         }
 

@@ -110,13 +110,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ColorToSolidColorBrushValueConverter.cs" />
-    <Compile Include="Config.cs" />
+    <Compile Include="Models\Bitmaps.cs" />
+    <Compile Include="Models\ColorConfig.cs" />
+    <Compile Include="Models\ColorUtils.cs" />
+    <Compile Include="Models\Config.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ObservableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

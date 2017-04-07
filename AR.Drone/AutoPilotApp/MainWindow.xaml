@@ -26,6 +26,12 @@
                 <Style TargetType="Button" BasedOn="{StaticResource Margined}">
                 </Style>
             </StackPanel.Resources>
+            <TextBlock>IP:</TextBlock>
+            <TextBox Width="150">
+                <TextBox.Text>
+                    <Binding Source="{StaticResource Config}" Path="DroneIP" UpdateSourceTrigger="LostFocus"/>
+                </TextBox.Text>
+            </TextBox>
             <Button Name="StreamButton" Width="100" Click="StreamButton_Click">Stream</Button>
             <Button Name="SimulatorButton" Width="100" Click="SimulatorButton_Click">Simulator</Button>
             <ToggleButton Name="Toggle" Content="Green" IsChecked="{Binding Direction, Source={StaticResource Config}}"></ToggleButton>

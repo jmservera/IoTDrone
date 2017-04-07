@@ -1,7 +1,7 @@
 ﻿<Application x:Class="AutoPilotApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:AutoPilotApp"
+             xmlns:local="clr-namespace:AutoPilotApp.Models"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <local:Config  x:Key="Config"/>

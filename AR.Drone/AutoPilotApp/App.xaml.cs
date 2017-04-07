@@ -1,11 +1,15 @@
 ﻿using AR.Drone.Infrastructure;
+using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace AutoPilotApp
 {
@@ -30,6 +34,41 @@ namespace AutoPilotApp
                     InteropHelper.RegisterLibrariesSearchPath(libraryPath);
                     break;
             }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            var config = this.Resources["Config"] as Config;
+            if (config != null)
+            {
+                IsolatedStorageFile isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
+                using (StreamWriter sw = new StreamWriter(new IsolatedStorageFileStream("config.json", FileMode.Create, isolatedStorage)))
+                {
+                    config.Save(sw);
+                }
+            }
+
+            base.OnExit(e);
+        }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var config = this.Resources["Config"] as Config;
+            if (config != null)
+            {
+                IsolatedStorageFile isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
+                if (isolatedStorage.FileExists("config.json"))
+                {
+                    using (StreamReader sr = new StreamReader(new IsolatedStorageFileStream("config.json", FileMode.Open, isolatedStorage)))
+                    {
+                        var newConfig = Config.Load(sr);
+                        if (newConfig != null)
+                        {
+                            this.Resources["Config"] = newConfig;
+                        }
+                    }
+                }
+            }
+            base.OnStartup(e);
         }
     }
 }
