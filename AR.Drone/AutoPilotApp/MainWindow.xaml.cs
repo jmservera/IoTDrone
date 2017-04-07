@@ -222,18 +222,13 @@ namespace AutoPilotApp
             }
         }
 
-
-
         private void analyze(System.Drawing.Bitmap bitmap)
         {
             System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmap))
             {
-
                 UMat uimage = new UMat();
-
                 CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Hsv);
-
 
                 double cannyThreshold = 180.0;
                 double cannyThresholdLinking = 120.0;
@@ -281,7 +276,7 @@ namespace AutoPilotApp
                 sw.Restart();
                 bitmaps.Bitmap = bitmap;
                 bitmaps.UpdateImages(bitmap,img.ToBitmap(),
-                    uimage.Bitmap,
+                    cannyEdges.Bitmap,
                     imgThresholded.Bitmap);
 
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
