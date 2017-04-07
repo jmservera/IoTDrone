@@ -67,25 +67,36 @@ namespace AutoPilotApp.CV
                     morphOps(imgThresholded);
                 }
 
-                //Calculate the moments of the thresholded image
-                var oMoments = CvInvoke.Moments(imgThresholded);
+                ////Calculate the moments of the thresholded image
+                //var oMoments = CvInvoke.Moments(imgThresholded);
 
-                double dM01 = oMoments.M01;
-                double dM10 = oMoments.M10;
-                double dArea = oMoments.M00;
+                //double dM01 = oMoments.M01;
+                //double dM10 = oMoments.M10;
+                //double dArea = oMoments.M00;
 
-                // if the area <= 10000, I consider that the there are no object in the image and it's because of the noise, the area is not zero 
-                if (dArea > 10000)
+                //// if the area <= 10000, I consider that the there are no object in the image and it's because of the noise, the area is not zero 
+                //if (dArea > 10000)
+                //{
+                //    //calculate the position of the ball
+                //    int posX = (int)(dM10 / dArea);
+                //    int posY = (int)(dM01 / dArea);
+                //    CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea / 100000d),
+                //        new Bgr(Color.DarkOrange).MCvScalar, 4);
+                //}
+
+
+                var contours = ContourDetection(imgThresholded);
+                foreach (var box in contours)
                 {
-                    //calculate the position of the ball
-                    int posX = (int)(dM10 / dArea);
-                    int posY = (int)(dM01 / dArea);
-                    CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea / 100000d),
-                        new Bgr(Color.DarkOrange).MCvScalar, 4);
+                    for (int i = 0; i < box.Length; i++)
+                    {
+                        var pointA = box[i];
+                        var pointB = box[(i + 1) % box.Length];
+                        CvInvoke.Line(img, pointA, pointB, new Bgr(Color.DarkOrange).MCvScalar, 4);
+                    }
                 }
 
-
-                bitmaps.Calculations = sw.ElapsedMilliseconds;
+                    bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
                 bitmaps.UpdateImages(null, img.ToBitmap(),
                     cannyEdges.Bitmap,
@@ -106,20 +117,36 @@ namespace AutoPilotApp.CV
             CvInvoke.Dilate(imgThresholded, imgThresholded, dilateElement, new Point(-1, -1), 2, BorderType.Default, CvInvoke.MorphologyDefaultBorderValue);
         }
 
-        private List<Point[]> BoxDetection(UMat cannyEdges)
+        private List<Point[]> ContourDetection(UMat thresholded)
         {
-            CvInvoke.Dilate(cannyEdges, cannyEdges, null,new Point(-1,-1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
+            //CvInvoke.Dilate(cannyEdges, cannyEdges, null,new Point(-1,-1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
 
             List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
 
-            LineSegment2D[] lines = CvInvoke.HoughLinesP(
-               cannyEdges,
-               1, //Distance resolution in pixel-related units
-               Math.PI / 45.0, //Angle resolution measured in radians.
-               20, //threshold
-               30, //min Line width
-               10); //gap between lines
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                CvInvoke.FindContours(thresholded.Clone(), contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                int count = contours.Size;
+                for (int i = 0; i < count; i++)
+                {
+                    using (VectorOfPoint contour = contours[i])
+                    using (VectorOfPoint approxContour = new VectorOfPoint())
+                    {
+                        CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
+                        if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
+                        {
+                            boxList.Add(contour.ToArray());// CvInvoke.MinAreaRect(approxContour));
+                        }
+                    }
+                }
+            }
+            return boxList;
+        }
+        private List<Point[]> BoxDetection(UMat cannyEdges)
+        {
+            //CvInvoke.Dilate(cannyEdges, cannyEdges, null,new Point(-1,-1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
 
+            List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
