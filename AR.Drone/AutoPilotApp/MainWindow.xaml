@@ -47,13 +47,18 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
-                FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
+            <Grid DataContext="{StaticResource CognitiveData}">
+            <Image Name="Original" Source="{Binding Original, Mode=OneWay}" MouseDown="Original_MouseDown" />
+            <TextBlock  Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                HeadCount: <Run Text="{Binding HeadCount}"/>
             </TextBlock>
-            <Image Name="Original" Source="{Binding Original}" MouseDown="Original_MouseDown" />
+            </Grid>
             <Image Name="First" Source="{Binding First}" Grid.Column="1"/>
             <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
             <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
+            <TextBlock Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
+                FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
+            </TextBlock>
         </Grid>
         <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="170">
             <Grid.RowDefinitions>

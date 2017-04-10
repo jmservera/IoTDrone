@@ -57,6 +57,8 @@ namespace AutoPilotApp
 
         Bitmaps bitmaps;
         Analyzer analyzer;
+        CognitiveData cognitiveData;
+        CognitiveController cognitiveController;
         DroneClient _droneClient;
         VideoPacketDecoderWorker _videoPacketDecoderWorker;
 
@@ -80,6 +82,10 @@ namespace AutoPilotApp
             var bmpsObj = Application.Current.Resources["Bitmaps"];
             bitmaps = bmpsObj as Bitmaps;
             analyzer = new Analyzer(bitmaps);
+
+            var cogObj = Application.Current.Resources["CognitiveData"];
+            cognitiveData = cogObj as CognitiveData;
+            cognitiveController = new CognitiveController(bitmaps, cognitiveData);
 
             this.DataContextChanged += (o, e) => {
                 System.Diagnostics.Debug.WriteLine(e.Property.Name);

@@ -202,9 +202,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Cognitive\CognitiveController.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushValueConverter.cs" />
     <Compile Include="CV\Analyzer.cs" />
     <Compile Include="Models\Bitmaps.cs" />
+    <Compile Include="Models\BitmapsBase.cs" />
     <Compile Include="Models\CognitiveData.cs" />
     <Compile Include="Models\ColorConfig.cs" />
     <Compile Include="Models\ColorUtils.cs" />
