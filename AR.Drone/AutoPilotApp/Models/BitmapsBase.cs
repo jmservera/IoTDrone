@@ -16,10 +16,16 @@ namespace AutoPilotApp.Models
             wbitmaps = new WriteableBitmap[bitmaps];
         }
 
-        public System.Drawing.Bitmap Bitmap { get; private set; }
+        System.Drawing.Bitmap original;
+        public System.Drawing.Bitmap Bitmap
+        {
+            get { return original; }
+            private set { Set(ref original, value); }
+        }
 
         protected WriteableBitmap[] wbitmaps;
         int init;
+
         public void UpdateImages(params System.Drawing.Bitmap[] bitmaps)
         {
             if (bitmaps[0] != null)
