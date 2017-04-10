@@ -31,6 +31,7 @@ using Emgu.CV.Util;
 using AutoPilotApp.Models;
 using System.ComponentModel;
 using AutoPilotApp.CV;
+using AutoPilotApp.IoT;
 
 namespace AutoPilotApp
 {
@@ -59,7 +60,10 @@ namespace AutoPilotApp
         Analyzer analyzer;
         CognitiveData cognitiveData;
         CognitiveController cognitiveController;
+        IoTHubController iotController;
         DroneClient _droneClient;
+
+
         VideoPacketDecoderWorker _videoPacketDecoderWorker;
 
         bool first = true;
@@ -86,6 +90,8 @@ namespace AutoPilotApp
             var cogObj = Application.Current.Resources["CognitiveData"];
             cognitiveData = cogObj as CognitiveData;
             cognitiveController = new CognitiveController(bitmaps, cognitiveData);
+
+            iotController = new IoTHubController();
 
             this.DataContextChanged += (o, e) => {
                 System.Diagnostics.Debug.WriteLine(e.Property.Name);
