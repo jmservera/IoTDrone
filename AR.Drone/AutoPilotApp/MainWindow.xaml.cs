@@ -32,6 +32,7 @@ using AutoPilotApp.Models;
 using System.ComponentModel;
 using AutoPilotApp.CV;
 using AutoPilotApp.IoT;
+using AutoPilotApp.Common;
 
 namespace AutoPilotApp
 {
@@ -80,6 +81,9 @@ namespace AutoPilotApp
         public MainWindow()
         {
             InitializeComponent();
+
+            Logger.LogReceived += log;
+
             var configObj = Application.Current.Resources["Config"];
             udpateConfig(configObj as Config);
 
@@ -91,7 +95,6 @@ namespace AutoPilotApp
             cognitiveData = cogObj as CognitiveData;
             cognitiveController = new CognitiveController(bitmaps, cognitiveData);
 
-            iotController = new IoTHubController();
 
             this.DataContextChanged += (o, e) => {
                 System.Diagnostics.Debug.WriteLine(e.Property.Name);
@@ -99,7 +102,26 @@ namespace AutoPilotApp
             Closed += MainWindow_Closed;
 
             configDrone();
+
+            iotController = new IoTHubController(_droneClient);
+
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
+        }
+
+        async void log(object sender, LoggerEventArgs eventArgs)
+        {
+            //if (eventArgs.Level != LogLevel.Info)
+            {
+                var dt = DateTime.Now;
+                await logger.Dispatcher.InvokeAsync( () =>
+                {
+                    logger.Text = dt.ToLongTimeString() +" "+ eventArgs.Message + Environment.NewLine + logger.Text;
+                    if (logger.Text.Length > 1500)
+                    {
+                        logger.Text.Substring(0, 1000);
+                    }
+                });
+            }
         }
 
 
@@ -110,6 +132,7 @@ namespace AutoPilotApp
                 _droneClient.VideoPacketAcquired -= OnVideoPacketAcquired;
                 _droneClient.Dispose();
             }
+            Logger.LogInfo($"Configuring Drone at {config.DroneIP}");
             _droneClient = new DroneClient(config.DroneIP);
             _droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
 
@@ -194,7 +217,7 @@ namespace AutoPilotApp
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Trace.TraceError(ex.Message);
+                    Logger.LogException(ex);
                 }
 
                 //Create NewFrame event handler

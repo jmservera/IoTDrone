@@ -204,6 +204,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Cognitive\CognitiveController.cs" />
+    <Compile Include="Common\Logger.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushValueConverter.cs" />
     <Compile Include="CV\Analyzer.cs" />
     <Compile Include="IoT\IoTHubController.cs" />

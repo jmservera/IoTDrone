@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace AutoPilotApp
+namespace AutoPilotApp.Converters
 {
     public class ConfigToGradientColorBrushValueConverter : IMultiValueConverter
     {

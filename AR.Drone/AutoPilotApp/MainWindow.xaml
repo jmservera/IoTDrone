@@ -4,18 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoPilotApp"
+        xmlns:converters="clr-namespace:AutoPilotApp.Converters"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" >
     <Grid Margin="5" Name="mainGrid">
         <Grid.Resources>
-            <local:ColorToSolidColorBrushValueConverter x:Key="colorConverter"/>
-            <local:ConfigToGradientColorBrushValueConverter x:Key="configColorConverter"/>
+            <converters:ColorToSolidColorBrushValueConverter x:Key="colorConverter"/>
+            <converters:ConfigToGradientColorBrushValueConverter x:Key="configColorConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="boolVisibilityConverter"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Name="logger" Grid.Column="1" Width="400" Grid.RowSpan="3" 
+                   TextWrapping="Wrap"
+                 IsReadOnly="True"
+                   Visibility="{Binding IsChecked, ElementName=showLog, Converter={StaticResource boolVisibilityConverter}}"/>
         <StackPanel Orientation="Horizontal">
             <StackPanel.Resources>
                 <Style x:Key="Margined" TargetType="Control">
@@ -37,6 +47,7 @@
             <ToggleButton Name="Toggle" Content="Green" IsChecked="{Binding Direction, Source={StaticResource Config}}"></ToggleButton>
             <Button Name="SaveButton" Click="SaveButton_Click">Save</Button>
             <Button Name="LoadButton" Click="LoadButton_Click">Load</Button>
+            <CheckBox Name="showLog">Show Log</CheckBox>
         </StackPanel>
         <Grid Grid.Row="1" DataContext="{DynamicResource Bitmaps}">
             <Grid.ColumnDefinitions>
