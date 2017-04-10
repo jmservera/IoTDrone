@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AutoPilotApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" >
-    <Grid Margin="5">
+    <Grid Margin="5" Name="mainGrid">
         <Grid.Resources>
             <local:ColorToSolidColorBrushValueConverter x:Key="colorConverter"/>
             <local:ConfigToGradientColorBrushValueConverter x:Key="configColorConverter"/>
@@ -14,7 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition/>
-            <RowDefinition Height="170"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <StackPanel.Resources>
@@ -55,7 +55,7 @@
             <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
             <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
         </Grid>
-        <Grid Grid.Row="2" DataContext="{DynamicResource Config}">
+        <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="170">
             <Grid.RowDefinitions>
                 <RowDefinition Height="15"/>
                 <RowDefinition />
@@ -143,5 +143,6 @@
                 </StackPanel>
             </Grid>
         </Grid>
+        <Button Grid.Row="2" Width="15" HorizontalAlignment="Right" Content="▼" Height="15" VerticalAlignment="top" FontSize="8" Name="collapseColors" Click="collapseColors_Click"/>
     </Grid>
 </Window>

@@ -20,16 +20,14 @@ namespace AutoPilotApp.CV
             this.bitmaps = bitmaps;
         }
 
-        public void Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig)
+        public List<Point[]> Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig, bool useMorphologic = true, bool detectBox = false)
         {
-            bool useMorphologic=true;
-            bool detectBox = false;
             System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             bitmaps.UpdateImages(bitmap);
             using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmaps.Bitmap))
             {
                 UMat uimage = new UMat();
-                CvInvoke.CvtColor(img.Clone(), uimage, ColorConversion.Bgr2Hsv,3);
+                CvInvoke.CvtColor(img.Clone(), uimage, ColorConversion.Bgr2Hsv, 3);
 
                 double cannyThreshold = 180.0;
                 double cannyThresholdLinking = 10.0;
@@ -67,24 +65,6 @@ namespace AutoPilotApp.CV
                     morphOps(imgThresholded);
                 }
 
-                ////Calculate the moments of the thresholded image
-                //var oMoments = CvInvoke.Moments(imgThresholded);
-
-                //double dM01 = oMoments.M01;
-                //double dM10 = oMoments.M10;
-                //double dArea = oMoments.M00;
-
-                //// if the area <= 10000, I consider that the there are no object in the image and it's because of the noise, the area is not zero 
-                //if (dArea > 10000)
-                //{
-                //    //calculate the position of the ball
-                //    int posX = (int)(dM10 / dArea);
-                //    int posY = (int)(dM01 / dArea);
-                //    CvInvoke.Circle(img, new System.Drawing.Point(posX, posY), (int)(dArea / 100000d),
-                //        new Bgr(Color.DarkOrange).MCvScalar, 4);
-                //}
-
-
                 var contours = ContourDetection(imgThresholded);
                 foreach (var box in contours)
                 {
@@ -96,7 +76,7 @@ namespace AutoPilotApp.CV
                     }
                 }
 
-                    bitmaps.Calculations = sw.ElapsedMilliseconds;
+                bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
                 bitmaps.UpdateImages(null, img.ToBitmap(),
                     cannyEdges.Bitmap,
@@ -104,12 +84,12 @@ namespace AutoPilotApp.CV
 
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
                 bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
+                return contours;
             }
         }
 
         private void morphOps(UMat imgThresholded)
         {
-
             Mat erodeElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
             Mat dilateElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(8, 8), new Point(-1, -1));
 
@@ -119,8 +99,6 @@ namespace AutoPilotApp.CV
 
         private List<Point[]> ContourDetection(UMat thresholded)
         {
-            //CvInvoke.Dilate(cannyEdges, cannyEdges, null,new Point(-1,-1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
-
             List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
@@ -142,10 +120,9 @@ namespace AutoPilotApp.CV
             }
             return boxList;
         }
+
         private List<Point[]> BoxDetection(UMat cannyEdges)
         {
-            //CvInvoke.Dilate(cannyEdges, cannyEdges, null,new Point(-1,-1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
-
             List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())

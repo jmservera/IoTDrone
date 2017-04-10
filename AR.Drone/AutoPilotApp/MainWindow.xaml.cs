@@ -66,7 +66,7 @@ namespace AutoPilotApp
             if (first)
             {
                 first = false;
-                SimulatorButton_Click(this, null);
+               // SimulatorButton_Click(this, null);
             }
             base.OnActivated(e);
         }
@@ -324,6 +324,21 @@ namespace AutoPilotApp
         private void StreamButton_Click(object sender, RoutedEventArgs e)
         {
             _droneClient.Start();
+        }
+
+        private void collapseColors_Click(object sender, RoutedEventArgs e)
+        {
+            // ▼
+            if((string)collapseColors.Content== "▼")
+            {
+                collapseColors.Content = "▲";
+                colorsGrid.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                collapseColors.Content = "▼";
+                colorsGrid.Visibility = Visibility.Visible;
+            }
         }
     }
 }

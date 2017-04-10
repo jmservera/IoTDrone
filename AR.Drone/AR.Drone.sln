@@ -84,6 +84,9 @@ Global
 		{A536B02A-B0B1-4753-8328-17369EF09976} = {891FCE8B-173F-4090-8F5D-CE223277AEA4}
 		{78C83708-BF89-4A5D-B823-21D06EED6A6B} = {891FCE8B-173F-4090-8F5D-CE223277AEA4}
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AR.Drone.WinApp\AR.Drone.WinApp.csproj
 	EndGlobalSection
