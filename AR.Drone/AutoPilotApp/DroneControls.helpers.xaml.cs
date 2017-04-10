@@ -6,16 +6,7 @@ namespace AutoPilotApp
 {
     public partial class DroneControls
     {
-        /// <summary>
-        /// Do not close, just hide, will be closed with main window
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            e.Cancel = true;
-            Hide();
-            base.OnClosing(e);
-        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>Updates the property and raises the changed event, but only if the new value does not equal the old value. </summary>

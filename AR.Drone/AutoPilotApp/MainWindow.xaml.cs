@@ -73,9 +73,19 @@ namespace AutoPilotApp
             if (first)
             {
                 first = false;
-               // SimulatorButton_Click(this, null);
+                // SimulatorButton_Click(this, null);
+                collapseColors_Click(this, null);
             }
             base.OnActivated(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (controlsWindow!=null)
+            {
+                controlsWindow.Close();
+            }
+            base.OnClosing(e);
         }
 
         public MainWindow()

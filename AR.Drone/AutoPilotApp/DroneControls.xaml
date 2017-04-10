@@ -13,6 +13,10 @@
             <Button Name="Activate" Click="Activate_Click">Activate</Button>
             <TextBlock>Altitude: <Run Text="{Binding Altitude}"/></TextBlock>
             <TextBlock>Battery: <Run Text="{Binding Battery}"/> </TextBlock>
+            <Button Name="FlyToObjective" Click="FlyToObjective_Click">Fly forward</Button>
+            <Button Name="Land" Click="Land_Click">Land</Button>
+            <Button Name="Reset" Click="Reset_Click" FontWeight="Bold" Height="25">Reset</Button>
+            <Button Name="Emergency" Click="Emergency_Click" Height="80" Background="Red" Foreground="White" FontWeight="Bold" FontSize="40">Emergency</Button>
         </StackPanel>
     </Grid>
 </Window>
