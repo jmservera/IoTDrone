@@ -5,63 +5,22 @@ using System.Windows.Media.Imaging;
 
 namespace AutoPilotApp.Models
 {
-    public class Bitmaps : ObservableObject
+    public class BitmapsBase:ObservableObject
     {
-        private long calculations;
-
-        public long Calculations
-        {
-            get { return calculations; }
-            set { Set(ref calculations, value); }
-        }
-
-        private long imageSet;
-
-        public long ImageSet
-        {
-            get { return imageSet; }
-            set { Set(ref imageSet, value); }
-        }
-
-        private long[] fps = new long[5];
-        long index;
-        public long FPS
-        {
-            get
-            {
-                long count = index < fps.Length ? index : fps.Length;
-                return count > 0 ? 1000 / (fps.Take((int)count).Sum() / count) : 0;
-            }
-            set
-            {
-                fps[index++ % 5] = value;
-                RaisePropertyChanged(nameof(FPS));
-            }
-        }
-
         public BitmapSource Original
         {
             get { return wbitmaps[0]; }
         }
 
-        public BitmapSource First
+        public BitmapsBase(int bitmaps=1)
         {
-            get { return wbitmaps[1]; }
+            wbitmaps = new WriteableBitmap[bitmaps];
         }
 
-        public BitmapSource Second
-        {
-            get { return wbitmaps[2]; }
-        }
-
-        public BitmapSource Final
-        {
-            get { return wbitmaps[3]; }
-        }
 
         public System.Drawing.Bitmap Bitmap { get; private set; }
 
-        WriteableBitmap[] wbitmaps = new WriteableBitmap[4];
+        protected WriteableBitmap[] wbitmaps;
         int init;
         public void UpdateImages(params System.Drawing.Bitmap[] bitmaps)
         {
@@ -69,11 +28,11 @@ namespace AutoPilotApp.Models
             {
                 Bitmap = (System.Drawing.Bitmap)bitmaps[0].Clone();
             }
-            if (init<15)
+            if (init < ((1<< wbitmaps.Length)-1))
             {
                 for (int i = 0; i < bitmaps.Length; i++)
                 {
-                    if (bitmaps[i]!=null)
+                    if (bitmaps[i] != null)
                     {
                         init = init | (1 << i);
                         var bmp = bitmaps[i];
@@ -129,5 +88,65 @@ namespace AutoPilotApp.Models
                 bitmap.Dispose();
             }
         }
+    }
+    public class Bitmaps : BitmapsBase
+    {
+        private long calculations;
+
+        public Bitmaps() : base(4)
+        {
+
+        }
+
+        public long Calculations
+        {
+            get { return calculations; }
+            set { Set(ref calculations, value); }
+        }
+
+        private long imageSet;
+
+        public long ImageSet
+        {
+            get { return imageSet; }
+            set { Set(ref imageSet, value); }
+        }
+
+        private long[] fps = new long[5];
+        long index;
+        public long FPS
+        {
+            get
+            {
+                long count = index < fps.Length ? index : fps.Length;
+                return count > 0 ? 1000 / (fps.Take((int)count).Sum() / count) : 0;
+            }
+            set
+            {
+                fps[index++ % 5] = value;
+                RaisePropertyChanged(nameof(FPS));
+            }
+        }
+
+        public BitmapSource Original
+        {
+            get { return wbitmaps[0]; }
+        }
+
+        public BitmapSource First
+        {
+            get { return wbitmaps[1]; }
+        }
+
+        public BitmapSource Second
+        {
+            get { return wbitmaps[2]; }
+        }
+
+        public BitmapSource Final
+        {
+            get { return wbitmaps[3]; }
+        }
+
     }
 }

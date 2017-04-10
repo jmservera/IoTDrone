@@ -205,6 +205,7 @@
     <Compile Include="Converters\ColorToSolidColorBrushValueConverter.cs" />
     <Compile Include="CV\Analyzer.cs" />
     <Compile Include="Models\Bitmaps.cs" />
+    <Compile Include="Models\CognitiveData.cs" />
     <Compile Include="Models\ColorConfig.cs" />
     <Compile Include="Models\ColorUtils.cs" />
     <Compile Include="Models\Config.cs" />
