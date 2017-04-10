@@ -62,7 +62,7 @@ namespace AutoPilotApp
         CognitiveData cognitiveData;
         CognitiveController cognitiveController;
         IoTHubController iotController;
-        DroneClient _droneClient;
+        DroneClient droneClient;
 
 
         VideoPacketDecoderWorker _videoPacketDecoderWorker;
@@ -103,7 +103,7 @@ namespace AutoPilotApp
 
             configDrone();
 
-            iotController = new IoTHubController(_droneClient);
+            iotController = new IoTHubController(droneClient);
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
         }
@@ -127,14 +127,14 @@ namespace AutoPilotApp
 
         void configDrone()
         {
-            if (_droneClient != null)
+            if (droneClient != null)
             {
-                _droneClient.VideoPacketAcquired -= OnVideoPacketAcquired;
-                _droneClient.Dispose();
+                droneClient.VideoPacketAcquired -= OnVideoPacketAcquired;
+                droneClient.Dispose();
             }
             Logger.LogInfo($"Configuring Drone at {config.DroneIP}");
-            _droneClient = new DroneClient(config.DroneIP);
-            _droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
+            droneClient = new DroneClient(config.DroneIP);
+            droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
 
             if (_videoPacketDecoderWorker != null)
             {
@@ -172,10 +172,10 @@ namespace AutoPilotApp
             {
                 frameTimer.Stop();
             }
-            if (_droneClient != null)
+            if (droneClient != null)
             {
-                _droneClient.Stop();
-                _droneClient.Dispose();
+                droneClient.Stop();
+                droneClient.Dispose();
             }
             if (_videoPacketDecoderWorker != null)
             {
@@ -358,7 +358,7 @@ namespace AutoPilotApp
 
         private void StreamButton_Click(object sender, RoutedEventArgs e)
         {
-            _droneClient.Start();
+            droneClient.Start();
         }
 
         private void collapseColors_Click(object sender, RoutedEventArgs e)
@@ -374,6 +374,18 @@ namespace AutoPilotApp
                 collapseColors.Content = "▼";
                 colorsGrid.Visibility = Visibility.Visible;
             }
+        }
+
+        DroneControls controlsWindow;
+
+        private void DroneControls_Click(object sender, RoutedEventArgs e)
+        {
+            if (controlsWindow == null)
+            {
+                controlsWindow = new DroneControls(droneClient);
+                controlsWindow.Owner = this;
+            }
+            controlsWindow.Show();
         }
     }
 }

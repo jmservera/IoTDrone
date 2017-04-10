@@ -195,6 +195,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="DroneControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -208,6 +212,12 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushValueConverter.cs" />
     <Compile Include="CV\Analyzer.cs" />
+    <Compile Include="DroneControls.helpers.xaml.cs" >
+      <DependentUpon>DroneControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DroneControls.xaml.cs">
+      <DependentUpon>DroneControls.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IoT\IoTHubController.cs" />
     <Compile Include="Models\Bitmaps.cs" />
     <Compile Include="Models\BitmapsBase.cs" />

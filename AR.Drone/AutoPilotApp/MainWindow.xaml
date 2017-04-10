@@ -47,6 +47,7 @@
             <ToggleButton Name="Toggle" Content="Green" IsChecked="{Binding Direction, Source={StaticResource Config}}"></ToggleButton>
             <Button Name="SaveButton" Click="SaveButton_Click">Save</Button>
             <Button Name="LoadButton" Click="LoadButton_Click">Load</Button>
+            <Button Name="DroneControls" Click="DroneControls_Click">Controls</Button>
             <CheckBox Name="showLog">Show Log</CheckBox>
         </StackPanel>
         <Grid Grid.Row="1" DataContext="{DynamicResource Bitmaps}">
@@ -59,12 +60,12 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid DataContext="{StaticResource CognitiveData}">
-            <Image Name="Original" Source="{Binding Original, Mode=OneWay}" MouseDown="Original_MouseDown" />
+            <Image Name="Original" Source="{Binding Original, Mode=OneWay}"  />
             <TextBlock  Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
                 HeadCount: <Run Text="{Binding HeadCount}"/>
             </TextBlock>
             </Grid>
-            <Image Name="First" Source="{Binding First}" Grid.Column="1"/>
+            <Image Name="First" Source="{Binding First}" Grid.Column="1" MouseDown="Original_MouseDown"/>
             <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
             <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
             <TextBlock Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
