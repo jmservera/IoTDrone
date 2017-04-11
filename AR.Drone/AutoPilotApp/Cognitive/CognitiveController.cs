@@ -44,15 +44,12 @@ namespace AutoPilotApp
         {
             if (e.PropertyName == "Bitmap")
             {
-
-                var bmp = (Bitmap) input.Bitmap.Clone();
-                output.UpdateImages(bmp);
                 //todo call api                
-                if(callAPI)await getEmotion(bmp);
+                if(callAPI)await getEmotion();
             }
         }
 
-        public async Task getEmotion(Bitmap bits)
+        public async Task getEmotion()
         {
             callAPI = false;
             try
@@ -69,12 +66,14 @@ namespace AutoPilotApp
                         FaceAttributeType.Smile,
                         FaceAttributeType.FacialHair,
                         FaceAttributeType.HeadPose,
-                        FaceAttributeType.Glasses
+                        FaceAttributeType.Glasses,
+                        FaceAttributeType.Emotion
                     };
                     var faces = await sc.DetectAsync(imageFileStream,
                         returnFaceLandmarks: true,
                         returnFaceAttributes: requiredFaceAttributes);
                     output.HeadCount = faces.Length;
+                    output.Age = 0;
                     if (faces.Length > 0)
                     {
                         foreach (var face in faces)
@@ -85,7 +84,7 @@ namespace AutoPilotApp
                             output.Square = rec;
 
                             var age = attributes.Age;
-                            output.Age = age;
+                            output.Age = output.Age>0? (output.Age + age)/2:age;
                             Logger.LogInfo($"Age: " + age);
 
                             var gender = attributes.Gender;
@@ -99,16 +98,32 @@ namespace AutoPilotApp
                             var smile = face.FaceAttributes.Smile;
                             output.Smiling = smile;
                             Logger.LogInfo($"Smiling? " + smile);
+                            var emotions = face.FaceAttributes.Emotion.ToRankedList();
+                            var emotion = emotions.OrderByDescending(f => f.Value).FirstOrDefault().Key;
+
+                            using (Graphics g = Graphics.FromImage(input.Bitmap))
+                            {
+                                g.DrawRectangle(new Pen(new SolidBrush(System.Drawing.Color.Yellow),2),  new System.Drawing.Rectangle(faceRec.Left, faceRec.Top, faceRec.Width,faceRec.Height+45));
+                                g.FillRectangle(new SolidBrush(System.Drawing.Color.Yellow), new System.Drawing.Rectangle(faceRec.Left, faceRec.Top + faceRec.Height , faceRec.Width, 45));
+                                g.DrawString(emotion, new Font("Arial", 18), new SolidBrush(System.Drawing.Color.Black), faceRec.Left + 5, faceRec.Top + faceRec.Height +2);
+                                g.Flush();
+                            }
+                            output.UpdateImages((Bitmap)input.Bitmap);
                         }
                     }
                     Logger.LogInfo($"Successfull call");
-                    callAPI = true;
+
+
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogException(ex);
-            }    
+            }
+            finally
+            {
+                callAPI = true;
+            }
         }
 
         public static byte[] ImageToByte2(Image img)
