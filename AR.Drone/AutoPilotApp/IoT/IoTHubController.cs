@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -26,6 +27,8 @@ namespace AutoPilotApp.IoT
         Twin twin;
         string deviceId;
 
+        CancellationTokenSource cancelTokenSource;
+
         async void init()
         {
             try
@@ -40,6 +43,8 @@ namespace AutoPilotApp.IoT
                     Logger.LogInfo($"Connected to IoT Hub");
                     twin = await deviceClient.GetTwinAsync();
                     Logger.LogInfo($"Twin received {twin.DeviceId}");
+                    await deviceClient.OpenAsync();
+                    
                 });
             }
             catch (Exception ex)

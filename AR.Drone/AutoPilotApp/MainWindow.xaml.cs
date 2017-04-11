@@ -99,7 +99,14 @@ namespace AutoPilotApp
 
             var bmpsObj = Application.Current.Resources["Bitmaps"];
             bitmaps = bmpsObj as Bitmaps;
-            analyzer = new Analyzer(bitmaps);
+
+            var useGPUObj= Application.Current.Resources["UseGPU"];
+            bool useGPU = true;
+            if (useGPUObj!=null)
+            {
+                bool.TryParse(useGPUObj.ToString(), out useGPU);
+            }
+            analyzer = new Analyzer(bitmaps,useGPU);
 
             var cogObj = Application.Current.Resources["CognitiveData"];
             cognitiveData = cogObj as CognitiveData;
@@ -270,7 +277,7 @@ namespace AutoPilotApp
 
         private void analyze(System.Drawing.Bitmap bitmap)
         {
-            analyzer.Analyze(bitmap, currentConfig);
+            var squares= analyzer.Analyze(bitmap, currentConfig);
         }
 
         private void Original_MouseDown(object sender, MouseButtonEventArgs e)

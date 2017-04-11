@@ -208,11 +208,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Cognitive\CognitiveController.cs" />
+    <Compile Include="Common\Calc.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushValueConverter.cs" />
     <Compile Include="CV\Analyzer.cs" />
-    <Compile Include="DroneControls.helpers.xaml.cs" >
+    <Compile Include="DroneControls.helpers.xaml.cs">
       <DependentUpon>DroneControls.xaml</DependentUpon>
     </Compile>
     <Compile Include="DroneControls.xaml.cs">

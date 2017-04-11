@@ -15,9 +15,16 @@ namespace AutoPilotApp.CV
     public class Analyzer
     {
         Bitmaps bitmaps;
-        public Analyzer(Bitmaps bitmaps)
+        bool useGPU = true;
+        public Analyzer(Bitmaps bitmaps, bool useGPU=true)
         {
             this.bitmaps = bitmaps;
+            this.useGPU = useGPU;
+        }
+
+        private IImage createMat()
+        {
+            return useGPU? (IImage)new UMat(): new Mat();
         }
 
         public List<Point[]> Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig, bool useMorphologic = true, bool detectBox = false)
@@ -31,7 +38,7 @@ namespace AutoPilotApp.CV
 
                 double cannyThreshold = 180.0;
                 double cannyThresholdLinking = 10.0;
-                UMat cannyEdges = new UMat();
+                IImage cannyEdges = createMat();
                 CvInvoke.Canny(img.Clone(), cannyEdges, cannyThreshold, cannyThresholdLinking);
 
                 if (detectBox)
@@ -97,13 +104,13 @@ namespace AutoPilotApp.CV
             CvInvoke.Dilate(imgThresholded, imgThresholded, dilateElement, new Point(-1, -1), 2, BorderType.Default, CvInvoke.MorphologyDefaultBorderValue);
         }
 
-        private List<Point[]> ContourDetection(UMat thresholded)
+        private List<Point[]> ContourDetection(IImage thresholded)
         {
             List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
-                CvInvoke.FindContours(thresholded.Clone(), contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                CvInvoke.FindContours((IImage) ((ICloneable)thresholded).Clone(), contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
                 int count = contours.Size;
                 for (int i = 0; i < count; i++)
                 {
@@ -121,13 +128,13 @@ namespace AutoPilotApp.CV
             return boxList;
         }
 
-        private List<Point[]> BoxDetection(UMat cannyEdges)
+        private List<Point[]> BoxDetection(IImage cannyEdges)
         {
             List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
-                CvInvoke.FindContours(cannyEdges.Clone(), contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                CvInvoke.FindContours((IImage)((ICloneable)cannyEdges).Clone(), contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
                 int count = contours.Size;
                 for (int i = 0; i < count; i++)
                 {
