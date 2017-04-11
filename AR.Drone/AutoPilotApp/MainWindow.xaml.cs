@@ -60,6 +60,7 @@ namespace AutoPilotApp
 
         Bitmaps bitmaps;
         Analyzer analyzer;
+        AnalyzerOuput analyzerOutput;
         CognitiveData cognitiveData;
         CognitiveController cognitiveController;
         IoTHubController iotController;
@@ -101,13 +102,17 @@ namespace AutoPilotApp
             var bmpsObj = Application.Current.Resources["Bitmaps"];
             bitmaps = bmpsObj as Bitmaps;
 
+            var analyzerOutObj = Application.Current.Resources["AnalyzerOuput"];
+            analyzerOutput = analyzerOutObj as AnalyzerOuput;
             var useGPUObj= ConfigurationManager.AppSettings["UseGPU"];
             bool useGPU = false;
             if (useGPUObj!=null)
             {
                 bool.TryParse(useGPUObj.ToString(), out useGPU);
             }
-            analyzer = new Analyzer(bitmaps,useGPU);
+            analyzer = new Analyzer(bitmaps, analyzerOutput, useGPU);
+
+
 
             var cogObj = Application.Current.Resources["CognitiveData"];
             cognitiveData = cogObj as CognitiveData;
@@ -400,7 +405,7 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
-                controlsWindow = new DroneControls(droneClient);
+                controlsWindow = new DroneControls(droneClient, analyzerOutput);
                 controlsWindow.Owner = this;
             }
             controlsWindow.Show();

@@ -2,6 +2,8 @@
 using AR.Drone.Avionics.Objectives;
 using AR.Drone.Client;
 using AR.Drone.Client.Command;
+using AR.Drone.Data.Navigation;
+using AutoPilotApp.Common;
 using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,6 @@ namespace AutoPilotApp.Pilot
 {
     public class Controller : ObservableObject
     {
-        AimCoords aimCoords;
         DroneClient droneClient;
         private Missions currentMission;
 
@@ -24,16 +25,35 @@ namespace AutoPilotApp.Pilot
         }
 
         Autopilot autoPilot;
-        public Controller(DroneClient client)
+        AnalyzerOuput analyzer;
+        public Controller(DroneClient client, AnalyzerOuput output)
         {
+            analyzer = output;
             droneClient = client;
             autoPilot = new Autopilot(client);
         }
 
         public void EmergencyStop()
         {
-            droneClient.Emergency();
             stopAutopilot();
+
+            droneClient.Emergency();
+        }
+
+        public bool Stop()
+        {
+            try
+            {
+                stopAutopilot();
+                droneClient.Hover();
+                loop.Wait();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+                return false;
+            }
+            return true;
         }
 
         void stopAutopilot()
@@ -51,12 +71,11 @@ namespace AutoPilotApp.Pilot
             }
         }
 
-        public void Start(Missions mission, AimCoords coords)
+        public void Start(Missions mission)
         {
             stopAutopilot();
 
             currentMission = mission;
-            aimCoords = coords;
 
             RaisePropertyChanged(nameof(CurrentMission));
 
@@ -65,6 +84,7 @@ namespace AutoPilotApp.Pilot
         }
 
         CancellationTokenSource cancellationTokenSource;
+        Task loop;
         void startAutopilot()
         {
             if (cancellationTokenSource != null)
@@ -75,31 +95,44 @@ namespace AutoPilotApp.Pilot
                     return;
 
                 cancellationTokenSource = new CancellationTokenSource();
-                Task.Run(()=>Loop(cancellationTokenSource.Token), cancellationTokenSource.Token);
+                loop = Task.Run(() => Loop(cancellationTokenSource.Token), cancellationTokenSource.Token);
             }
         }
 
         void Loop(CancellationToken token)
         {
+            step = 0;
             while (!token.IsCancellationRequested)
             {
                 switch (currentMission)
                 {
                     case Missions.Objective:
                     case Missions.Home:
-                        step = 0;
-                        flyToObjective();
+                        switch (step)
+                        {
+                            case 0:
+                                flyToObjective();
+                                break;
+                            default:
+                                hover();
+                                break;
+                        }
                         break;
                     case Missions.AttendeesPicture:
                     default:
                         {
                             CurrentCommand = "Hover";
-                            droneClient.Hover();
+                            hover();
                             break;
                         }
                 }
-                Task.Delay(10, token).Wait();
+                Task.Delay(10).Wait();
             }
+        }
+
+        private void hover()
+        {
+            droneClient.Hover();
         }
 
         private string currentCommand;
@@ -107,14 +140,74 @@ namespace AutoPilotApp.Pilot
         public string CurrentCommand
         {
             get { return currentCommand; }
-            set { Set(ref currentCommand , value); }
+            set { Set(ref currentCommand, value); }
         }
 
         int step;
 
         void flyToObjective()
         {
-            
+            bool flight = true;
+            var state = droneClient.NavigationData.State;
+            if (state.HasFlag(NavigationState.Emergency))
+                return;
+
+            if (flight && state.HasFlag(NavigationState.Landed))
+            {
+                analyzer.ResultingCommand = "takeof";
+                droneClient.Takeoff();
+                return;
+            }
+            if (analyzer.Detected)
+            {
+                if (droneClient.NavigationData.Altitude > 0.5 || !flight)
+                {
+                    var width = analyzer.FovSize.Width / 2f;
+                    var change = width - analyzer.Center.X;
+                    if (change > 25)
+                    {
+                        if (flight)
+                            droneClient.Progress(FlightMode.Progressive, yaw: -0.25f);
+                        analyzer.ResultingCommand = "right";
+                    }
+                    else if (change < -25)
+                    {
+                        if (flight)
+                            droneClient.Progress(FlightMode.Progressive, yaw: 0.25f);
+                        analyzer.ResultingCommand = "left";
+                    }
+                    else
+                    {
+                        var d = analyzer.Distance / analyzer.FovSize.Width;
+                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 55)
+                        {
+                            analyzer.ResultingCommand = $"gaz {d}";
+
+                            if (flight)
+                                droneClient.Progress(FlightMode.Progressive, pitch: -0.05f);
+                        }
+                        else
+                        {
+                            analyzer.ResultingCommand = "hover";
+
+                            if (flight)
+                                droneClient.Hover();
+                        }
+                    }
+                }
+                else
+                {
+                    analyzer.ResultingCommand = $"altitude {droneClient.NavigationData.Altitude}";
+                }
+            }
+            else
+            {
+                analyzer.ResultingCommand = "seek";
+
+                if (flight)
+                    droneClient.Progress(FlightMode.Progressive, yaw: 0.10f);
+            }
+
         }
     }
 }
