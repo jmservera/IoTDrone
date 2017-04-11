@@ -1,6 +1,7 @@
 ﻿using AR.Drone.Avionics.Objectives;
 using AR.Drone.Avionics.Objectives.IntentObtainers;
 using AR.Drone.Client;
+using AR.Drone.Client.Command;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -53,6 +54,50 @@ namespace AutoPilotApp
             autopilot.OnOutOfObjectives += Autopilot_OnOutOfObjectives;
             autopilot.BindToClient();
             autopilot.Start();
+
+            this.KeyDown += DroneControls_KeyDown;
+        }
+        
+
+        private void DroneControls_KeyDown(object sender, KeyEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.Key);
+            switch (e.Key)
+            {
+                case Key.Left:
+                    droneClient.Progress(FlightMode.Progressive, roll: -0.05f);
+                    break;
+                case Key.Up:
+                    droneClient.Progress(FlightMode.Progressive, gaz: 0.25f);
+                    break;
+                case Key.Right:
+                    droneClient.Progress(FlightMode.Progressive, roll: 0.05f);
+                    break;
+                case Key.Down:
+                    droneClient.Progress(FlightMode.Progressive, gaz: -0.25f);
+                    break;
+                case Key.A:
+                    droneClient.Progress(FlightMode.Progressive, yaw: 0.25f);
+                    break;
+                case Key.D:
+                    droneClient.Progress(FlightMode.Progressive, yaw: -0.25f);
+                    break;
+                case Key.S:
+                    droneClient.Progress(FlightMode.Progressive, pitch: 0.05f);
+                    break;
+                case Key.W:
+                    droneClient.Progress(FlightMode.Progressive, pitch: -0.05f);
+                    break;
+                case Key.I:
+                    droneClient.Takeoff();
+                    System.Diagnostics.Debug.WriteLine("Entro");
+                    break;
+                case Key.O:
+                    droneClient.Land();
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected override void OnActivated(EventArgs e)
