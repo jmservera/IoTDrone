@@ -48,7 +48,7 @@ namespace AutoPilotApp
                 var bmp = (Bitmap) input.Bitmap.Clone();
                 output.UpdateImages(bmp);
                 //todo call api                
-                await getEmotion(bmp);
+                if(callAPI)await getEmotion(bmp);
             }
         }
 
