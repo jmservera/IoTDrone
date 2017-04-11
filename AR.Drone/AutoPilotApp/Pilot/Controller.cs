@@ -164,22 +164,25 @@ namespace AutoPilotApp.Pilot
                 {
                     var width = analyzer.FovSize.Width / 2f;
                     var change = width - analyzer.Center.X;
-                    if (change > 25)
+
+                    var diff = (analyzer.Distance / analyzer.FovSize.Width) * 6f;
+
+                    if (change > diff)
                     {
                         if (flight)
                             droneClient.Progress(FlightMode.Progressive, yaw: -0.25f);
-                        analyzer.ResultingCommand = "right";
+                        analyzer.ResultingCommand = $"right {diff}";
                     }
-                    else if (change < -25)
+                    else if (change < (1-diff))
                     {
                         if (flight)
                             droneClient.Progress(FlightMode.Progressive, yaw: 0.25f);
-                        analyzer.ResultingCommand = "left";
+                        analyzer.ResultingCommand = $"left {diff}";
                     }
                     else
                     {
                         var d = analyzer.Distance / analyzer.FovSize.Width;
-                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 55)
+                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 45)
                         {
                             analyzer.ResultingCommand = $"gaz {d}";
 
@@ -188,10 +191,9 @@ namespace AutoPilotApp.Pilot
                         }
                         else
                         {
-                            analyzer.ResultingCommand = "hover";
-
-                            if (flight)
-                                droneClient.Hover();
+                            analyzer.ResultingCommand = "land";
+                            droneClient.Land();
+                            stopAutopilot();
                         }
                     }
                 }

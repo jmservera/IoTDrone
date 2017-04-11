@@ -59,7 +59,6 @@ namespace AutoPilotApp
                 Byte[] byteArray = ImageToByte2(input.Bitmap);
                 using (Stream imageFileStream = new MemoryStream(byteArray))
                 {
-                    Logger.LogInfo($"Llamo a la API");
                     var requiredFaceAttributes = new FaceAttributeType[] {
                         FaceAttributeType.Age,
                         FaceAttributeType.Gender,
@@ -85,19 +84,15 @@ namespace AutoPilotApp
 
                             var age = attributes.Age;
                             output.Age = output.Age>0? (output.Age + age)/2:age;
-                            Logger.LogInfo($"Age: " + age);
 
                             var gender = attributes.Gender;
                             output.Gender = gender;
-                            Logger.LogInfo($"Gender: " + gender);
 
                             var glasses = attributes.Glasses;
                             output.Glasses = glasses.ToString();
-                            Logger.LogInfo($"Glases? " + glasses);
 
                             var smile = face.FaceAttributes.Smile;
                             output.Smiling = smile;
-                            Logger.LogInfo($"Smiling? " + smile);
                             var emotions = face.FaceAttributes.Emotion.ToRankedList();
                             var emotion = emotions.OrderByDescending(f => f.Value).FirstOrDefault().Key;
 
@@ -108,11 +103,10 @@ namespace AutoPilotApp
                                 g.DrawString(emotion, new Font("Arial", 18), new SolidBrush(System.Drawing.Color.Black), faceRec.Left + 5, faceRec.Top + faceRec.Height +2);
                                 g.Flush();
                             }
-                            output.UpdateImages((Bitmap)input.Bitmap);
+                            output.UpdateImages(input.Bitmap);
                         }
                     }
-                    Logger.LogInfo($"Successfull call");
-
+                        output.UpdateImages(input.Bitmap);
 
                 }
             }
