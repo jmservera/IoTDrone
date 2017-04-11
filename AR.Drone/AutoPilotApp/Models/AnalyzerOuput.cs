@@ -37,5 +37,12 @@ namespace AutoPilotApp.Models
             get { return size; }
             set { Set(ref size, value); }
         }
+
+        string command;
+        public string ResultingCommand
+        {
+            get { return command; }
+            set { Set(ref command, value); }
+        }
     }
 }

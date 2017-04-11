@@ -72,11 +72,12 @@
                 <TextBlock>
                     FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
                 </TextBlock>
-                <TextBlock DataContext="{Binding Mode=OneWay, Source={StaticResource AnalyzerOuput}}">
+                <TextBlock TextWrapping="WrapWithOverflow" DataContext="{Binding Mode=OneWay, Source={StaticResource AnalyzerOuput}}">
                     Object Detected: <Run Text="{Binding Detected}"/>
                     Distance: <Run Text="{Binding Distance}"/>
                     Center: <Run Text="{Binding Center.X}"/>, <Run Text="{Binding Center.Y}"/>
                     FOV: <Run Text="{Binding FovSize.Width}"/>, <Run Text="{Binding FovSize.Height}"/>
+                    Command: <Run Text="{Binding ResultingCommand}"/>
                 </TextBlock>
             </StackPanel>
         </Grid>
