@@ -108,10 +108,21 @@ namespace AutoPilotApp.CV
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
                 bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
 
-                if (this.analyzerOutput != null && maxContour!=null)
+                if (this.analyzerOutput != null)
                 {
-                    analyzerOutput.Center = maxContour.Item3;
-                    analyzerOutput.Distance = maxContour.Item2;
+                        analyzerOutput.FovSize = bitmaps.Bitmap.Size;
+                    if (maxContour != null)
+                    {
+                        analyzerOutput.Detected = true;
+                        analyzerOutput.Center = maxContour.Item3;
+                        analyzerOutput.Distance = maxContour.Item2;
+                    }
+                    else
+                    {
+                        analyzerOutput.Detected = false;
+                        analyzerOutput.Center = Point.Empty;
+                        analyzerOutput.Distance = 0;
+                    }
                 }
 
                 return maxContour;

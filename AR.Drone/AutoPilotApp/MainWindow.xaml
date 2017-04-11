@@ -68,9 +68,17 @@
             <Image Name="First" Source="{Binding First}" Grid.Column="1" MouseDown="Original_MouseDown"/>
             <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
             <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
-            <TextBlock Height="15" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
-                FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
-            </TextBlock>
+            <StackPanel Background="#7FFFFFFF" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
+                <TextBlock>
+                    FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
+                </TextBlock>
+                <TextBlock DataContext="{Binding Mode=OneWay, Source={StaticResource AnalyzerOuput}}">
+                    Object Detected: <Run Text="{Binding Detected}"/>
+                    Distance: <Run Text="{Binding Distance}"/>
+                    Center: <Run Text="{Binding Center.X}"/>, <Run Text="{Binding Center.Y}"/>
+                    FOV: <Run Text="{Binding FovSize.Width}"/>, <Run Text="{Binding FovSize.Height}"/>
+                </TextBlock>
+            </StackPanel>
         </Grid>
         <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="170">
             <Grid.RowDefinitions>

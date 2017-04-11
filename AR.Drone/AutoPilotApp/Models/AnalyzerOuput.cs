@@ -7,14 +7,20 @@ using System.Threading.Tasks;
 
 namespace AutoPilotApp.Models
 {
-    public class AnalyzerOuput:ObservableObject
+    public class AnalyzerOuput : ObservableObject
     {
+        bool detected;
+        public bool Detected
+        {
+            get { return detected; }
+            set { Set(ref detected, value); }
+        }
         private Point point;
 
         public Point Center
         {
             get { return point; }
-            set { Set(ref point , value); }
+            set { Set(ref point, value); }
         }
 
         private double distance;
@@ -22,8 +28,14 @@ namespace AutoPilotApp.Models
         public double Distance
         {
             get { return distance; }
-            set { Set(ref distance , value); }
+            set { Set(ref distance, value); }
         }
 
+        Size size;
+        public Size FovSize
+        {
+            get { return size; }
+            set { Set(ref size, value); }
+        }
     }
 }
