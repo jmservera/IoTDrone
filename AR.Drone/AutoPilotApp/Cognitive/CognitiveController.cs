@@ -10,6 +10,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.ProjectOxford.Vision;
+using Microsoft.ProjectOxford.Vision.Contract;
+using Microsoft.ProjectOxford.Face;
 
 namespace AutoPilotApp
 {
@@ -18,7 +21,7 @@ namespace AutoPilotApp
         Bitmaps input;
         CognitiveData output;
         Boolean callAPI = true;
-        Boolean callAPI2 = false;
+        private static readonly VisualFeature[] VisualFeatures = { VisualFeature.Description, VisualFeature.Faces };
         public CognitiveController(Bitmaps input, CognitiveData output)
         {
             this.input = input;
@@ -42,11 +45,11 @@ namespace AutoPilotApp
             if (e.PropertyName == "Bitmap")
             {
 
-                float result = 1000;
+                float result;
                 var bmp = (Bitmap) input.Bitmap.Clone();
-                //todo call api                
                 output.UpdateImages(bmp);
-                if(callAPI) result = await getEmotion(bmp);
+                //todo call api                
+                if (callAPI) result = await getEmotion(bmp);
             }
         }
 
@@ -56,27 +59,60 @@ namespace AutoPilotApp
             float emotion = 150;
             try
             {
-
-                EmotionServiceClient emotionServiceClient = new EmotionServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
-                Emotion[] emotionResult;
+                FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
+                VisionServiceClient VisionServiceClient = new VisionServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
 
                 Byte[] byteArray = ImageToByte2(input.Bitmap);
                 using (Stream imageFileStream = new MemoryStream(byteArray))
                 {
                     Logger.LogInfo($"Llamo a la API");
-                    emotionResult = await emotionServiceClient.RecognizeAsync(imageFileStream);
-                    emotion = emotionResult[0].Scores.Happiness;
+                    var requiredFaceAttributes = new FaceAttributeType[] {
+                        FaceAttributeType.Age,
+                        FaceAttributeType.Gender,
+                        FaceAttributeType.Smile,
+                        FaceAttributeType.FacialHair,
+                        FaceAttributeType.HeadPose,
+                        FaceAttributeType.Glasses
+                    };
+                    var faces = await sc.DetectAsync(imageFileStream,
+                        returnFaceLandmarks: true,
+                        returnFaceAttributes: requiredFaceAttributes);
+                    output.HeadCount = faces.Length;
+                    if (faces.Length > 0)
+                    {
+                        foreach (var face in faces)
+                        {
+                            var faceRec = face.FaceRectangle;
+                            var attributes = face.FaceAttributes;
+                            var rec = new Models.Rectangle(face.FaceRectangle.Width * 0.6, faceRec.Height * 0.6, faceRec.Left, faceRec.Top);
+                            output.Square = rec;
+
+                            var age = attributes.Age;
+                            output.Age = age;
+                            Logger.LogInfo($"Age: " + age);
+
+                            var gender = attributes.Gender;
+                            output.Gender = gender;
+                            Logger.LogInfo($"Gender: " + gender);
+
+                            var glasses = attributes.Glasses;
+                            output.Glasses = glasses.ToString();
+                            Logger.LogInfo($"Glases? " + glasses);
+
+                            var smile = face.FaceAttributes.Smile;
+                            output.Smiling = smile;
+                            Logger.LogInfo($"Smiling? " + smile);
+                        }
+                    }
                     Logger.LogInfo($"Successfull call");
                     callAPI = true;
-                    
                 }
-
-
             }
             catch (Exception ex)
             {
                 Logger.LogException(ex);
             }
+            
             output.HeadCount = emotion;
             return emotion;
         }
