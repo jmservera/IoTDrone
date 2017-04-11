@@ -17,6 +17,8 @@ namespace AutoPilotApp
     {
         Bitmaps input;
         CognitiveData output;
+        Boolean callAPI = true;
+        Boolean callAPI2 = false;
         public CognitiveController(Bitmaps input, CognitiveData output)
         {
             this.input = input;
@@ -35,21 +37,23 @@ namespace AutoPilotApp
             input.PropertyChanged += Input_PropertyChanged;
         }
 
-        private void Input_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private async void Input_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Bitmap")
             {
+
+                float result = 1000;
                 var bmp = (Bitmap) input.Bitmap.Clone();
-                //todo call api
-                String result = getEmotion(input).Result;
-                output.HeadCount = 10;
+                //todo call api                
                 output.UpdateImages(bmp);
+                if(callAPI) result = await getEmotion(bmp);
             }
         }
 
-        public async Task<String> getEmotion(Bitmaps bits)
+        public async Task<float> getEmotion(Bitmap bits)
         {
-            String emotion = "";
+            callAPI = false;
+            float emotion = 150;
             try
             {
 
@@ -59,7 +63,12 @@ namespace AutoPilotApp
                 Byte[] byteArray = ImageToByte2(input.Bitmap);
                 using (Stream imageFileStream = new MemoryStream(byteArray))
                 {
+                    Logger.LogInfo($"Llamo a la API");
                     emotionResult = await emotionServiceClient.RecognizeAsync(imageFileStream);
+                    emotion = emotionResult[0].Scores.Happiness;
+                    Logger.LogInfo($"Successfull call");
+                    callAPI = true;
+                    
                 }
 
 
@@ -68,7 +77,7 @@ namespace AutoPilotApp
             {
                 Logger.LogException(ex);
             }
-
+            output.HeadCount = emotion;
             return emotion;
         }
 

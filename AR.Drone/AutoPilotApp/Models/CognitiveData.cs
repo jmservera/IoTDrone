@@ -9,8 +9,8 @@ namespace AutoPilotApp.Models
 {
     public class CognitiveData : BitmapsBase
     {
-        int headCount;
-        public int HeadCount
+        float headCount;
+        public float HeadCount
         {
             get { return headCount; }
             set { Set(ref headCount, value); }
