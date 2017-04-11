@@ -2,6 +2,7 @@
 using AR.Drone.Avionics.Objectives.IntentObtainers;
 using AR.Drone.Client;
 using AR.Drone.Client.Command;
+using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,10 +45,12 @@ namespace AutoPilotApp
             set { Set(ref battery, value); }
         }
 
+        AnalyzerOuput analyzerOutput;
 
-        public DroneControls(DroneClient client)
+        public DroneControls(DroneClient client, AnalyzerOuput output)
         {
             InitializeComponent();
+            analyzerOutput = output;
             droneClient = client;
             droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
             autopilot = new AR.Drone.Avionics.Autopilot(client);
@@ -158,18 +161,31 @@ namespace AutoPilotApp
                 return;
             if (droneController != null)
             {
-                droneController.Start(Pilot.Missions.Objective, null);
+                droneController.Stop();
+                droneController = null;
             }
             else
             {
-                droneController = new Pilot.Controller(droneClient);
+                droneController = new Pilot.Controller(droneClient, analyzerOutput);
+                droneController.Start(Pilot.Missions.Objective);
             }
 
         }
 
         private void Land_Click(object sender, RoutedEventArgs e)
         {
-            autopilot.SetObjective(new Land(5000));
+            if (autopilot.Active)
+            {
+                autopilot.SetObjective(new Land(5000));
+            }
+            else
+            {
+                if (droneController != null)
+                {
+                    droneController.Stop();
+                }
+                droneClient.Land();
+            }
         }
 
         private void Emergency_Click(object sender, RoutedEventArgs e)
@@ -180,6 +196,10 @@ namespace AutoPilotApp
             }
             else
             {
+                if (droneController != null)
+                {
+                    droneController.Stop();
+                }
                 droneClient.Emergency();
             }
         }
@@ -192,6 +212,10 @@ namespace AutoPilotApp
             }
             else
             {
+                if (droneController != null)
+                {
+                    droneController.Stop();
+                }
                 droneClient.ResetEmergency();
             }
         }
@@ -217,6 +241,11 @@ namespace AutoPilotApp
             autopilot.EnqueueObjective(new Land(5000));
 
             autopilot.Active = true;
+        }
+
+        private void FlatTrim_Click(object sender, RoutedEventArgs e)
+        {
+            droneClient.FlatTrim();
         }
     }
 }

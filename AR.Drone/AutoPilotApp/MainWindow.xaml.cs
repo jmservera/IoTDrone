@@ -405,7 +405,7 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
-                controlsWindow = new DroneControls(droneClient);
+                controlsWindow = new DroneControls(droneClient, analyzerOutput);
                 controlsWindow.Owner = this;
             }
             controlsWindow.Show();
