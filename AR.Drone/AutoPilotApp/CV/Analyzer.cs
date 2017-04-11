@@ -27,7 +27,7 @@ namespace AutoPilotApp.CV
             return useGPU? (IImage)new UMat(): new Mat();
         }
 
-        public List<Point[]> Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig, bool useMorphologic = true, bool detectBox = false)
+        public Tuple<Point[],double> Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig, bool useMorphologic = true, bool detectBox = false)
         {
             System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             bitmaps.UpdateImages(bitmap);
@@ -46,15 +46,15 @@ namespace AutoPilotApp.CV
                     var boxList = BoxDetection(cannyEdges);
                     foreach (var box in boxList)
                     {
-                        for (int i = 0; i < box.Length; i++)
+                        for (int i = 0; i < box.Item1.Length; i++)
                         {
-                            var pointA = box[i];
-                            var pointB = box[(i + 1) % box.Length];
+                            var pointA = box.Item1[i];
+                            var pointB = box.Item1[(i + 1) % box.Item1.Length];
                             CvInvoke.Line(img, pointA, pointB, new Bgr(Color.DarkOrange).MCvScalar, 2);
                         }
-                        //CvInvoke.Polylines(img, box, true, new Bgr(Color.DarkOrange).MCvScalar, 2);
                     }
                 }
+
 
                 //use image pyr to remove noise
                 IImage pyrDown = createMat();
@@ -73,13 +73,24 @@ namespace AutoPilotApp.CV
                 }
 
                 var contours = ContourDetection(imgThresholded);
+                var maxContour = contours.OrderByDescending(t => t.Item2).FirstOrDefault();
                 foreach (var box in contours)
                 {
-                    for (int i = 0; i < box.Length; i++)
+                    for (int i = 0; i < box.Item1.Length; i++)
                     {
-                        var pointA = box[i];
-                        var pointB = box[(i + 1) % box.Length];
-                        CvInvoke.Line(img, pointA, pointB, new Bgr(Color.DarkOrange).MCvScalar, 4);
+                        MCvScalar contourColor;
+                        if (box == maxContour)
+                        {
+                            contourColor = new Bgr(Color.DarkOrange).MCvScalar;
+                        }
+                        else
+                        {
+                            contourColor = new Bgr(Color.Green).MCvScalar;
+                        }
+
+                        var pointA = box.Item1[i];
+                        var pointB = box.Item1[(i + 1) % box.Item1.Length];
+                        CvInvoke.Line(img, pointA, pointB, contourColor, 4);
                     }
                 }
 
@@ -91,7 +102,7 @@ namespace AutoPilotApp.CV
 
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
                 bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
-                return contours;
+                return maxContour;
             }
         }
 
@@ -104,9 +115,9 @@ namespace AutoPilotApp.CV
             CvInvoke.Dilate(imgThresholded, imgThresholded, dilateElement, new Point(-1, -1), 2, BorderType.Default, CvInvoke.MorphologyDefaultBorderValue);
         }
 
-        private List<Point[]> ContourDetection(IImage thresholded)
+        private List<Tuple<Point[], double>> ContourDetection(IImage thresholded)
         {
-            List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
+            List<Tuple<Point[], double>> boxList = new List<Tuple<Point[], double>>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
@@ -118,9 +129,10 @@ namespace AutoPilotApp.CV
                     using (VectorOfPoint approxContour = new VectorOfPoint())
                     {
                         CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                        if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
+                        var area = CvInvoke.ContourArea(approxContour, false);
+                        if (area > 250) //only consider contours with area greater than 250
                         {
-                            boxList.Add(contour.ToArray());// CvInvoke.MinAreaRect(approxContour));
+                            boxList.Add(new Tuple<Point[], double>( contour.ToArray(),area));// CvInvoke.MinAreaRect(approxContour));
                         }
                     }
                 }
@@ -128,9 +140,9 @@ namespace AutoPilotApp.CV
             return boxList;
         }
 
-        private List<Point[]> BoxDetection(IImage cannyEdges)
+        private List<Tuple<Point[],double>> BoxDetection(IImage cannyEdges)
         {
-            List<Point[]> boxList = new List<Point[]>(); //a box is a rotated rectangle
+            List<Tuple<Point[], double>> boxList = new List<Tuple<Point[], double>>();
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
@@ -142,7 +154,8 @@ namespace AutoPilotApp.CV
                     using (VectorOfPoint approxContour = new VectorOfPoint())
                     {
                         CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                        if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
+                        var area = CvInvoke.ContourArea(approxContour, false);
+                        if (area > 250) //only consider contours with area greater than 250
                         {
                             if (approxContour.Size ==4) //The contour has 4 vertices.
                             {
@@ -163,7 +176,7 @@ namespace AutoPilotApp.CV
                                 }
                                 #endregion
 
-                                if (isRectangle) boxList.Add(approxContour.ToArray());// CvInvoke.MinAreaRect(approxContour));
+                                if (isRectangle) boxList.Add( new Tuple<Point[], double>(approxContour.ToArray(),area));// CvInvoke.MinAreaRect(approxContour));
 
                             }
                         }
