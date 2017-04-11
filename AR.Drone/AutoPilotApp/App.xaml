@@ -7,5 +7,6 @@
         <local:Config  x:Key="Config"/>
         <local:Bitmaps x:Key="Bitmaps"/>
         <local:CognitiveData x:Key="CognitiveData"/>
+        <local:AnalyzerOuput x:Key="AnalyzerOuput"/>
     </Application.Resources>
 </Application>

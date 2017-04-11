@@ -25,7 +25,7 @@ namespace AutoPilotApp
     public partial class DroneControls : Window, INotifyPropertyChanged
     {
         DroneClient droneClient;
-
+        Pilot.Controller droneController;
 
         private float altitude;
 
@@ -111,23 +111,14 @@ namespace AutoPilotApp
         {
             if (!droneClient.IsActive)
                 return;
-
-            autopilot.ClearObjectives();
-            autopilot.EnqueueObjective(new FlatTrim(1000));
-            autopilot.EnqueueObjective(new Takeoff(3500));
-
-            // One could use hover, but the method below, allows to gain/lose/maintain desired altitude
-            autopilot.EnqueueObjective(
-                Objective.Create(9500,
-                    new VelocityX(0.4f),
-                    new VelocityY(0.0f),
-                    new Altitude(1.0f)
-                )
-            );
-
-            autopilot.EnqueueObjective(new Land(5000));
-
-            autopilot.Active = true;
+            if (droneController != null)
+            {
+                droneController.Start(Pilot.Missions.Objective, null);
+            }
+            else
+            {
+                droneController = new Pilot.Controller(droneClient);
+            }
 
         }
 
@@ -158,6 +149,29 @@ namespace AutoPilotApp
             {
                 droneClient.ResetEmergency();
             }
+        }
+
+        private void FlyForward_Click(object sender, RoutedEventArgs e)
+        {
+            if (!droneClient.IsActive)
+                return;
+
+            autopilot.ClearObjectives();
+            autopilot.EnqueueObjective(new FlatTrim(1000));
+            autopilot.EnqueueObjective(new Takeoff(3500));
+
+            // One could use hover, but the method below, allows to gain/lose/maintain desired altitude
+            autopilot.EnqueueObjective(
+                Objective.Create(9500,
+                    new VelocityX(0.4f),
+                    new VelocityY(0.0f),
+                    new Altitude(1.0f)
+                )
+            );
+
+            autopilot.EnqueueObjective(new Land(5000));
+
+            autopilot.Active = true;
         }
     }
 }

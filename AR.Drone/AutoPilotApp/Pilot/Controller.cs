@@ -2,6 +2,7 @@
 using AR.Drone.Avionics.Objectives;
 using AR.Drone.Client;
 using AR.Drone.Client.Command;
+using AutoPilotApp.Common;
 using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,22 @@ namespace AutoPilotApp.Pilot
             stopAutopilot();
         }
 
+        public bool Stop()
+        {
+            try
+            {
+                stopAutopilot();
+                droneClient.Hover();
+                loop.Wait();
+            }
+            catch(Exception ex)
+            {
+                Logger.LogException(ex);
+                return false;
+            }
+            return true;
+        }
+
         void stopAutopilot()
         {
             if (cancellationTokenSource != null)
@@ -65,6 +82,7 @@ namespace AutoPilotApp.Pilot
         }
 
         CancellationTokenSource cancellationTokenSource;
+        Task loop;
         void startAutopilot()
         {
             if (cancellationTokenSource != null)
@@ -75,7 +93,7 @@ namespace AutoPilotApp.Pilot
                     return;
 
                 cancellationTokenSource = new CancellationTokenSource();
-                Task.Run(()=>Loop(cancellationTokenSource.Token), cancellationTokenSource.Token);
+                loop=Task.Run(()=>Loop(cancellationTokenSource.Token), cancellationTokenSource.Token);
             }
         }
 
