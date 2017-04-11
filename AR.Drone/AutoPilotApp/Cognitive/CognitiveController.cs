@@ -45,22 +45,19 @@ namespace AutoPilotApp
             if (e.PropertyName == "Bitmap")
             {
 
-                float result;
                 var bmp = (Bitmap) input.Bitmap.Clone();
                 output.UpdateImages(bmp);
                 //todo call api                
-                if (callAPI) result = await getEmotion(bmp);
+                await getEmotion(bmp);
             }
         }
 
-        public async Task<float> getEmotion(Bitmap bits)
+        public async Task getEmotion(Bitmap bits)
         {
             callAPI = false;
-            float emotion = 150;
             try
             {
                 FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
-                VisionServiceClient VisionServiceClient = new VisionServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
 
                 Byte[] byteArray = ImageToByte2(input.Bitmap);
                 using (Stream imageFileStream = new MemoryStream(byteArray))
@@ -111,10 +108,7 @@ namespace AutoPilotApp
             catch (Exception ex)
             {
                 Logger.LogException(ex);
-            }
-            
-            output.HeadCount = emotion;
-            return emotion;
+            }    
         }
 
         public static byte[] ImageToByte2(Image img)
