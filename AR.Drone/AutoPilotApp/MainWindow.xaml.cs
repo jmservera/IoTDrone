@@ -33,6 +33,7 @@ using System.ComponentModel;
 using AutoPilotApp.CV;
 using AutoPilotApp.IoT;
 using AutoPilotApp.Common;
+using System.Configuration;
 
 namespace AutoPilotApp
 {
@@ -100,8 +101,8 @@ namespace AutoPilotApp
             var bmpsObj = Application.Current.Resources["Bitmaps"];
             bitmaps = bmpsObj as Bitmaps;
 
-            var useGPUObj= Application.Current.Resources["UseGPU"];
-            bool useGPU = true;
+            var useGPUObj= ConfigurationManager.AppSettings["UseGPU"];
+            bool useGPU = false;
             if (useGPUObj!=null)
             {
                 bool.TryParse(useGPUObj.ToString(), out useGPU);

@@ -33,7 +33,7 @@ namespace AutoPilotApp.CV
             bitmaps.UpdateImages(bitmap);
             using (Image<Bgr, byte> img = new Image<Bgr, byte>(bitmaps.Bitmap))
             {
-                UMat uimage = new UMat();
+                IImage uimage = createMat();
                 CvInvoke.CvtColor(img.Clone(), uimage, ColorConversion.Bgr2Hsv, 3);
 
                 double cannyThreshold = 180.0;
@@ -57,11 +57,11 @@ namespace AutoPilotApp.CV
                 }
 
                 //use image pyr to remove noise
-                UMat pyrDown = new UMat();
+                IImage pyrDown = createMat();
                 CvInvoke.PyrDown(uimage, pyrDown);
                 CvInvoke.PyrUp(pyrDown, uimage);
 
-                UMat imgThresholded = new UMat();
+                IImage imgThresholded = createMat();
                 MCvScalar lower = new MCvScalar(currentConfig.LowH, currentConfig.LowS, currentConfig.LowV);
                 MCvScalar upper = new MCvScalar(currentConfig.HighH, currentConfig.HighS, currentConfig.HighV);
 
@@ -95,7 +95,7 @@ namespace AutoPilotApp.CV
             }
         }
 
-        private void morphOps(UMat imgThresholded)
+        private void morphOps(IImage imgThresholded)
         {
             Mat erodeElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
             Mat dilateElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(8, 8), new Point(-1, -1));
