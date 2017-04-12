@@ -7,6 +7,7 @@ using AutoPilotApp.Common;
 using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -46,7 +47,11 @@ namespace AutoPilotApp.Pilot
             {
                 stopAutopilot();
                 droneClient.Hover();
-                loop.Wait();
+                if (loop != null)
+                {
+                    loop.Wait();
+                    loop = null;
+                }
             }
             catch (Exception ex)
             {
@@ -102,6 +107,8 @@ namespace AutoPilotApp.Pilot
         void Loop(CancellationToken token)
         {
             step = 0;
+            Stopwatch sw1 = null;
+
             while (!token.IsCancellationRequested)
             {
                 switch (currentMission)
@@ -112,6 +119,22 @@ namespace AutoPilotApp.Pilot
                         {
                             case 0:
                                 flyToObjective();
+                                break;
+                            case 1:
+                                if (sw1 == null)
+                                {
+                                    sw1 = Stopwatch.StartNew();
+                                }
+                                if (sw1.ElapsedMilliseconds < 4000)
+                                {
+                                    hover();
+                                }
+                                else
+                                {
+                                    step = 2;
+                                    droneClient.Land();
+                                    Stop();
+                                }
                                 break;
                             default:
                                 hover();
@@ -191,9 +214,8 @@ namespace AutoPilotApp.Pilot
                         }
                         else
                         {
-                            analyzer.ResultingCommand = "land";
-                            droneClient.Land();
-                            stopAutopilot();
+                            analyzer.ResultingCommand = "hover";
+                            step = 1;
                         }
                     }
                 }
