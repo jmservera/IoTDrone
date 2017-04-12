@@ -46,10 +46,10 @@ namespace AutoPilotApp.Pilot
             try
             {
                 stopAutopilot();
-                droneClient.Hover();
+                //droneClient.Hover();
                 if (loop != null)
                 {
-                    loop.Wait();
+                    loop.Wait(1000);
                     loop = null;
                 }
             }
@@ -131,6 +131,8 @@ namespace AutoPilotApp.Pilot
                                 }
                                 else
                                 {
+                                    Logger.LogInfo("Step 2");
+
                                     step = 2;
                                     droneClient.Land();
                                     Stop();
@@ -188,26 +190,26 @@ namespace AutoPilotApp.Pilot
                     var width = analyzer.FovSize.Width / 2f;
                     var change = width - analyzer.Center.X;
 
-                    var diff = (analyzer.Distance / analyzer.FovSize.Width) * 6f;
+                    var diff = (analyzer.Distance / analyzer.FovSize.Width) * 7.5f;
 
                     if (change > diff)
                     {
                         if (flight)
                             droneClient.Progress(FlightMode.Progressive, roll: -0.10f, yaw: -0.05f);
-                        analyzer.ResultingCommand = $"right {diff}";
+                        analyzer.ResultingCommand = $"right {change} {diff}";
                     }
-                    else if (change < (1-diff))
+                    else if  (change < (0-diff))
                     {
                         if (flight)
                             droneClient.Progress(FlightMode.Progressive, roll: 0.10f, yaw: 0.05f);
-                        analyzer.ResultingCommand = $"left {diff}";
+                        analyzer.ResultingCommand = $"left {change} {diff}";
                     }
                     else
                     {
                         var d = analyzer.Distance / analyzer.FovSize.Width;
-                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 40)
+                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 15)
                         {
-                            analyzer.ResultingCommand = $"pitch {d}";
+                            analyzer.ResultingCommand = $"pitch {change} {d}";
 
                             if (flight)
                                 droneClient.Progress(FlightMode.Progressive, pitch: -0.05f);
@@ -216,6 +218,7 @@ namespace AutoPilotApp.Pilot
                         {
                             analyzer.ResultingCommand = "hover";
                             step = 1;
+                            Logger.LogInfo("Step 1");
                         }
                     }
                 }
