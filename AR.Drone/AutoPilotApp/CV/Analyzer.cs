@@ -16,18 +16,23 @@ namespace AutoPilotApp.CV
     {
         Bitmaps bitmaps;
         bool useGPU = true;
-        public Analyzer(Bitmaps bitmaps, bool useGPU=true)
+        private AnalyzerOuput analyzerOutput;
+        private bool useGPU1;
+
+        public Analyzer(Bitmaps input, AnalyzerOuput output, bool useGPU=true)
         {
-            this.bitmaps = bitmaps;
+            analyzerOutput = output;
+            bitmaps = input;
             this.useGPU = useGPU;
         }
+
 
         private IImage createMat()
         {
             return useGPU? (IImage)new UMat(): new Mat();
         }
 
-        public Tuple<Point[],double> Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig, bool useMorphologic = true, bool detectBox = false)
+        public Tuple<Point[],double,Point> Analyze(System.Drawing.Bitmap bitmap, ColorConfig currentConfig, bool useMorphologic = true, bool detectBox = false)
         {
             System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             bitmaps.UpdateImages(bitmap);
@@ -76,22 +81,22 @@ namespace AutoPilotApp.CV
                 var maxContour = contours.OrderByDescending(t => t.Item2).FirstOrDefault();
                 foreach (var box in contours)
                 {
+                    MCvScalar contourColor;
+                    if (box == maxContour)
+                    {
+                        contourColor = new Bgr(Color.DarkOrange).MCvScalar;
+                    }
+                    else
+                    {
+                        contourColor = new Bgr(Color.Green).MCvScalar;
+                    }
                     for (int i = 0; i < box.Item1.Length; i++)
                     {
-                        MCvScalar contourColor;
-                        if (box == maxContour)
-                        {
-                            contourColor = new Bgr(Color.DarkOrange).MCvScalar;
-                        }
-                        else
-                        {
-                            contourColor = new Bgr(Color.Green).MCvScalar;
-                        }
-
                         var pointA = box.Item1[i];
                         var pointB = box.Item1[(i + 1) % box.Item1.Length];
                         CvInvoke.Line(img, pointA, pointB, contourColor, 4);
                     }
+                    CvInvoke.Circle(img, box.Item3,5,contourColor,2);
                 }
 
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
@@ -102,6 +107,24 @@ namespace AutoPilotApp.CV
 
                 bitmaps.ImageSet = sw.ElapsedMilliseconds;
                 bitmaps.FPS = bitmaps.Calculations + bitmaps.ImageSet;
+
+                if (this.analyzerOutput != null)
+                {
+                        analyzerOutput.FovSize = bitmaps.Bitmap.Size;
+                    if (maxContour != null)
+                    {
+                        analyzerOutput.Detected = true;
+                        analyzerOutput.Center = maxContour.Item3;
+                        analyzerOutput.Distance = maxContour.Item2;
+                    }
+                    else
+                    {
+                        analyzerOutput.Detected = false;
+                        analyzerOutput.Center = Point.Empty;
+                        analyzerOutput.Distance = 0;
+                    }
+                }
+
                 return maxContour;
             }
         }
@@ -115,9 +138,9 @@ namespace AutoPilotApp.CV
             CvInvoke.Dilate(imgThresholded, imgThresholded, dilateElement, new Point(-1, -1), 2, BorderType.Default, CvInvoke.MorphologyDefaultBorderValue);
         }
 
-        private List<Tuple<Point[], double>> ContourDetection(IImage thresholded)
+        private List<Tuple<Point[], double, Point>> ContourDetection(IImage thresholded)
         {
-            List<Tuple<Point[], double>> boxList = new List<Tuple<Point[], double>>(); //a box is a rotated rectangle
+            List<Tuple<Point[], double, Point>> boxList = new List<Tuple<Point[], double, Point>>(); //a box is a rotated rectangle
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
@@ -128,11 +151,16 @@ namespace AutoPilotApp.CV
                     using (VectorOfPoint contour = contours[i])
                     using (VectorOfPoint approxContour = new VectorOfPoint())
                     {
-                        CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                        var area = CvInvoke.ContourArea(approxContour, false);
+                        //CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
+
+                        var area = CvInvoke.ContourArea(contour, false);
                         if (area > 250) //only consider contours with area greater than 250
                         {
-                            boxList.Add(new Tuple<Point[], double>( contour.ToArray(),area));// CvInvoke.MinAreaRect(approxContour));
+                            var moments = CvInvoke.Moments(contour);
+                            var cX = moments.M10 / moments.M00;
+                            var cY = moments.M01 / moments.M00;
+
+                            boxList.Add(new Tuple<Point[], double, Point>( contour.ToArray(),area, new Point((int)cX, (int)cY)));// CvInvoke.MinAreaRect(approxContour));
                         }
                     }
                 }
