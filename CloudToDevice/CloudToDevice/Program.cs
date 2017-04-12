@@ -23,7 +23,7 @@ namespace CloudToDevice
                 var c2dconn = System.Configuration.ConfigurationManager.AppSettings["iothubconnectionstring"];
 
                 log(c2dconn);
-                ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(c2dconn);
+                ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(c2dconn, Microsoft.Azure.Devices.TransportType.Amqp);
                 //dynamic msg = JObject.Parse(myEventHubMessage);
                 var commandMessage = new Message(Encoding.ASCII.GetBytes("Cloud to device message."));
                 await serviceClient.SendAsync("Drone", commandMessage);

@@ -2,6 +2,7 @@
 using AutoPilotApp.Common;
 using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -40,17 +41,41 @@ namespace AutoPilotApp.IoT
                     var builder = IotHubConnectionStringBuilder.Create(connString);
                     deviceId = builder.DeviceId;
                     deviceClient = DeviceClient.CreateFromConnectionString(connString, TransportType.Mqtt);
+                    //deviceClient.RetryPolicy = RetryPolicyType.Exponential_Backoff_With_Jitter;
+                    cancelTokenSource = new CancellationTokenSource();
+                    startMessageReceiver(cancelTokenSource.Token);
                     Logger.LogInfo($"Connected to IoT Hub");
                     twin = await deviceClient.GetTwinAsync();
                     Logger.LogInfo($"Twin received {twin.DeviceId}");
-                    await deviceClient.OpenAsync();
-                    
+                    //await deviceClient.OpenAsync();
+
                 });
             }
             catch (Exception ex)
             {
                 Logger.LogException(ex);
             }
+        }
+
+        private void startMessageReceiver(CancellationToken token)
+        {
+            Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    var message = await deviceClient.ReceiveAsync(TimeSpan.FromMilliseconds(1000));
+                    if (message != null)
+                    {
+                        var str = Encoding.UTF8.GetString(message.GetBytes());
+                        dynamic obj=JsonConvert.DeserializeObject(str);
+                        if (obj.data != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine(obj.data);
+                        }
+                    }
+                    Thread.Sleep(10);
+                }
+            }, token);
         }
 
         DateTime last=DateTime.Now;
@@ -70,6 +95,7 @@ namespace AutoPilotApp.IoT
                             obj.Yaw,
                             obj.Pitch,
                             obj.Roll,
+                            obj.Altitude,
                             State = obj.State.ToString(),
                             Timestamp= DateTime.UtcNow
                         };
