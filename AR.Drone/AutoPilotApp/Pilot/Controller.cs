@@ -170,21 +170,21 @@ namespace AutoPilotApp.Pilot
                     if (change > diff)
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, yaw: -0.25f);
+                            droneClient.Progress(FlightMode.Progressive, roll: -0.10f, yaw: -0.05f);
                         analyzer.ResultingCommand = $"right {diff}";
                     }
                     else if (change < (1-diff))
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, yaw: 0.25f);
+                            droneClient.Progress(FlightMode.Progressive, roll: 0.10f, yaw: 0.05f);
                         analyzer.ResultingCommand = $"left {diff}";
                     }
                     else
                     {
                         var d = analyzer.Distance / analyzer.FovSize.Width;
-                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 45)
+                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 40)
                         {
-                            analyzer.ResultingCommand = $"gaz {d}";
+                            analyzer.ResultingCommand = $"pitch {d}";
 
                             if (flight)
                                 droneClient.Progress(FlightMode.Progressive, pitch: -0.05f);
@@ -199,6 +199,7 @@ namespace AutoPilotApp.Pilot
                 }
                 else
                 {
+                    droneClient.Progress(FlightMode.Progressive, gaz: 0.25f);
                     analyzer.ResultingCommand = $"altitude {droneClient.NavigationData.Altitude}";
                 }
             }

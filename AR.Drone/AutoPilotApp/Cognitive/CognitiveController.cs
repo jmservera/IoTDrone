@@ -103,10 +103,9 @@ namespace AutoPilotApp
                                 g.DrawString(emotion, new Font("Arial", 18), new SolidBrush(System.Drawing.Color.Black), faceRec.Left + 5, faceRec.Top + faceRec.Height +2);
                                 g.Flush();
                             }
-                            output.UpdateImages(input.Bitmap);
                         }
                     }
-                        output.UpdateImages(input.Bitmap);
+                    output.UpdateImages(input.Bitmap);
 
                 }
             }
