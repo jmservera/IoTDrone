@@ -11,8 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ProjectOxford.Vision;
-using Microsoft.ProjectOxford.Vision.Contract;
 using Microsoft.ProjectOxford.Face;
+using Microsoft.ProjectOxford.Face.Contract;
 
 namespace AutoPilotApp
 {
@@ -45,9 +45,36 @@ namespace AutoPilotApp
             if (e.PropertyName == "Bitmap")
             {
                 //todo call api                
-                if(callAPI)await getEmotion();
+                if (callAPI) await getEmotion();
+
+                var bmp = (Bitmap)input.Bitmap.Clone();
+                if (faces != null)
+                {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        lock (facesLock)
+                        {
+                            foreach (var face in faces)
+                            {
+                                var faceRec = face.FaceRectangle;
+                                var emotions = face.FaceAttributes.Emotion.ToRankedList();
+                                var emotion = emotions.OrderByDescending(f => f.Value).FirstOrDefault().Key;
+
+                                g.DrawRectangle(new Pen(new SolidBrush(System.Drawing.Color.Yellow), 2), new System.Drawing.Rectangle(faceRec.Left, faceRec.Top, faceRec.Width, faceRec.Height + 45));
+                                g.FillRectangle(new SolidBrush(System.Drawing.Color.Yellow), new System.Drawing.Rectangle(faceRec.Left, faceRec.Top + faceRec.Height, faceRec.Width, 45));
+                                g.DrawString(emotion, new Font("Arial", 18), new SolidBrush(System.Drawing.Color.Black), faceRec.Left + 5, faceRec.Top + faceRec.Height + 2);
+                            }
+                        }
+                        g.Flush();
+                    }
+                }
+                output.UpdateImages(bmp);
+
             }
         }
+
+        Face[] faces;
+        object facesLock = new object();
 
         public async Task getEmotion()
         {
@@ -68,9 +95,14 @@ namespace AutoPilotApp
                         FaceAttributeType.Glasses,
                         FaceAttributeType.Emotion
                     };
-                    var faces = await sc.DetectAsync(imageFileStream,
+                    
+                    var facesResult = await sc.DetectAsync(imageFileStream,
                         returnFaceLandmarks: true,
                         returnFaceAttributes: requiredFaceAttributes);
+                    lock (facesLock)
+                    {
+                        faces = facesResult;
+                    }
                     output.HeadCount = faces.Length;
                     output.Age = 0;
                     if (faces.Length > 0)
@@ -93,19 +125,9 @@ namespace AutoPilotApp
 
                             var smile = face.FaceAttributes.Smile;
                             output.Smiling = smile;
-                            var emotions = face.FaceAttributes.Emotion.ToRankedList();
-                            var emotion = emotions.OrderByDescending(f => f.Value).FirstOrDefault().Key;
-
-                            using (Graphics g = Graphics.FromImage(input.Bitmap))
-                            {
-                                g.DrawRectangle(new Pen(new SolidBrush(System.Drawing.Color.Yellow),2),  new System.Drawing.Rectangle(faceRec.Left, faceRec.Top, faceRec.Width,faceRec.Height+45));
-                                g.FillRectangle(new SolidBrush(System.Drawing.Color.Yellow), new System.Drawing.Rectangle(faceRec.Left, faceRec.Top + faceRec.Height , faceRec.Width, 45));
-                                g.DrawString(emotion, new Font("Arial", 18), new SolidBrush(System.Drawing.Color.Black), faceRec.Left + 5, faceRec.Top + faceRec.Height +2);
-                                g.Flush();
-                            }
+                            
                         }
                     }
-                    output.UpdateImages(input.Bitmap);
 
                 }
             }
