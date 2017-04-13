@@ -143,6 +143,10 @@ namespace AutoPilotApp
                     {
                         logger.Text.Substring(0, 1000);
                     }
+                    if (eventArgs.Level == LogLevel.Event)
+                    {
+                        infoLog.Text = eventArgs.Message + Environment.NewLine + infoLog.Text;
+                    }
                 });
             }
         }

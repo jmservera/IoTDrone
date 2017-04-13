@@ -41,12 +41,12 @@ namespace AutoPilotApp.IoT
                     var builder = IotHubConnectionStringBuilder.Create(connString);
                     deviceId = builder.DeviceId;
                     deviceClient = DeviceClient.CreateFromConnectionString(connString, TransportType.Mqtt);
-                    //deviceClient.RetryPolicy = RetryPolicyType.Exponential_Backoff_With_Jitter;
+                    deviceClient.RetryPolicy = RetryPolicyType.Exponential_Backoff_With_Jitter;
                     cancelTokenSource = new CancellationTokenSource();
                     startMessageReceiver(cancelTokenSource.Token);
                     Logger.LogInfo($"Connected to IoT Hub");
-                    twin = await deviceClient.GetTwinAsync();
-                    Logger.LogInfo($"Twin received {twin.DeviceId}");
+                    //twin = await deviceClient.GetTwinAsync();
+                    //Logger.LogInfo($"Twin received {twin.DeviceId}");
                     //await deviceClient.OpenAsync();
 
                 });
@@ -66,11 +66,34 @@ namespace AutoPilotApp.IoT
                     var message = await deviceClient.ReceiveAsync(TimeSpan.FromMilliseconds(1000));
                     if (message != null)
                     {
-                        var str = Encoding.UTF8.GetString(message.GetBytes());
-                        dynamic obj=JsonConvert.DeserializeObject(str);
-                        if (obj.data != null)
+                        try
                         {
-                            System.Diagnostics.Debug.WriteLine(obj.data);
+                            var str = Encoding.UTF8.GetString(message.GetBytes());
+                            dynamic obj = JsonConvert.DeserializeObject(str);
+                            if (obj.data != null)
+                            {
+                                var x = (DateTime)obj.timestamp;
+                                if (DateTime.UtcNow - x > TimeSpan.FromSeconds(60))
+                                {
+                                    Logger.LogError($"Old message received: {str}");
+                                }
+                                else
+                                {
+                                    var droneMsg = obj.data.ToString();
+                                    if (!string.IsNullOrEmpty(droneMsg) && droneMsg.ToUpper()=="DRONESTART")
+                                    {
+                                        Logger.Log($"{x.ToLocalTime()} received: {droneMsg}", LogLevel.Event);
+                                    }
+                                }
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Logger.LogException(ex);
+                        }
+                        finally
+                        {
+                            await deviceClient.CompleteAsync(message);
                         }
                     }
                     Thread.Sleep(10);
@@ -99,7 +122,7 @@ namespace AutoPilotApp.IoT
                             State = obj.State.ToString(),
                             Timestamp= DateTime.UtcNow
                         };
-                        var infoString = Newtonsoft.Json.JsonConvert.SerializeObject(info);
+                        var infoString = JsonConvert.SerializeObject(info);
 
                         Message msg = new Message(Encoding.UTF8.GetBytes(infoString));
                         msg.Properties.Add("type", "telemetry");

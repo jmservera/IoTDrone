@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AutoPilotApp"
         xmlns:converters="clr-namespace:AutoPilotApp.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" >
+        Title="IoT Drone Autopilot" Height="600" Width="800" Icon="favicon.ico" >
     <Grid Margin="5" Name="mainGrid">
         <Grid.Resources>
             <converters:ColorToSolidColorBrushValueConverter x:Key="colorConverter"/>
@@ -59,28 +59,69 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            <Grid.Resources>
+                <Style x:Key="All" TargetType="FrameworkElement">
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+                <!--<Style BasedOn="{StaticResource All}" TargetType="Grid">
+                </Style>-->
+                <Style BasedOn="{StaticResource All}" TargetType="Image">
+                    <Setter Property="Stretch" Value="UniformToFill"/>
+                </Style>
+                <Style BasedOn="{StaticResource All}" TargetType="TextBox">
+                    <Setter Property="Padding" Value="5"/>
+                    <Setter Property="Foreground" Value="#FF00BE00"/>
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                </Style>
+                <Style BasedOn="{StaticResource All}" TargetType="TextBlock">
+                    <Setter Property="Padding" Value="5"/>
+                    <Setter Property="Foreground" Value="#FF00BE00"/>
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                </Style>
+            </Grid.Resources>
             <Grid DataContext="{StaticResource CognitiveData}">
                 <Image Name="Original" Source="{Binding Original, Mode=OneWay}"  />
-                <TextBlock  Foreground="Blue" FontSize="18" Height="29" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left">
                    Average Age: <Run Text="{Binding Age}"/>
                 </TextBlock>
-                
             </Grid>
             <Image Name="First" Source="{Binding First}" Grid.Column="1" MouseDown="Original_MouseDown"/>
-            <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
-            <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
-            <StackPanel Background="#7FFFFFFF" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
-                <TextBlock>
+            <TextBlock Grid.Column="1"
+                           VerticalAlignment="Top">
+                <TextBlock.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Offset="1"/>
+                        <GradientStop Color="#7FFFFFFF"/>
+                        <GradientStop Color="#3FFFFFFF" Offset="0.8"/>
+                    </LinearGradientBrush>
+                </TextBlock.Background>
                     FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
-                </TextBlock>
-                <TextBlock TextWrapping="WrapWithOverflow" DataContext="{Binding Mode=OneWay, Source={StaticResource AnalyzerOuput}}">
+            </TextBlock>
+            <TextBlock Grid.Column="1" 
+                           TextWrapping="WrapWithOverflow" VerticalAlignment="Bottom"
+                           DataContext="{Binding Mode=OneWay, Source={StaticResource AnalyzerOuput}}">
+                <TextBlock.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop/>
+                        <GradientStop Color="#7FFFFFFF" Offset="1"/>
+                        <GradientStop Color="#3FFFFFFF" Offset="0.2"/>
+                    </LinearGradientBrush>
+                </TextBlock.Background>
                     Object Detected: <Run Text="{Binding Detected}"/>
                     Distance: <Run Text="{Binding Distance}"/>
                     Center: <Run Text="{Binding Center.X}"/>, <Run Text="{Binding Center.Y}"/>
                     FOV: <Run Text="{Binding FovSize.Width}"/>, <Run Text="{Binding FovSize.Height}"/>
                     Command: <Run Text="{Binding ResultingCommand}"/>
-                </TextBlock>
-            </StackPanel>
+            </TextBlock>
+            <Image Name="Second" Source="{Binding Second}" Grid.Row="1" />
+            <TextBox Name="infoLog" Background="#00000000"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     TextAlignment="Right"                    
+                   TextWrapping="Wrap"
+                 IsReadOnly="True" Foreground="#FF00BE00" FontFamily="Consolas" BorderBrush="{x:Null}" Grid.Row="1" VerticalContentAlignment="Bottom"/>
+
+            <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
         </Grid>
         <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="170">
             <Grid.RowDefinitions>
