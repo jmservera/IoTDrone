@@ -414,5 +414,10 @@ namespace AutoPilotApp
             }
             controlsWindow.Show();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            logger.Text = String.Empty;
+        }
     }
 }

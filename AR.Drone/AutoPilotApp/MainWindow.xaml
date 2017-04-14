@@ -22,10 +22,6 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <TextBox Name="logger" Grid.Column="1" Width="400" Grid.RowSpan="3" 
-                   TextWrapping="Wrap"
-                 IsReadOnly="True"
-                   Visibility="{Binding IsChecked, ElementName=showLog, Converter={StaticResource boolVisibilityConverter}}"/>
         <StackPanel Orientation="Horizontal">
             <StackPanel.Resources>
                 <Style x:Key="Margined" TargetType="Control">
@@ -212,5 +208,12 @@
             </Grid>
         </Grid>
         <Button Grid.Row="2" Width="15" HorizontalAlignment="Right" Content="▼" Height="15" VerticalAlignment="top" FontSize="8" Name="collapseColors" Click="collapseColors_Click"/>
+
+        <TextBox Name="logger" Grid.Column="1" Width="400" Grid.Row="1" Grid.RowSpan="2" 
+                   TextWrapping="Wrap"
+                 IsReadOnly="True"
+                   Visibility="{Binding IsChecked, ElementName=showLog, Converter={StaticResource boolVisibilityConverter}}"/>
+        <Button Grid.Column="1" Click="Button_Click"  Visibility="{Binding IsChecked, ElementName=showLog, Converter={StaticResource boolVisibilityConverter}}">Clear</Button>
+
     </Grid>
 </Window>
