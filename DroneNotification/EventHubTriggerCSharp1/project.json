@@ -1,9 +1,0 @@
-{
-  "frameworks": {
-    "net46":{
-      "dependencies": {
-        "Microsoft.Azure.Devices": "1.2.5"
-      }
-    }
-   }
-}
