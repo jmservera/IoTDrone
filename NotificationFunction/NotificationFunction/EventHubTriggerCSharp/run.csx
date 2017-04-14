@@ -1,0 +1,57 @@
+﻿#r "Newtonsoft.Json"
+using System;
+using System.Text;
+using Newtonsoft.Json.Linq;
+using Microsoft.Azure.Devices;
+using System.Net;
+
+public static async Task<HttpResponseMessage> Run(string myEventHubMessage, TraceWriter log)
+{
+    try
+    {
+        if (myEventHubMessage.StartsWith("["))
+        {
+            dynamic msgs = JArray.Parse(myEventHubMessage);
+            foreach (dynamic msg in msgs)
+            {
+                if (msg.data == "DroneStart")
+                {
+                    await send(msg.ToString(), log);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            dynamic msg = JObject.Parse(myEventHubMessage);
+            if (msg.data == "DroneStart")
+            {
+                await send(myEventHubMessage, log);
+            }
+        }
+    }
+    catch (Microsoft.Azure.Devices.Common.Exceptions.DeviceMaximumQueueDepthExceededException qex)
+    {
+        log.Info($"{qex.Message}");
+        return new HttpResponseMessage(HttpStatusCode.OK);
+    }
+    catch (Exception ex)
+    {
+        log.Info($"Error: {ex.GetType()} {ex.Message}\n\t message: {myEventHubMessage}");
+        return new HttpResponseMessage(HttpStatusCode.BadRequest);
+    }
+    return new HttpResponseMessage(HttpStatusCode.OK);
+}
+
+static async Task send(string msg, TraceWriter log)
+{
+    var c2dconn = GetEnvironmentVariable("iothubconnectionstring");
+    log.Info(c2dconn);
+    ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(c2dconn.Trim(), Microsoft.Azure.Devices.TransportType.Amqp);
+    await serviceClient.SendAsync("Drone", new Message(Encoding.UTF8.GetBytes(msg)));
+    log.Info($"Message sent to Drone: {msg}");
+}
+public static string GetEnvironmentVariable(string name)
+{
+    return System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
+}

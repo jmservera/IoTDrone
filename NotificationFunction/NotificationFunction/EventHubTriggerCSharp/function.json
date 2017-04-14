@@ -1,0 +1,13 @@
+﻿{
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "myEventHubMessage",
+      "direction": "in",
+      "path": "eventoiot",
+      "connection": "eventoiot",
+      "consumerGroup": "function"
+    }
+  ],
+  "disabled": false
+}
