@@ -259,3 +259,6 @@ node_modules
 /node-red/lib
 
 /AR.Drone/FFmpeg.AutoGen/
+
+#local appsettings file for functions
+appsettings.json
