@@ -44,5 +44,23 @@ namespace AutoPilotApp.Models
             get { return command; }
             set { Set(ref command, value); }
         }
+
+        int width, height;
+        public int Width
+        {
+            get { return width; }
+            set
+            {
+                Set(ref width, value);
+            }
+        }
+        public int Height
+        {
+            get { return height; }
+            set
+            {
+                Set(ref height, value);
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿using AutoPilotApp.Common;
+using Emgu.CV;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace AutoPilotApp.Models
         {
             RedConfig = new ColorConfig();
             GreenConfig = new ColorConfig();
+            SpaceConfig = new SpaceConfig();
         }
 
         private string droneIP;
@@ -69,6 +71,15 @@ namespace AutoPilotApp.Models
             }
         }
 
+        private SpaceConfig spaceConfig;
+
+        public SpaceConfig SpaceConfig
+        {
+            get { return spaceConfig; }
+            set { Set(ref spaceConfig , value); }
+        }
+
+
         public void Save(string fileName)
         {
             using (StreamWriter w = new StreamWriter(fileName))
@@ -91,6 +102,11 @@ namespace AutoPilotApp.Models
             using (JsonTextReader jw = new JsonTextReader(reader))
             {
                 JsonSerializer serializer = new JsonSerializer();
+                serializer.Error += (ser, err) =>
+                {
+                    Logger.LogError(err.ErrorContext.Error.Message);
+                    err.ErrorContext.Handled = true;
+                };
                 return serializer.Deserialize<Config>(jw);
             }
         }

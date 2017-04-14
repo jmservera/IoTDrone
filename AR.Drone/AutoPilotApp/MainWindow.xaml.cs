@@ -287,7 +287,7 @@ namespace AutoPilotApp
 
         private void analyze(System.Drawing.Bitmap bitmap)
         {
-            var squares= analyzer.Analyze(bitmap, currentConfig);
+            analyzer.Analyze(bitmap, currentConfig);
         }
 
         private void Original_MouseDown(object sender, MouseButtonEventArgs e)
@@ -409,7 +409,7 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
-                controlsWindow = new DroneControls(droneClient, analyzerOutput);
+                controlsWindow = new DroneControls(droneClient, analyzerOutput, config);
                 controlsWindow.Owner = this;
             }
             controlsWindow.Show();

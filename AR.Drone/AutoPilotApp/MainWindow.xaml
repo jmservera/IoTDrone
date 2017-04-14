@@ -104,7 +104,8 @@
                     </LinearGradientBrush>
                 </TextBlock.Background>
                     Object Detected: <Run Text="{Binding Detected}"/>
-                    Distance: <Run Text="{Binding Distance}"/>
+                    Area: <Run Text="{Binding Distance}"/>
+                    Size: <Run Text="{Binding Width}"/> x <Run Text="{Binding Height}"/>
                     Center: <Run Text="{Binding Center.X}"/>, <Run Text="{Binding Center.Y}"/>
                     FOV: <Run Text="{Binding FovSize.Width}"/>, <Run Text="{Binding FovSize.Height}"/>
                     Command: <Run Text="{Binding ResultingCommand}"/>
@@ -119,8 +120,9 @@
 
             <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
         </Grid>
-        <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="170">
+        <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="185">
             <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
                 <RowDefinition Height="15"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
@@ -136,8 +138,14 @@
                     <Setter Property="Maximum" Value="255"/>
                 </Style>
             </Grid.Resources>
-            <TextBlock Margin="10 0 0 0">Red</TextBlock>
-            <Grid Grid.Row="1" Margin="10" DataContext="{Binding RedConfig}">
+            <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
+                <TextBlock>Max Size:</TextBlock>
+                <TextBox Text="{Binding SpaceConfig.MaxSize}" Width="80"/>
+                <TextBlock>Rotating speed</TextBlock>
+                <TextBox Text="{Binding SpaceConfig.TurnSpeed}" Width="80"/>
+            </StackPanel>
+            <TextBlock Margin="10 0 0 0" Grid.Row="1">Red</TextBlock>
+            <Grid Grid.Row="2" Margin="10" DataContext="{Binding RedConfig}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -171,8 +179,8 @@
                     <Slider Name="RedHighV" Maximum="255" Value="{Binding HighV}" />
                 </StackPanel>
             </Grid>
-            <TextBlock Margin="10 0 0 0" Grid.Column="1">Green</TextBlock>
-            <Grid Grid.Row="1" Grid.Column="1" Margin="10" DataContext="{Binding GreenConfig}">
+            <TextBlock Margin="10 0 0 0" Grid.Row="1" Grid.Column="1">Green</TextBlock>
+            <Grid Grid.Row="2" Grid.Column="1" Margin="10" DataContext="{Binding GreenConfig}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>

@@ -46,11 +46,13 @@ namespace AutoPilotApp
         }
 
         AnalyzerOuput analyzerOutput;
+        Config config;
 
-        public DroneControls(DroneClient client, AnalyzerOuput output)
+        public DroneControls(DroneClient client, AnalyzerOuput output, Config configuration)
         {
             InitializeComponent();
             analyzerOutput = output;
+            config = configuration;
             droneClient = client;
             droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
             autopilot = new AR.Drone.Avionics.Autopilot(client);
@@ -166,7 +168,7 @@ namespace AutoPilotApp
             }
             else
             {
-                droneController = new Pilot.Controller(droneClient, analyzerOutput);
+                droneController = new Pilot.Controller(droneClient, analyzerOutput, config);
                 droneController.Start(Pilot.Missions.Objective);
             }
 

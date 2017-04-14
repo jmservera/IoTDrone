@@ -27,11 +27,13 @@ namespace AutoPilotApp.Pilot
 
         Autopilot autoPilot;
         AnalyzerOuput analyzer;
-        public Controller(DroneClient client, AnalyzerOuput output)
+        Config config;
+        public Controller(DroneClient client, AnalyzerOuput output, Config configuration)
         {
             analyzer = output;
             droneClient = client;
             autoPilot = new Autopilot(client);
+            config = configuration;
         }
 
         public void EmergencyStop()
@@ -108,6 +110,7 @@ namespace AutoPilotApp.Pilot
         {
             step = 0;
             Stopwatch sw1 = null;
+            bool pic = false;
 
             while (!token.IsCancellationRequested)
             {
@@ -124,9 +127,15 @@ namespace AutoPilotApp.Pilot
                                 if (sw1 == null)
                                 {
                                     sw1 = Stopwatch.StartNew();
+                                    Logger.Log("Objective Reached, Taking picture", LogLevel.Event);
                                 }
                                 if (sw1.ElapsedMilliseconds < 4000)
                                 {
+                                    if(sw1.ElapsedMilliseconds>2000 && !pic)
+                                    {
+                                        pic = true;
+                                        sendPicture();
+                                    }
                                     hover();
                                 }
                                 else
@@ -153,6 +162,11 @@ namespace AutoPilotApp.Pilot
                 }
                 Task.Delay(10).Wait();
             }
+        }
+
+        private void sendPicture()
+        {
+
         }
 
         private void hover()
@@ -192,24 +206,26 @@ namespace AutoPilotApp.Pilot
 
                     var diff = (analyzer.Distance / analyzer.FovSize.Width) * 7.5f;
 
+                    var roll = config.SpaceConfig.TurnSpeed * 2f / 3f;
+                    var yaw = config.SpaceConfig.TurnSpeed / 3f;
+
                     if (change > diff)
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, roll: -0.10f, yaw: -0.05f);
+                            droneClient.Progress(FlightMode.Progressive, roll: 0-roll, yaw: 0-yaw);
                         analyzer.ResultingCommand = $"right {change} {diff}";
                     }
                     else if  (change < (0-diff))
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, roll: 0.10f, yaw: 0.05f);
+                            droneClient.Progress(FlightMode.Progressive, roll: roll, yaw: yaw);
                         analyzer.ResultingCommand = $"left {change} {diff}";
                     }
                     else
                     {
-                        var d = analyzer.Distance / analyzer.FovSize.Width;
-                        if (analyzer.Distance > 0 && (analyzer.Distance/analyzer.FovSize.Width ) < 15)
+                        if (analyzer.Width < config.SpaceConfig.MaxSize && analyzer.Height < config.SpaceConfig.MaxSize)
                         {
-                            analyzer.ResultingCommand = $"pitch {change} {d}";
+                            analyzer.ResultingCommand = $"pitch {change}";
 
                             if (flight)
                                 droneClient.Progress(FlightMode.Progressive, pitch: -0.05f);

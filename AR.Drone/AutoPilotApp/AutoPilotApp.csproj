@@ -262,7 +262,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ObservableObject.cs" />
-    <Compile Include="Pilot\AimCoords.cs" />
+    <Compile Include="Models\SpaceConfig.cs" />
     <Compile Include="Pilot\Controller.cs" />
     <Compile Include="Pilot\Missions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
