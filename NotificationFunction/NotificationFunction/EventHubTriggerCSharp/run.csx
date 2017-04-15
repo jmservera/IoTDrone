@@ -46,10 +46,11 @@ public static async Task<HttpResponseMessage> Run(string myEventHubMessage, Trac
 static async Task send(string msg, TraceWriter log)
 {
     var c2dconn = GetEnvironmentVariable("iothubconnectionstring");
-    log.Info(c2dconn);
-    ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(c2dconn.Trim(), Microsoft.Azure.Devices.TransportType.Amqp);
-    await serviceClient.SendAsync("Drone", new Message(Encoding.UTF8.GetBytes(msg)));
-    log.Info($"Message sent to Drone: {msg}");
+    using (ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(c2dconn.Trim(), Microsoft.Azure.Devices.TransportType.Amqp))
+    {
+        await serviceClient.SendAsync("Drone", new Message(Encoding.UTF8.GetBytes(msg)));
+        log.Info($"Message sent to Drone: {msg}");
+    }
 }
 public static string GetEnvironmentVariable(string name)
 {
