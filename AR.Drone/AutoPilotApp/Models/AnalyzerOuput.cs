@@ -62,5 +62,8 @@ namespace AutoPilotApp.Models
                 Set(ref height, value);
             }
         }
+
+        public Navigation Navigation { get; private set; } = new Navigation();
+
     }
 }

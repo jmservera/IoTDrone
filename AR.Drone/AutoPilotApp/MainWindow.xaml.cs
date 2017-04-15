@@ -42,6 +42,7 @@ namespace AutoPilotApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        Pilot.Controller autoPilot;
         Config config;
         ColorConfig currentConfig
         {
@@ -97,7 +98,7 @@ namespace AutoPilotApp
             Logger.LogReceived += log;
 
             var configObj = Application.Current.Resources["Config"];
-            udpateConfig(configObj as Config);
+            updateConfig(configObj as Config);
 
             var bmpsObj = Application.Current.Resources["Bitmaps"];
             bitmaps = bmpsObj as Bitmaps;
@@ -126,6 +127,7 @@ namespace AutoPilotApp
 
             configDrone();
 
+            autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config);
             iotController = new IoTHubController(droneClient);
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
@@ -356,13 +358,13 @@ namespace AutoPilotApp
                     if (newConfig != null)
                     {
                         Application.Current.Resources["Config"] = newConfig;
-                        udpateConfig(newConfig);
+                        updateConfig(newConfig);
                     }
                 }
             }
         }
 
-        private void udpateConfig(Config newConfig)
+        private void updateConfig(Config newConfig)
         {
             if (config!=null)
             {
@@ -409,7 +411,7 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
-                controlsWindow = new DroneControls(droneClient, analyzerOutput, config);
+                controlsWindow = new DroneControls(droneClient, analyzerOutput, config, autoPilot);
                 controlsWindow.Owner = this;
             }
             controlsWindow.Show();

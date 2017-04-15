@@ -2,27 +2,20 @@
 {
     public class SpaceConfig:ObservableObject
     {
-        public SpaceConfig()
+        private int maxDistance=50;
+
+        public int MaxDistance
         {
+            get { return maxDistance; }
+            set { Set(ref maxDistance , value); }
         }
 
-        private int maxSize;
-
-        public int MaxSize
-        {
-            get { return maxSize; }
-            set { Set(ref maxSize , value); }
-        }
-
-        private float turnSpeed;
+        private float turnSpeed=0.15f;
 
         public float TurnSpeed
         {
             get { return turnSpeed; }
             set { Set(ref turnSpeed , value); }
         }
-
-
-
     }
 }

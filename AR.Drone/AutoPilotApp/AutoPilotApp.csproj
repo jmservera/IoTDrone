@@ -261,9 +261,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Navigation.cs" />
     <Compile Include="Models\ObservableObject.cs" />
     <Compile Include="Models\SpaceConfig.cs" />
     <Compile Include="Pilot\Controller.cs" />
+    <Compile Include="Pilot\ControllerCalculations.cs" />
     <Compile Include="Pilot\Missions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

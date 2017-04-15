@@ -93,14 +93,14 @@
                 </TextBlock.Background>
                     FPS: <Run Text="{Binding FPS}"/> C: <Run Text="{Binding Calculations}"/> I: <Run Text="{Binding ImageSet}"/>
             </TextBlock>
-            <TextBlock Grid.Column="1" 
+            <TextBlock Grid.Column="1" Foreground="Orange"
                            TextWrapping="WrapWithOverflow" VerticalAlignment="Bottom"
                            DataContext="{Binding Mode=OneWay, Source={StaticResource AnalyzerOuput}}">
                 <TextBlock.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop/>
-                        <GradientStop Color="#7FFFFFFF" Offset="1"/>
-                        <GradientStop Color="#3FFFFFFF" Offset="0.2"/>
+                        <GradientStop />
+                        <GradientStop Color="#A3000000" Offset="1"/>
+                        <GradientStop Color="#3F000000" Offset="0.2"/>
                     </LinearGradientBrush>
                 </TextBlock.Background>
                     Object Detected: <Run Text="{Binding Detected}"/>
@@ -119,6 +119,39 @@
                  IsReadOnly="True" Foreground="#FF00BE00" FontFamily="Consolas" BorderBrush="{x:Null}" Grid.Row="1" VerticalContentAlignment="Bottom"/>
 
             <Image Name="Third" Source="{Binding Final}" Grid.Row="1" Grid.Column="1"/>
+            <Viewbox Grid.Column="1" Grid.Row="1"  Margin="4"
+                     Stretch="Fill" Opacity="0.5">
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Symbol"/>
+                            <Setter Property="Foreground" Value="Green"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="1"/>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.DataContext>
+                        <Binding Mode="OneWay" Path="Navigation" Source="{StaticResource AnalyzerOuput}"/>
+                    </Grid.DataContext>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Tag="◄" Visibility="{Binding GoLeft, ConverterParameter=Hidden, Converter={StaticResource boolVisibilityConverter}, Mode=OneWay}" Grid.Row="1">Ü</TextBlock>
+                    <TextBlock Tag="►" Visibility="{Binding GoRight, ConverterParameter=Hidden, Converter={StaticResource boolVisibilityConverter}, Mode=OneWay}" Grid.Row="1" Grid.Column="2">Þ</TextBlock>
+                    <TextBlock Tag="▲" Visibility="{Binding TakeOff, ConverterParameter=Hidden, Converter={StaticResource boolVisibilityConverter}, Mode=OneWay}" Grid.Column="1">Ý</TextBlock>
+                    <TextBlock Tag="▼" Visibility="{Binding Land, ConverterParameter=Hidden, Converter={StaticResource boolVisibilityConverter}, Mode=OneWay}" Grid.Row="2" Grid.Column="1">ß</TextBlock>
+                    <TextBlock Tag="○" Visibility="{Binding GoAhead, ConverterParameter=Hidden, Converter={StaticResource boolVisibilityConverter}, Mode=OneWay}" Grid.Row="1" Grid.Column="1">Å</TextBlock>
+                </Grid>
+            </Viewbox>
         </Grid>
         <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="185">
             <Grid.RowDefinitions>
@@ -140,7 +173,7 @@
             </Grid.Resources>
             <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
                 <TextBlock>Max Size:</TextBlock>
-                <TextBox Text="{Binding SpaceConfig.MaxSize}" Width="80"/>
+                <TextBox Text="{Binding SpaceConfig.MaxDistance}" Width="80"/>
                 <TextBlock>Rotating speed</TextBlock>
                 <TextBox Text="{Binding SpaceConfig.TurnSpeed}" Width="80"/>
             </StackPanel>
