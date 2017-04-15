@@ -23,18 +23,19 @@ namespace AutoPilotApp.IoT
         {
             droneClient = client;
             droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
-            init();
+            cancelTokenSource = new CancellationTokenSource();
+            init(cancelTokenSource.Token);
         }
-        Twin twin;
+
         string deviceId;
 
         CancellationTokenSource cancelTokenSource;
 
-        async void init()
+        async void init(CancellationToken token)
         {
             try
             {
-                await Task.Run(async () =>
+                await Task.Run( () =>
                 {
                     var connString = ConfigurationManager.AppSettings["IoTDevice"];
                     Logger.LogInfo($"Connecting to IoT Hub {connString}");
@@ -42,14 +43,9 @@ namespace AutoPilotApp.IoT
                     deviceId = builder.DeviceId;
                     deviceClient = DeviceClient.CreateFromConnectionString(connString, TransportType.Mqtt);
                     deviceClient.RetryPolicy = RetryPolicyType.Exponential_Backoff_With_Jitter;
-                    cancelTokenSource = new CancellationTokenSource();
                     startMessageReceiver(cancelTokenSource.Token);
                     Logger.LogInfo($"Connected to IoT Hub");
-                    //twin = await deviceClient.GetTwinAsync();
-                    //Logger.LogInfo($"Twin received {twin.DeviceId}");
-                    //await deviceClient.OpenAsync();
-
-                });
+                },token);
             }
             catch (Exception ex)
             {
@@ -57,48 +53,57 @@ namespace AutoPilotApp.IoT
             }
         }
 
-        private void startMessageReceiver(CancellationToken token)
+        async void startMessageReceiver(CancellationToken token)
         {
-            Task.Run(async () =>
+            try
             {
-                while (!token.IsCancellationRequested)
+                await Task.Run(async () =>
                 {
-                    var message = await deviceClient.ReceiveAsync(TimeSpan.FromMilliseconds(1000));
-                    if (message != null)
+                    while (!token.IsCancellationRequested)
                     {
-                        try
+
+                        var message = await deviceClient.ReceiveAsync(TimeSpan.FromMilliseconds(1000));
+                        if (message != null)
                         {
-                            var str = Encoding.UTF8.GetString(message.GetBytes());
-                            dynamic obj = JsonConvert.DeserializeObject(str);
-                            if (obj.data != null)
+                            try
                             {
-                                var x = (DateTime)obj.timestamp;
-                                if (DateTime.UtcNow - x > TimeSpan.FromSeconds(60))
+                                var str = Encoding.UTF8.GetString(message.GetBytes());
+                                dynamic obj = JsonConvert.DeserializeObject(str);
+                                if (obj.data != null)
                                 {
-                                    Logger.LogError($"Old message received: {str}");
-                                }
-                                else
-                                {
-                                    var droneMsg = obj.data.ToString();
-                                    if (!string.IsNullOrEmpty(droneMsg) && droneMsg.ToUpper()=="DRONESTART")
+                                    var x = (DateTime)obj.timestamp;
+                                    if (DateTime.UtcNow - x > TimeSpan.FromSeconds(60))
                                     {
-                                        Logger.Log($"{x.ToLocalTime()} received: {droneMsg}", LogLevel.Event);
+                                        Logger.LogError($"Old message received: {str}");
+                                    }
+                                    else
+                                    {
+                                        var droneMsg = obj.data.ToString();
+                                        if (!string.IsNullOrEmpty(droneMsg) && droneMsg.ToUpper() == "DRONESTART")
+                                        {
+                                            Logger.Log($"{x.ToLocalTime()} received: {droneMsg}", LogLevel.Event);
+                                        }
                                     }
                                 }
                             }
+                            catch (Exception ex)
+                            {
+                                Logger.LogException(ex);
+                            }
+                            finally
+                            {
+                                await deviceClient.CompleteAsync(message);
+                            }
                         }
-                        catch(Exception ex)
-                        {
-                            Logger.LogException(ex);
-                        }
-                        finally
-                        {
-                            await deviceClient.CompleteAsync(message);
-                        }
+
+                        Thread.Sleep(10);
                     }
-                    Thread.Sleep(10);
-                }
-            }, token);
+                }, token);
+            }
+            catch (Exception oex)
+            {
+                Logger.LogException(oex);
+            }
         }
 
         DateTime last=DateTime.Now;
