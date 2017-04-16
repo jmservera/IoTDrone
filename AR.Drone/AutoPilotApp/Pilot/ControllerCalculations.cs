@@ -9,25 +9,30 @@ namespace AutoPilotApp.Pilot
 {
     public class ControllerCalculations
     {
-        Lagrange lagrangeDistance;
+        //Lagrange lagrangeDistance;
         Lagrange lagrangeDiff;
         Size screenSize;
+
+        double a, b;
+
         public ControllerCalculations(Size screenSize)
         {
             this.screenSize = screenSize;
-            lagrangeDistance = new Pilot.Lagrange(
-                new[] { 400d, 250d, 150d, 100d },
-                new[] { 50d, 100d, 200d, 300d });
+            //lagrangeDistance = new Pilot.Lagrange(
+            //    new[] x { 180d, 120d, 75d, 60d },
+            //    new[] y { 100d, 200d, 300d, 400d });
+            a = (300d - 100d) / (75d - 180d);
+            b = ((75d * 100d) - (180d * 300d)) / (75d - 180d); 
             lagrangeDiff = new Lagrange(
                 new[] { 50d, 100d, 200d, 300d },
-                new[] { 5d, 15d, 25d, 50d });
+                new[] { 20d, 30d, 50d, 90d });
         }
 
         public double GetDistance(Size modelObject)
         {
             var s = modelObject.Width > modelObject.Height ? modelObject.Width : modelObject.Height;
             var v =s==0?double.MaxValue:  (double) s* (480d / screenSize.Height);
-            return lagrangeDistance.InterpolateX(v);
+            return (a*v)+b;
         }
 
         public double GetDiff(double distance)

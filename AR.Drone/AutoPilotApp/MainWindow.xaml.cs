@@ -127,8 +127,8 @@ namespace AutoPilotApp
 
             configDrone();
 
-            autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config);
-            iotController = new IoTHubController(droneClient,analyzerOutput);
+            iotController = new IoTHubController(droneClient,analyzerOutput, bitmaps);
+            autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config, iotController);
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
         }

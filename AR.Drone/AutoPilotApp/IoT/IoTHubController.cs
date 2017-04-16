@@ -7,11 +7,14 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace AutoPilotApp.IoT
 {
@@ -20,9 +23,11 @@ namespace AutoPilotApp.IoT
         DeviceClient deviceClient;
         DroneClient droneClient;
         AnalyzerOutput analyzerOutput;
+        Bitmaps bitmaps;
 
-        public IoTHubController(DroneClient client, AnalyzerOutput output)
+        public IoTHubController(DroneClient client, AnalyzerOutput output, Bitmaps bitmaps)
         {
+            this.bitmaps = bitmaps;
             droneClient = client;
             this.analyzerOutput = output;
             droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
@@ -141,6 +146,21 @@ namespace AutoPilotApp.IoT
                     {
                         Logger.LogException(ex);
                     }
+                }
+            }
+        }
+
+        public async Task SendPictureAsync()
+        {
+            using (var bmp = (Bitmap) bitmaps.Bitmap.Clone())
+            {
+                var encoder = new JpegBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmaps.First));
+                using (var stream = new MemoryStream())
+                {
+                    encoder.Save(stream);
+                    stream.Position = 0;
+                    await deviceClient.UploadToBlobAsync("picture.jpg", stream);
                 }
             }
         }

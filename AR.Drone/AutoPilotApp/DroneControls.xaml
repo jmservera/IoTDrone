@@ -18,6 +18,9 @@
             <Button Name="Land" Click="Land_Click">Land</Button>
             <Button Name="Reset" Click="Reset_Click" FontWeight="Bold" Height="25">Reset</Button>
             <Button Name="Emergency" Click="Emergency_Click" Height="80" Background="Red" Foreground="White" FontWeight="Bold" FontSize="40">Emergency</Button>
+            <Button Name="Picture" Click="Picture_Click">Take Picture</Button>
+            <CheckBox IsChecked="{Binding DroneEnabled}">Drone Enabled
+                </CheckBox>
         </StackPanel>
     </Grid>
 </Window>

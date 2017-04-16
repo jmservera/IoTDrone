@@ -1,0 +1,12 @@
+﻿{
+  "bindings": [
+    {
+      "name": "myBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "pictures/{name}.jpg",
+      "connection": "iotdronestorage_STORAGE"
+    }
+  ],
+  "disabled": false
+}

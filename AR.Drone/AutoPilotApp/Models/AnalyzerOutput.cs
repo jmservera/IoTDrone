@@ -67,5 +67,8 @@ namespace AutoPilotApp.Models
 
         bool start;
         public bool Start { get { return start; } set { Set(ref start, value); } }
+
+        float change;
+        public float Change { get { return change; } set { Set(ref change, value); } }
     }
 }

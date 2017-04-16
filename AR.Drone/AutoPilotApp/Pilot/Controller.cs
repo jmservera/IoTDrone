@@ -4,6 +4,7 @@ using AR.Drone.Client;
 using AR.Drone.Client.Command;
 using AR.Drone.Data.Navigation;
 using AutoPilotApp.Common;
+using AutoPilotApp.IoT;
 using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
@@ -29,11 +30,13 @@ namespace AutoPilotApp.Pilot
         AnalyzerOutput analyzer;
         Config config;
         ControllerCalculations calculator;
-        public Controller(DroneClient client, AnalyzerOutput output, Config configuration)
+        IoTHubController hubController;
+        public Controller(DroneClient client, AnalyzerOutput output, Config configuration, IoTHubController hubController)
         {
             analyzer = output;
             analyzer.PropertyChanged += Analyzer_PropertyChanged;
             droneClient = client;
+            this.hubController = hubController;
             autoPilot = new Autopilot(client);
             config = configuration;
             calculator = new ControllerCalculations(output.FovSize);
@@ -42,12 +45,15 @@ namespace AutoPilotApp.Pilot
         bool started;
         private void Analyzer_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(AnalyzerOutput.Start))
+            if (enabled)
             {
-                if (!started)
+                if (e.PropertyName == nameof(AnalyzerOutput.Start))
                 {
-                    started = true;
-                    Start(Missions.Objective);
+                    if (!started)
+                    {
+                        started = true;
+                        Start(Missions.Objective);
+                    }
                 }
             }
         }
@@ -69,6 +75,7 @@ namespace AutoPilotApp.Pilot
                     loop.Wait(1000);
                     loop = null;
                 }
+                Active = false;
             }
             catch (Exception ex)
             {
@@ -103,7 +110,6 @@ namespace AutoPilotApp.Pilot
             RaisePropertyChanged(nameof(CurrentMission));
 
             startAutopilot();
-
         }
 
         CancellationTokenSource cancellationTokenSource;
@@ -122,67 +128,75 @@ namespace AutoPilotApp.Pilot
             }
         }
 
-        void Loop(CancellationToken token)
+        async Task Loop(CancellationToken token)
         {
+            Active = true;
             step = 0;
             Stopwatch sw1 = null;
             bool pic = false;
 
-            while (!token.IsCancellationRequested)
+            try
             {
-                switch (currentMission)
+                while (!token.IsCancellationRequested)
                 {
-                    case Missions.Objective:
-                    case Missions.Home:
-                        switch (step)
-                        {
-                            case 0:
-                                flyToObjective();
-                                break;
-                            case 1:
-                                if (sw1 == null)
-                                {
-                                    sw1 = Stopwatch.StartNew();
-                                    Logger.Log("Objective Reached, Taking picture", LogLevel.Event);
-                                }
-                                if (sw1.ElapsedMilliseconds < 4000)
-                                {
-                                    if(sw1.ElapsedMilliseconds>2000 && !pic)
+                    switch (currentMission)
+                    {
+                        case Missions.Objective:
+                        case Missions.Home:
+                            switch (step)
+                            {
+                                case 0:
+                                    flyToObjective();
+                                    break;
+                                case 1:
+                                    if (sw1 == null)
                                     {
-                                        pic = true;
-                                        sendPicture();
+                                        sw1 = Stopwatch.StartNew();
+                                        Logger.Log("Objective Reached, Taking picture", LogLevel.Event);
                                     }
-                                    hover();
-                                }
-                                else
-                                {
-                                    Logger.LogInfo("Step 2");
+                                    if (sw1.ElapsedMilliseconds < 4000)
+                                    {
+                                        if (sw1.ElapsedMilliseconds > 2000 && !pic)
+                                        {
+                                            pic = true;
+                                            await SendPicture();
+                                        }
+                                        hover();
+                                    }
+                                    else
+                                    {
+                                        Logger.LogInfo("Step 2");
 
-                                    step = 2;
-                                    droneClient.Land();
-                                    Stop();
-                                }
-                                break;
-                            default:
+                                        step = 2;
+                                        droneClient.Land();
+                                        Stop();
+                                    }
+                                    break;
+                                default:
+                                    hover();
+                                    break;
+                            }
+                            break;
+                        case Missions.AttendeesPicture:
+                        default:
+                            {
+                                CurrentCommand = "Hover";
                                 hover();
                                 break;
-                        }
-                        break;
-                    case Missions.AttendeesPicture:
-                    default:
-                        {
-                            CurrentCommand = "Hover";
-                            hover();
-                            break;
-                        }
+                            }
+                    }
+                    await Task.Delay(10);
                 }
-                Task.Delay(10).Wait();
+            }
+            finally
+            {
+                Active = false;
             }
         }
 
-        private void sendPicture()
+        public async Task SendPicture()
         {
-
+            await hubController.SendPictureAsync();
         }
 
         private void hover()
@@ -200,6 +214,17 @@ namespace AutoPilotApp.Pilot
 
         int step;
 
+        private bool enabled;
+
+        public bool Enabled
+        {
+            get { return enabled; }
+            set { Set(ref enabled , value); }
+        }
+
+        bool active;
+        public bool Active { get { return active; } set { Set(ref active, value); } }
+
         void flyToObjective()
         {
             bool flight = true;
@@ -216,13 +241,15 @@ namespace AutoPilotApp.Pilot
             }
             if (analyzer.Detected)
             {
-                if (droneClient.NavigationData.Altitude > 0.5 || !flight)
+                if (droneClient.NavigationData.Altitude > 0.6 || !flight)
                 {
                     var width = analyzer.FovSize.Width / 2f;
                     var change = width - analyzer.Center.X;
 
                     var distance = calculator.GetDistance(new System.Drawing.Size(analyzer.Width, analyzer.Height));
-                    var diff = calculator.GetDiff(distance);// (analyzer.Distance / analyzer.FovSize.Width) * 7.5f;
+                    analyzer.Distance = distance;
+                    analyzer.Change = change;
+                    var diff =  calculator.GetDiff(distance);// (analyzer.Distance / analyzer.FovSize.Width) * 7.5f;
 
                     var roll = config.SpaceConfig.TurnSpeed * 2f / 3f;
                     var yaw = config.SpaceConfig.TurnSpeed / 3f;
@@ -230,22 +257,20 @@ namespace AutoPilotApp.Pilot
                     if (change > diff)
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, roll: 0-roll, yaw: 0-yaw);
+                            droneClient.Progress(FlightMode.Progressive, roll: roll, yaw: 0 - yaw);
                         analyzer.ResultingCommand = $"right {change} {diff}";
                         analyzer.Navigation.SetMovement(Movements.Right);
-
                     }
                     else if  (change < (0-diff))
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, roll: roll, yaw: yaw);
+                            droneClient.Progress(FlightMode.Progressive, roll: 0-roll, yaw: yaw);
                         analyzer.ResultingCommand = $"left {change} {diff}";
                         analyzer.Navigation.SetMovement(Movements.Left);
-
                     }
                     else
                     {
-                        if (distance < config.SpaceConfig.MaxDistance)
+                        if (distance > config.SpaceConfig.MaxDistance)
                         {
                             analyzer.ResultingCommand = $"pitch {change}";
                             analyzer.Navigation.SetMovement(Movements.Ahead);

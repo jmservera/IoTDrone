@@ -152,6 +152,13 @@
                     <TextBlock Tag="○" Visibility="{Binding GoAhead, ConverterParameter=Hidden, Converter={StaticResource boolVisibilityConverter}, Mode=OneWay}" Grid.Row="1" Grid.Column="1">Å</TextBlock>
                 </Grid>
             </Viewbox>
+            <StackPanel Grid.Column="1" Grid.Row="1">
+                <StackPanel.DataContext>
+                    <Binding Mode="OneWay"  Source="{StaticResource AnalyzerOuput}"/>
+                </StackPanel.DataContext>
+                <TextBlock FontSize="50" Text="{Binding Distance  }"/>
+                <TextBlock FontSize="50" Text="{Binding Change}"/>
+            </StackPanel>
         </Grid>
         <Grid Name="colorsGrid" Grid.Row="2" DataContext="{DynamicResource Config}" Height="185">
             <Grid.RowDefinitions>

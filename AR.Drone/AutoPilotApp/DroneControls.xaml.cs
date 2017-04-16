@@ -2,6 +2,7 @@
 using AR.Drone.Avionics.Objectives.IntentObtainers;
 using AR.Drone.Client;
 using AR.Drone.Client.Command;
+using AutoPilotApp.IoT;
 using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
@@ -45,9 +46,15 @@ namespace AutoPilotApp
             set { Set(ref battery, value); }
         }
 
+        public bool DroneEnabled
+        {
+            get { return droneController?.Enabled ?? false; }
+            set { if (droneController != null) droneController.Enabled = value; }
+        }
+
+
         AnalyzerOutput analyzerOutput;
         Config config;
-
         public DroneControls(DroneClient client, AnalyzerOutput output, Config configuration, Pilot.Controller autopilot)
         {
             InitializeComponent();
@@ -138,15 +145,15 @@ namespace AutoPilotApp
                 return;
             if (droneController != null)
             {
-                droneController.Stop();
-                droneController = null;
+                if (droneController.Active)
+                {
+                    droneController.Stop();
+                }
+                else
+                {
+                    droneController.Start(Pilot.Missions.Objective);
+                }
             }
-            else
-            {
-                droneController = new Pilot.Controller(droneClient, analyzerOutput, config);
-                droneController.Start(Pilot.Missions.Objective);
-            }
-
         }
 
         private void Land_Click(object sender, RoutedEventArgs e)
@@ -179,6 +186,11 @@ namespace AutoPilotApp
         private void FlatTrim_Click(object sender, RoutedEventArgs e)
         {
             droneClient.FlatTrim();
+        }
+
+        private async void Picture_Click(object sender, RoutedEventArgs e)
+        {
+            await droneController.SendPicture();
         }
     }
 }

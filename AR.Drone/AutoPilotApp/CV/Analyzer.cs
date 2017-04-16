@@ -105,6 +105,8 @@ namespace AutoPilotApp.CV
                     }
                     CvInvoke.Circle(img, box.Item3,5,contourColor,2);
                 }
+                //Add Hour
+                CvInvoke.PutText(img, DateTime.Now.ToString(), new Point(15, 80), FontFace.HersheySimplex, 0.8, new Bgr(Color.LightYellow).MCvScalar);
 
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
@@ -122,7 +124,6 @@ namespace AutoPilotApp.CV
                     {
                         analyzerOutput.Detected = true;
                         analyzerOutput.Center = maxContour.Item3;
-                        analyzerOutput.Distance = maxContour.Item2;
                         analyzerOutput.Width = (int) maxContour.Item4.Size.Width;
                         analyzerOutput.Height = (int)maxContour.Item4.Size.Height;
                     }
