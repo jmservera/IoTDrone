@@ -61,7 +61,7 @@ namespace AutoPilotApp
 
         Bitmaps bitmaps;
         Analyzer analyzer;
-        AnalyzerOuput analyzerOutput;
+        AnalyzerOutput analyzerOutput;
         CognitiveData cognitiveData;
         CognitiveController cognitiveController;
         IoTHubController iotController;
@@ -104,7 +104,7 @@ namespace AutoPilotApp
             bitmaps = bmpsObj as Bitmaps;
 
             var analyzerOutObj = Application.Current.Resources["AnalyzerOuput"];
-            analyzerOutput = analyzerOutObj as AnalyzerOuput;
+            analyzerOutput = analyzerOutObj as AnalyzerOutput;
             var useGPUObj= ConfigurationManager.AppSettings["UseGPU"];
             bool useGPU = false;
             if (useGPUObj!=null)
@@ -128,7 +128,7 @@ namespace AutoPilotApp
             configDrone();
 
             autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config);
-            iotController = new IoTHubController(droneClient);
+            iotController = new IoTHubController(droneClient,analyzerOutput);
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
         }

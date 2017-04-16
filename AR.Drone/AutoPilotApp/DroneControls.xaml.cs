@@ -45,10 +45,10 @@ namespace AutoPilotApp
             set { Set(ref battery, value); }
         }
 
-        AnalyzerOuput analyzerOutput;
+        AnalyzerOutput analyzerOutput;
         Config config;
 
-        public DroneControls(DroneClient client, AnalyzerOuput output, Config configuration, Pilot.Controller autopilot)
+        public DroneControls(DroneClient client, AnalyzerOutput output, Config configuration, Pilot.Controller autopilot)
         {
             InitializeComponent();
             analyzerOutput = output;

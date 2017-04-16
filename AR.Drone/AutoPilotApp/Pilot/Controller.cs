@@ -26,16 +26,30 @@ namespace AutoPilotApp.Pilot
         }
 
         Autopilot autoPilot;
-        AnalyzerOuput analyzer;
+        AnalyzerOutput analyzer;
         Config config;
         ControllerCalculations calculator;
-        public Controller(DroneClient client, AnalyzerOuput output, Config configuration)
+        public Controller(DroneClient client, AnalyzerOutput output, Config configuration)
         {
             analyzer = output;
+            analyzer.PropertyChanged += Analyzer_PropertyChanged;
             droneClient = client;
             autoPilot = new Autopilot(client);
             config = configuration;
             calculator = new ControllerCalculations(output.FovSize);
+        }
+
+        bool started;
+        private void Analyzer_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(AnalyzerOutput.Start))
+            {
+                if (!started)
+                {
+                    started = true;
+                    Start(Missions.Objective);
+                }
+            }
         }
 
         public void EmergencyStop()
@@ -81,6 +95,7 @@ namespace AutoPilotApp.Pilot
 
         public void Start(Missions mission)
         {
+            Logger.Log($"Start mission {mission}", LogLevel.Event);
             stopAutopilot();
 
             currentMission = mission;

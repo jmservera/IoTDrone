@@ -16,10 +16,10 @@ namespace AutoPilotApp.CV
     {
         Bitmaps bitmaps;
         bool useGPU = true;
-        private AnalyzerOuput analyzerOutput;
+        private AnalyzerOutput analyzerOutput;
         private bool useGPU1;
 
-        public Analyzer(Bitmaps input, AnalyzerOuput output, bool useGPU=true)
+        public Analyzer(Bitmaps input, AnalyzerOutput output, bool useGPU=true)
         {
             analyzerOutput = output;
             bitmaps = input;

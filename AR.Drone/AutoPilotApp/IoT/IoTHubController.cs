@@ -1,5 +1,6 @@
 ﻿using AR.Drone.Client;
 using AutoPilotApp.Common;
+using AutoPilotApp.Models;
 using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
 using Newtonsoft.Json;
@@ -18,10 +19,12 @@ namespace AutoPilotApp.IoT
     {
         DeviceClient deviceClient;
         DroneClient droneClient;
+        AnalyzerOutput analyzerOutput;
 
-        public IoTHubController(DroneClient client)
+        public IoTHubController(DroneClient client, AnalyzerOutput output)
         {
             droneClient = client;
+            this.analyzerOutput = output;
             droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
             cancelTokenSource = new CancellationTokenSource();
             init(cancelTokenSource.Token);
@@ -81,6 +84,7 @@ namespace AutoPilotApp.IoT
                                         var droneMsg = obj.data.ToString();
                                         if (!string.IsNullOrEmpty(droneMsg) && droneMsg.ToUpper() == "DRONESTART")
                                         {
+                                            analyzerOutput.Start = true;
                                             Logger.Log($"{x.ToLocalTime()} received: {droneMsg}", LogLevel.Event);
                                         }
                                     }

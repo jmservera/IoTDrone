@@ -248,7 +248,7 @@
       <DependentUpon>DroneControls.xaml</DependentUpon>
     </Compile>
     <Compile Include="IoT\IoTHubController.cs" />
-    <Compile Include="Models\AnalyzerOuput.cs" />
+    <Compile Include="Models\AnalyzerOutput.cs" />
     <Compile Include="Models\Bitmaps.cs" />
     <Compile Include="Models\BitmapsBase.cs" />
     <Compile Include="Models\CognitiveData.cs" />
