@@ -156,7 +156,7 @@
                 <StackPanel.DataContext>
                     <Binding Mode="OneWay"  Source="{StaticResource AnalyzerOuput}"/>
                 </StackPanel.DataContext>
-                <TextBlock FontSize="50" Text="{Binding Distance  }"/>
+                <TextBlock FontSize="50" Text="{Binding Distance, StringFormat=N2}"/>
                 <TextBlock FontSize="50" Text="{Binding Change}"/>
             </StackPanel>
         </Grid>

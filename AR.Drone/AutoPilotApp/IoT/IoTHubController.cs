@@ -152,17 +152,25 @@ namespace AutoPilotApp.IoT
 
         public async Task SendPictureAsync()
         {
-            using (var bmp = (Bitmap) bitmaps.Bitmap.Clone())
+            await bitmaps.First.Dispatcher.InvokeAsync(async () =>
             {
-                var encoder = new JpegBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmaps.First));
-                using (var stream = new MemoryStream())
+                try
                 {
-                    encoder.Save(stream);
-                    stream.Position = 0;
-                    await deviceClient.UploadToBlobAsync("picture.jpg", stream);
+                    var encoder = new JpegBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmaps.First));
+                    using (var stream = new MemoryStream())
+                    {
+                        encoder.Save(stream);
+                        stream.Position = 0;
+                        await deviceClient.UploadToBlobAsync("picture.jpg", stream);
+                    }
+                    Logger.Log("Picture sent", LogLevel.Event);
                 }
-            }
+                catch(Exception ex)
+                {
+                    Logger.LogException(ex);
+                }
+            });
         }
     }
 }

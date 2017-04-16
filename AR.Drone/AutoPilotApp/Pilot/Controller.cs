@@ -39,7 +39,6 @@ namespace AutoPilotApp.Pilot
             this.hubController = hubController;
             autoPilot = new Autopilot(client);
             config = configuration;
-            calculator = new ControllerCalculations(output.FovSize);
         }
 
         bool started;
@@ -159,7 +158,7 @@ namespace AutoPilotApp.Pilot
                                         if (sw1.ElapsedMilliseconds > 2000 && !pic)
                                         {
                                             pic = true;
-                                            await SendPicture();
+                                            SendPicture();
                                         }
                                         hover();
                                     }
@@ -194,7 +193,7 @@ namespace AutoPilotApp.Pilot
             }
         }
 
-        public async Task SendPicture()
+        public async void SendPicture()
         {
             await hubController.SendPictureAsync();
         }
@@ -227,6 +226,10 @@ namespace AutoPilotApp.Pilot
 
         void flyToObjective()
         {
+            if (calculator == null)
+            {
+                calculator = new ControllerCalculations(analyzer.FovSize);
+            }
             bool flight = true;
             var state = droneClient.NavigationData.State;
             if (state.HasFlag(NavigationState.Emergency))
@@ -257,16 +260,16 @@ namespace AutoPilotApp.Pilot
                     if (change > diff)
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, roll: roll, yaw: 0 - yaw);
-                        analyzer.ResultingCommand = $"right {change} {diff}";
-                        analyzer.Navigation.SetMovement(Movements.Right);
+                            droneClient.Progress(FlightMode.Progressive, roll: 0 - roll, yaw: 0 - yaw);
+                        analyzer.ResultingCommand = $"left {change} {diff}";
+                        analyzer.Navigation.SetMovement(Movements.Left);
                     }
                     else if  (change < (0-diff))
                     {
                         if (flight)
-                            droneClient.Progress(FlightMode.Progressive, roll: 0-roll, yaw: yaw);
-                        analyzer.ResultingCommand = $"left {change} {diff}";
-                        analyzer.Navigation.SetMovement(Movements.Left);
+                            droneClient.Progress(FlightMode.Progressive, roll: roll, yaw: yaw);
+                        analyzer.ResultingCommand = $"right {change} {diff}";
+                        analyzer.Navigation.SetMovement(Movements.Right);
                     }
                     else
                     {

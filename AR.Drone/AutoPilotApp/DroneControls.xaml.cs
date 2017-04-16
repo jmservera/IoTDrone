@@ -188,9 +188,9 @@ namespace AutoPilotApp
             droneClient.FlatTrim();
         }
 
-        private async void Picture_Click(object sender, RoutedEventArgs e)
+        void Picture_Click(object sender, RoutedEventArgs e)
         {
-            await droneController.SendPicture();
+            droneController.SendPicture();
         }
     }
 }
