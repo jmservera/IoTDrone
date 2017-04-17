@@ -127,7 +127,7 @@ namespace AutoPilotApp.Pilot
             }
         }
 
-        async Task Loop(CancellationToken token)
+        void Loop(CancellationToken token)
         {
             Active = true;
             step = 0;
@@ -184,7 +184,7 @@ namespace AutoPilotApp.Pilot
                                 break;
                             }
                     }
-                    await Task.Delay(10);
+                    Task.Delay(10).Wait();
                 }
             }
             finally

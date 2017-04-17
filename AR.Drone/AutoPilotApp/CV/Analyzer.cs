@@ -106,7 +106,7 @@ namespace AutoPilotApp.CV
                     CvInvoke.Circle(img, box.Item3,5,contourColor,2);
                 }
                 //Add Hour
-                CvInvoke.PutText(img, DateTime.Now.ToString(), new Point(5, 30), FontFace.HersheySimplex, 0.8, new Bgr(Color.LightYellow).MCvScalar);
+                CvInvoke.PutText(img, DateTime.Now.ToString(), new Point(5, 30), FontFace.HersheySimplex, 0.8, new Bgr(Color.LightBlue).MCvScalar);
 
                 bitmaps.Calculations = sw.ElapsedMilliseconds;
                 sw.Restart();
