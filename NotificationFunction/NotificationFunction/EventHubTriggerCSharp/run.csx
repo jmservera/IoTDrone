@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using Microsoft.Azure.Devices;
 using System.Net;
 
@@ -48,7 +49,8 @@ static async Task send(string msg, TraceWriter log)
     var c2dconn = GetEnvironmentVariable("iothubconnectionstring");
     using (ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(c2dconn.Trim(), Microsoft.Azure.Devices.TransportType.Amqp))
     {
-        await serviceClient.SendAsync("Drone", new Message(Encoding.UTF8.GetBytes(msg)));
+        var message = new { data = "DroneStart", timestamp = DateTime.UtcNow };
+        await serviceClient.SendAsync("Drone", new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message))));
         log.Info($"Message sent to Drone: {msg}");
     }
 }

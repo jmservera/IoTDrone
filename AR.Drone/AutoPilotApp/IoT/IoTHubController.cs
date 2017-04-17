@@ -43,17 +43,17 @@ namespace AutoPilotApp.IoT
         {
             try
             {
-                await Task.Run( () =>
-                {
-                    var connString = ConfigurationManager.AppSettings["IoTDevice"];
-                    Logger.LogInfo($"Connecting to IoT Hub {connString}");
-                    var builder = IotHubConnectionStringBuilder.Create(connString);
-                    deviceId = builder.DeviceId;
-                    deviceClient = DeviceClient.CreateFromConnectionString(connString, TransportType.Mqtt);
-                    deviceClient.RetryPolicy = RetryPolicyType.Exponential_Backoff_With_Jitter;
-                    startMessageReceiver(cancelTokenSource.Token);
-                    Logger.LogInfo($"Connected to IoT Hub");
-                },token);
+                await Task.Run(() =>
+               {
+                   var connString = ConfigurationManager.AppSettings["IoTDevice"];
+                   Logger.LogInfo($"Connecting to IoT Hub {connString}");
+                   var builder = IotHubConnectionStringBuilder.Create(connString);
+                   deviceId = builder.DeviceId;
+                   deviceClient = DeviceClient.CreateFromConnectionString(connString, TransportType.Mqtt);
+                   deviceClient.RetryPolicy = RetryPolicyType.Exponential_Backoff_With_Jitter;
+                   startMessageReceiver(cancelTokenSource.Token);
+                   Logger.LogInfo($"Connected to IoT Hub");
+               }, token);
             }
             catch (Exception ex)
             {
@@ -117,7 +117,7 @@ namespace AutoPilotApp.IoT
             }
         }
 
-        DateTime last=DateTime.Now;
+        DateTime last = DateTime.Now;
         async void DroneClient_NavigationDataAcquired(AR.Drone.Data.Navigation.NavigationData obj)
         {
             if (deviceClient != null)
@@ -136,7 +136,7 @@ namespace AutoPilotApp.IoT
                             obj.Roll,
                             obj.Altitude,
                             State = obj.State.ToString(),
-                            Timestamp= DateTime.UtcNow
+                            Timestamp = DateTime.UtcNow
                         };
                         var infoString = JsonConvert.SerializeObject(info);
 
@@ -168,11 +168,21 @@ namespace AutoPilotApp.IoT
                     }
                     Logger.Log("Picture sent", LogLevel.Event);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger.LogException(ex);
                 }
             });
+
+            var message = JsonConvert.SerializeObject(new
+            {
+                path = "https://iotdronestorage.blob.core.windows.net/pictures/Drone/picture.jpg",
+                timestamp = DateTime.UtcNow
+            });
+
+            Message msg = new Message(Encoding.UTF8.GetBytes(message));
+            msg.Properties.Add("process", "defectq");
+            await deviceClient.SendEventAsync(msg);
         }
     }
 }
