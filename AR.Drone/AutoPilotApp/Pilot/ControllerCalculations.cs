@@ -9,23 +9,30 @@ namespace AutoPilotApp.Pilot
 {
     public class ControllerCalculations
     {
-        //Lagrange lagrangeDistance;
-        Lagrange lagrangeDiff;
         Size screenSize;
-
-        double a, b;
+        double a, b, a1, b1;
 
         public ControllerCalculations(Size screenSize)
         {
             this.screenSize = screenSize;
-            //lagrangeDistance = new Pilot.Lagrange(
-            //    new[] x { 180d, 120d, 75d, 60d },
-            //    new[] y { 100d, 200d, 300d, 400d });
-            a = (300d - 100d) / (75d - 180d);
-            b = ((75d * 100d) - (180d * 300d)) / (75d - 180d); 
-            lagrangeDiff = new Lagrange(
-                new[] { 50d, 100d, 200d, 300d },
-                new[] { 20d, 30d, 50d, 90d });
+            var x = new[] { 180d, 75d };
+            var y = new[] { 100d, 300d };
+            var m = calcLine(x, y);
+            a = m.Item1;
+            b = m.Item2;
+
+            var xd = new[] { 50d, 200d };
+            var yd = new[] { 20d, 50d };
+            var d=calcLine(xd, yd);
+            a1 = d.Item1;
+            b1 = d.Item2;
+        }
+
+        static Tuple<double,double> calcLine(double[] x, double[] y)
+        {
+            var a = (y[1] - y[0]) / (x[1] - x[0]);
+            var b = ((x[1] * y[0]) - (x[0] * y[1])) / (x[1] - x[0]);
+            return new Tuple<double, double>(a, b);
         }
 
         public double GetDistance(Size modelObject)
@@ -37,7 +44,7 @@ namespace AutoPilotApp.Pilot
 
         public double GetDiff(double distance)
         {
-            return lagrangeDiff.InterpolateX(distance);
+            return (a1 * distance) + b1;
         }
     }
 

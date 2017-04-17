@@ -254,8 +254,8 @@ namespace AutoPilotApp.Pilot
                     analyzer.Change = change;
                     var diff =  calculator.GetDiff(distance);// (analyzer.Distance / analyzer.FovSize.Width) * 7.5f;
 
-                    var roll = config.SpaceConfig.TurnSpeed * 2f / 3f;
-                    var yaw = config.SpaceConfig.TurnSpeed / 3f;
+                    var yaw = config.SpaceConfig.TurnSpeed * 2f / 3f;
+                    var roll = config.SpaceConfig.TurnSpeed / 3f;
 
                     if (change > diff)
                     {
