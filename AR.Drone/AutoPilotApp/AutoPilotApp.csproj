@@ -233,6 +233,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Cognitive\CognitiveController.cs" />
+    <Compile Include="Cognitive\IdentifiedPerson.cs" />
     <Compile Include="Common\Calc.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -325,7 +326,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config.user" />
+    <Content Include="config.user">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -8,11 +8,12 @@ using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.ProjectOxford.Face;
 using Microsoft.ProjectOxford.Face.Contract;
+using AutoPilotApp.Cognitive;
+using System.Diagnostics;
 
 namespace AutoPilotApp
 {
@@ -21,6 +22,10 @@ namespace AutoPilotApp
         Bitmaps input;
         CognitiveData output;
         Boolean callAPI = true;
+        IEnumerable<IdentifiedPerson> IdentifiedPersons { get; set; }
+        private static FaceServiceClient faceClient { get; set; }
+
+
         private static readonly VisualFeature[] VisualFeatures = { VisualFeature.Description, VisualFeature.Faces };
         public CognitiveController(Bitmaps input, CognitiveData output)
         {
@@ -32,7 +37,7 @@ namespace AutoPilotApp
                 var cogKey = ConfigurationManager.AppSettings["CognitiveKey"];
                 Logger.LogInfo($"Cognitive Key: {cogKey}");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogException(ex);
             }
@@ -56,6 +61,8 @@ namespace AutoPilotApp
                         {
                             foreach (var face in faces)
                             {
+                                // Here we check if the image is known
+                                //String name = checkKnownFace(bmp);
                                 var faceRec = face.FaceRectangle;
                                 var emotions = face.FaceAttributes.Emotion.ToRankedList();
                                 var emotion = emotions.OrderByDescending(f => f.Value).FirstOrDefault().Key;
@@ -79,6 +86,7 @@ namespace AutoPilotApp
         public async Task getEmotion()
         {
             callAPI = false;
+            await checkKnownFace();
             try
             {
                 FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
@@ -95,7 +103,7 @@ namespace AutoPilotApp
                         FaceAttributeType.Glasses,
                         FaceAttributeType.Emotion
                     };
-                    
+
                     var facesResult = await sc.DetectAsync(imageFileStream,
                         returnFaceLandmarks: true,
                         returnFaceAttributes: requiredFaceAttributes);
@@ -115,7 +123,7 @@ namespace AutoPilotApp
                             output.Square = rec;
 
                             var age = attributes.Age;
-                            output.Age = output.Age>0? (output.Age + age)/2:age;
+                            output.Age = output.Age > 0 ? (output.Age + age) / 2 : age;
 
                             var gender = attributes.Gender;
                             output.Gender = gender;
@@ -125,7 +133,7 @@ namespace AutoPilotApp
 
                             var smile = face.FaceAttributes.Smile;
                             output.Smiling = smile;
-                            
+
                         }
                     }
 
@@ -149,5 +157,32 @@ namespace AutoPilotApp
                 return stream.ToArray();
             }
         }
+
+        public async Task<String> checkKnownFace()
+        {
+
+            Person[] persons = await faceClient.GetPersonsAsync("Dani");
+            Debug.WriteLine("Nombre personas: " + persons[0].Name);
+            return persons[0].Name;
+            /*
+
+                        if (IdentifiedPersons.Any())
+                        {
+                            string names = IdentifiedPersons.Count() > 1 ? string.Join(", ", IdentifiedPersons.Select(p => p.Person.Name)) : IdentifiedPersons.First().Person.Name;
+                            return string.Format("Welcome back, {0}!", names);
+                        }
+                        else
+                        {
+                            return "";
+                        }
+                        return "";*/
+        }
+
+        /*public async Task IdentifyFacesAsync()
+        {
+            this.IdentifiedPersons = Enumerable.Empty<IdentifiedPerson>();
+            List<IdentifiedPerson> result = new List<IdentifiedPerson>();
+
+        }*/
     }
 }
