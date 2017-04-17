@@ -79,6 +79,8 @@ namespace AutoPilotApp.IoT
                                 dynamic obj = JsonConvert.DeserializeObject(str);
                                 if (obj.data != null)
                                 {
+                                    analyzerOutput.Start = false;
+
                                     var x = (DateTime)obj.timestamp;
                                     if (DateTime.UtcNow - x > TimeSpan.FromSeconds(60))
                                     {

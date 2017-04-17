@@ -46,7 +46,7 @@ namespace AutoPilotApp.Pilot
         {
             if (enabled)
             {
-                if (e.PropertyName == nameof(AnalyzerOutput.Start))
+                if (e.PropertyName == nameof(AnalyzerOutput.Start) && analyzer.Start)
                 {
                     if (!started)
                     {
