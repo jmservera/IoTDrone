@@ -20,8 +20,13 @@ namespace AutoPilotApp.Converters
             // For a more sophisticated converter, check also the targetType and react accordingly..
             if (value is bool)
             {
+                var vv = Visibility.Collapsed;
+                if (parameter != null)
+                {
+                    vv = Visibility.Hidden;
+                }
                 bool v = (bool)value;
-                return v?Visibility.Visible:Visibility.Collapsed;
+                return v?Visibility.Visible:vv;
             }
             // You can support here more source types if you wish
             // For the example I throw an exception

@@ -42,6 +42,7 @@ namespace AutoPilotApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        Pilot.Controller autoPilot;
         Config config;
         ColorConfig currentConfig
         {
@@ -60,7 +61,7 @@ namespace AutoPilotApp
 
         Bitmaps bitmaps;
         Analyzer analyzer;
-        AnalyzerOuput analyzerOutput;
+        AnalyzerOutput analyzerOutput;
         CognitiveData cognitiveData;
         CognitiveController cognitiveController;
         IoTHubController iotController;
@@ -97,13 +98,13 @@ namespace AutoPilotApp
             Logger.LogReceived += log;
 
             var configObj = Application.Current.Resources["Config"];
-            udpateConfig(configObj as Config);
+            updateConfig(configObj as Config);
 
             var bmpsObj = Application.Current.Resources["Bitmaps"];
             bitmaps = bmpsObj as Bitmaps;
 
             var analyzerOutObj = Application.Current.Resources["AnalyzerOuput"];
-            analyzerOutput = analyzerOutObj as AnalyzerOuput;
+            analyzerOutput = analyzerOutObj as AnalyzerOutput;
             var useGPUObj= ConfigurationManager.AppSettings["UseGPU"];
             bool useGPU = false;
             if (useGPUObj!=null)
@@ -126,7 +127,8 @@ namespace AutoPilotApp
 
             configDrone();
 
-            iotController = new IoTHubController(droneClient);
+            iotController = new IoTHubController(droneClient,analyzerOutput, bitmaps);
+            autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config, iotController);
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
         }
@@ -142,6 +144,10 @@ namespace AutoPilotApp
                     if (logger.Text.Length > 1500)
                     {
                         logger.Text.Substring(0, 1000);
+                    }
+                    if (eventArgs.Level == LogLevel.Event)
+                    {
+                        infoLog.Text = eventArgs.Message + Environment.NewLine + infoLog.Text;
                     }
                 });
             }
@@ -283,7 +289,7 @@ namespace AutoPilotApp
 
         private void analyze(System.Drawing.Bitmap bitmap)
         {
-            var squares= analyzer.Analyze(bitmap, currentConfig);
+            analyzer.Analyze(bitmap, currentConfig);
         }
 
         private void Original_MouseDown(object sender, MouseButtonEventArgs e)
@@ -352,13 +358,13 @@ namespace AutoPilotApp
                     if (newConfig != null)
                     {
                         Application.Current.Resources["Config"] = newConfig;
-                        udpateConfig(newConfig);
+                        updateConfig(newConfig);
                     }
                 }
             }
         }
 
-        private void udpateConfig(Config newConfig)
+        private void updateConfig(Config newConfig)
         {
             if (config!=null)
             {
@@ -405,10 +411,15 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
-                controlsWindow = new DroneControls(droneClient, analyzerOutput);
+                controlsWindow = new DroneControls(droneClient, analyzerOutput, config, autoPilot);
                 controlsWindow.Owner = this;
             }
             controlsWindow.Show();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            logger.Text = String.Empty;
         }
     }
 }

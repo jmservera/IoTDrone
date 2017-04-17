@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutoPilotApp.Models
 {
-    public class AnalyzerOuput : ObservableObject
+    public class AnalyzerOutput : ObservableObject
     {
         bool detected;
         public bool Detected
@@ -44,5 +44,31 @@ namespace AutoPilotApp.Models
             get { return command; }
             set { Set(ref command, value); }
         }
+
+        int width, height;
+        public int Width
+        {
+            get { return width; }
+            set
+            {
+                Set(ref width, value);
+            }
+        }
+        public int Height
+        {
+            get { return height; }
+            set
+            {
+                Set(ref height, value);
+            }
+        }
+
+        public Navigation Navigation { get; private set; } = new Navigation();
+
+        bool start;
+        public bool Start { get { return start; } set { Set(ref start, value); } }
+
+        float change;
+        public float Change { get { return change; } set { Set(ref change, value); } }
     }
 }
