@@ -86,7 +86,7 @@ namespace AutoPilotApp
         public async Task getEmotion()
         {
             callAPI = false;
-            await checkKnownFace();
+            //await checkKnownFace();
             try
             {
                 FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
