@@ -2,6 +2,7 @@
 using AR.Drone.Avionics.Objectives.IntentObtainers;
 using AR.Drone.Client;
 using AR.Drone.Client.Command;
+using AutoPilotApp.IoT;
 using AutoPilotApp.Models;
 using System;
 using System.Collections.Generic;
@@ -45,18 +46,23 @@ namespace AutoPilotApp
             set { Set(ref battery, value); }
         }
 
-        AnalyzerOuput analyzerOutput;
+        public bool DroneEnabled
+        {
+            get { return droneController?.Enabled ?? false; }
+            set { if (droneController != null) droneController.Enabled = value; }
+        }
 
-        public DroneControls(DroneClient client, AnalyzerOuput output)
+
+        AnalyzerOutput analyzerOutput;
+        Config config;
+        public DroneControls(DroneClient client, AnalyzerOutput output, Config configuration, Pilot.Controller autopilot)
         {
             InitializeComponent();
             analyzerOutput = output;
+            config = configuration;
             droneClient = client;
             droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
-            autopilot = new AR.Drone.Avionics.Autopilot(client);
-            autopilot.OnOutOfObjectives += Autopilot_OnOutOfObjectives;
-            autopilot.BindToClient();
-            autopilot.Start();
+            droneController = autopilot;
 
             this.KeyDown += DroneControls_KeyDown;
         }
@@ -93,7 +99,6 @@ namespace AutoPilotApp
                     break;
                 case Key.I:
                     droneClient.Takeoff();
-                    System.Diagnostics.Debug.WriteLine("Entro");
                     break;
                 case Key.O:
                     droneClient.Land();
@@ -105,14 +110,6 @@ namespace AutoPilotApp
 
         protected override void OnActivated(EventArgs e)
         {
-            if (autopilot == null)
-            {
-                autopilot = new AR.Drone.Avionics.Autopilot(droneClient);
-                autopilot.OnOutOfObjectives += Autopilot_OnOutOfObjectives;
-                autopilot.BindToClient();
-                autopilot.Start();
-            }
-
             base.OnActivated(e);
         }
 
@@ -122,13 +119,6 @@ namespace AutoPilotApp
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (autopilot != null)
-            {
-                autopilot.Stop();
-                autopilot.OnOutOfObjectives -= Autopilot_OnOutOfObjectives;
-                autopilot.UnbindFromClient();
-                autopilot = null;
-            }
             e.Cancel = true;
             Hide();
             base.OnClosing(e);
@@ -137,11 +127,6 @@ namespace AutoPilotApp
         protected override void OnDeactivated(EventArgs e)
         {
             base.OnDeactivated(e);
-        }
-
-        private void Autopilot_OnOutOfObjectives()
-        {
-            autopilot.Active = false;
         }
 
         private void DroneClient_NavigationDataAcquired(AR.Drone.Data.Navigation.NavigationData obj)
@@ -154,98 +139,58 @@ namespace AutoPilotApp
         {
             droneClient.Start();
         }
-        AR.Drone.Avionics.Autopilot autopilot;
         private void FlyToObjective_Click(object sender, RoutedEventArgs e)
         {
             if (!droneClient.IsActive)
                 return;
             if (droneController != null)
             {
-                droneController.Stop();
-                droneController = null;
+                if (droneController.Active)
+                {
+                    droneController.Stop();
+                }
+                else
+                {
+                    droneController.Start(Pilot.Missions.Objective);
+                }
             }
-            else
-            {
-                droneController = new Pilot.Controller(droneClient, analyzerOutput);
-                droneController.Start(Pilot.Missions.Objective);
-            }
-
         }
 
         private void Land_Click(object sender, RoutedEventArgs e)
         {
-            if (autopilot.Active)
+            if (droneController != null)
             {
-                autopilot.SetObjective(new Land(5000));
+                droneController.Stop();
             }
-            else
-            {
-                if (droneController != null)
-                {
-                    droneController.Stop();
-                }
-                droneClient.Land();
-            }
+            droneClient.Land();
         }
 
         private void Emergency_Click(object sender, RoutedEventArgs e)
         {
-            if (autopilot.Active)
+            if (droneController != null)
             {
-                autopilot.SetObjective(new Emergency());
+                droneController.Stop();
             }
-            else
-            {
-                if (droneController != null)
-                {
-                    droneController.Stop();
-                }
-                droneClient.Emergency();
-            }
+            droneClient.Emergency();
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            if (autopilot.Active)
+            if (droneController != null)
             {
-                autopilot.SetObjective(new EmergencyReset());
+                droneController.Stop();
             }
-            else
-            {
-                if (droneController != null)
-                {
-                    droneController.Stop();
-                }
-                droneClient.ResetEmergency();
-            }
-        }
-
-        private void FlyForward_Click(object sender, RoutedEventArgs e)
-        {
-            if (!droneClient.IsActive)
-                return;
-
-            autopilot.ClearObjectives();
-            autopilot.EnqueueObjective(new FlatTrim(1000));
-            autopilot.EnqueueObjective(new Takeoff(3500));
-
-            // One could use hover, but the method below, allows to gain/lose/maintain desired altitude
-            autopilot.EnqueueObjective(
-                Objective.Create(9500,
-                    new VelocityX(0.4f),
-                    new VelocityY(0.0f),
-                    new Altitude(1.0f)
-                )
-            );
-
-            autopilot.EnqueueObjective(new Land(5000));
-
-            autopilot.Active = true;
+            droneClient.ResetEmergency();
         }
 
         private void FlatTrim_Click(object sender, RoutedEventArgs e)
         {
             droneClient.FlatTrim();
+        }
+
+        void Picture_Click(object sender, RoutedEventArgs e)
+        {
+            droneController.SendPicture();
         }
     }
 }
