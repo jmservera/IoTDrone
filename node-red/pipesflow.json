@@ -1,0 +1,316 @@
+[
+    {
+        "id": "92301d1c.afe93",
+        "type": "ui_gauge",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel1",
+        "group": "1a167037.d731a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Pipe Level 1",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "50",
+        "seg2": "80",
+        "x": 630.7500228881836,
+        "y": 154.61719131469726,
+        "wires": []
+    },
+    {
+        "id": "688e5cdd.fc0924",
+        "type": "ui_slider",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel1",
+        "label": "",
+        "group": "1a167037.d731a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "0",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 419.74221420288086,
+        "y": 160.82032203674316,
+        "wires": [
+            [
+                "92301d1c.afe93",
+                "ef60f8c.a43c508"
+            ]
+        ]
+    },
+    {
+        "id": "ef6e1fe4.8bdab",
+        "type": "ui_gauge",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel2",
+        "group": "1a167037.d731a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Pipe Level 2",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "50",
+        "seg2": "80",
+        "x": 650.7422103881836,
+        "y": 296.60156631469726,
+        "wires": []
+    },
+    {
+        "id": "74777fad.440a9",
+        "type": "ui_slider",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel2",
+        "label": "",
+        "group": "1a167037.d731a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "1",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 407.5078353881836,
+        "y": 297.52344131469726,
+        "wires": [
+            [
+                "ef6e1fe4.8bdab",
+                "ef60f8c.a43c508"
+            ]
+        ]
+    },
+    {
+        "id": "64d862be.a1ceac",
+        "type": "ui_gauge",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel3",
+        "group": "10c524f6.b1989b",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Pipe Level 3",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "50",
+        "seg2": "80",
+        "x": 654.2343978881836,
+        "y": 431.52344131469726,
+        "wires": []
+    },
+    {
+        "id": "9d669750.058af8",
+        "type": "ui_slider",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel3",
+        "label": "",
+        "group": "10c524f6.b1989b",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "2",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 411.0000228881836,
+        "y": 432.44531631469726,
+        "wires": [
+            [
+                "64d862be.a1ceac",
+                "ef60f8c.a43c508"
+            ]
+        ]
+    },
+    {
+        "id": "c0ee31c9.b1e",
+        "type": "ui_gauge",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel4",
+        "group": "10c524f6.b1989b",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Pipe Level 4",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "50",
+        "seg2": "80",
+        "x": 648.5078353881836,
+        "y": 537.5234413146973,
+        "wires": []
+    },
+    {
+        "id": "3ac16fa0.a8f94",
+        "type": "ui_slider",
+        "z": "829f6bb4.84b628",
+        "name": "pipelevel4",
+        "label": "",
+        "group": "10c524f6.b1989b",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "3",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 405.2734603881836,
+        "y": 538.4453163146973,
+        "wires": [
+            [
+                "c0ee31c9.b1e",
+                "ef60f8c.a43c508"
+            ]
+        ]
+    },
+    {
+        "id": "11498c.0fca7675",
+        "type": "azureiothub",
+        "z": "829f6bb4.84b628",
+        "name": "Azure IoT Hub",
+        "protocol": "mqtt",
+        "x": 1327.0000381469726,
+        "y": 234.0000228881836,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ef60f8c.a43c508",
+        "type": "function",
+        "z": "829f6bb4.84b628",
+        "name": "create jobject",
+        "func": "var v=flow.get(\"values\");\nnode.error(JSON.stringify(context));\nif(v===undefined){\n    v=[];\n}\nvar name=\"pipe\"+msg.topic;\nv[msg.topic]={name : name, value: msg.payload};\nflow.set(\"values\",v);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 992.0003356933594,
+        "y": 380.0000419616699,
+        "wires": [
+            [
+                "15e0a8bd.72f8f7"
+            ]
+        ]
+    },
+    {
+        "id": "7eeca715.841978",
+        "type": "inject",
+        "z": "829f6bb4.84b628",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "x": 740.5000038146973,
+        "y": 76.00000190734863,
+        "wires": [
+            [
+                "8fd4a94f.afabe8"
+            ]
+        ]
+    },
+    {
+        "id": "15e0a8bd.72f8f7",
+        "type": "debug",
+        "z": "829f6bb4.84b628",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 1409.5000343322754,
+        "y": 403.0000114440918,
+        "wires": []
+    },
+    {
+        "id": "9ff1b84.b007e48",
+        "type": "json",
+        "z": "829f6bb4.84b628",
+        "name": "",
+        "x": 1156.5000305175781,
+        "y": 239.00000762939453,
+        "wires": [
+            [
+                "11498c.0fca7675",
+                "15e0a8bd.72f8f7"
+            ]
+        ]
+    },
+    {
+        "id": "8fd4a94f.afabe8",
+        "type": "function",
+        "z": "829f6bb4.84b628",
+        "name": "prepare jobject array",
+        "func": "var arr=flow.get(\"values\");\nif(arr!==undefined){\n    arr = arr.filter(function(n){ return n !== undefined }); \n}\nmsg.payload=arr;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 958.5000267028809,
+        "y": 189.0000057220459,
+        "wires": [
+            [
+                "9ff1b84.b007e48"
+            ]
+        ]
+    },
+    {
+        "id": "1a167037.d731a",
+        "type": "ui_group",
+        "z": "",
+        "name": "Entrance",
+        "tab": "ae5f15a8.3f3e78",
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "10c524f6.b1989b",
+        "type": "ui_group",
+        "z": "",
+        "name": "Main House",
+        "tab": "ae5f15a8.3f3e78",
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "ae5f15a8.3f3e78",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Building 42 - Pipe pressure",
+        "icon": "dashboard"
+    }
+]
