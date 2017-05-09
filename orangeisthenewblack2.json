@@ -1,1 +1,0 @@
-{"DroneIP":"192.168.2.1","RedConfig":{"LowH":1,"HighH":20,"LowS":176,"HighS":227,"LowV":206,"HighV":255},"GreenConfig":{"LowH":0,"HighH":179,"LowS":94,"HighS":134,"LowV":127,"HighV":255},"SpaceConfig":{"MaxDistance":80,"TurnSpeed":0.15}}
