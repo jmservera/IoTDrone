@@ -21,7 +21,7 @@ namespace AutoPilotApp
     {
         Bitmaps input;
         CognitiveData output;
-        Boolean callAPI = true;
+        Boolean callAPI = false;
         IEnumerable<IdentifiedPerson> IdentifiedPersons { get; set; }
         private static FaceServiceClient faceClient { get; set; }
 

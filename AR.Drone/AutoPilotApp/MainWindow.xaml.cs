@@ -66,9 +66,7 @@ namespace AutoPilotApp
         CognitiveController cognitiveController;
         IoTHubController iotController;
         DroneClient droneClient;
-
-
-        VideoPacketDecoderWorker _videoPacketDecoderWorker;
+        VideoPacketDecoderWorker videoPacketDecoderWorker;
 
         bool first = true;
         protected override void OnActivated(EventArgs e)
@@ -119,16 +117,7 @@ namespace AutoPilotApp
             cognitiveData = cogObj as CognitiveData;
             cognitiveController = new CognitiveController(bitmaps, cognitiveData);
 
-
-            this.DataContextChanged += (o, e) => {
-                System.Diagnostics.Debug.WriteLine(e.Property.Name);
-            };
             Closed += MainWindow_Closed;
-
-            configDrone();
-
-            iotController = new IoTHubController(droneClient,analyzerOutput, bitmaps);
-            autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config, iotController);
 
             frameTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, timerElapsed, this.Dispatcher);
         }
@@ -159,19 +148,23 @@ namespace AutoPilotApp
             if (droneClient != null)
             {
                 droneClient.VideoPacketAcquired -= OnVideoPacketAcquired;
-                droneClient.Dispose();
             }
+            droneClient?.Stop();
+            droneClient?.Dispose();
+            iotController = null;
+            autoPilot?.Stop();
+            autoPilot = null;
+            videoPacketDecoderWorker?.Stop();
+            videoPacketDecoderWorker?.Dispose();
+
             Logger.LogInfo($"Configuring Drone at {config.DroneIP}");
             droneClient = new DroneClient(config.DroneIP);
             droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
+            videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
+            videoPacketDecoderWorker.Start();
 
-            if (_videoPacketDecoderWorker != null)
-            {
-                _videoPacketDecoderWorker.Stop();
-                _videoPacketDecoderWorker.Dispose();
-            }
-            _videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
-            _videoPacketDecoderWorker.Start();
+            iotController = new IoTHubController(droneClient, analyzerOutput, bitmaps);
+            autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config, iotController);
         }
 
         void timerElapsed(object sender, EventArgs e)
@@ -191,8 +184,8 @@ namespace AutoPilotApp
 
         private void OnVideoPacketAcquired(VideoPacket packet)
         {
-            if (_videoPacketDecoderWorker.IsAlive)
-                _videoPacketDecoderWorker.EnqueuePacket(packet);
+            if (videoPacketDecoderWorker.IsAlive)
+                videoPacketDecoderWorker.EnqueuePacket(packet);
         }
 
         private async void MainWindow_Closed(object sender, EventArgs e)
@@ -206,10 +199,10 @@ namespace AutoPilotApp
                 droneClient.Stop();
                 droneClient.Dispose();
             }
-            if (_videoPacketDecoderWorker != null)
+            if (videoPacketDecoderWorker != null)
             {
-                _videoPacketDecoderWorker.Stop();
-                _videoPacketDecoderWorker.Dispose();
+                videoPacketDecoderWorker.Stop();
+                videoPacketDecoderWorker.Dispose();
             }
             await closeSource();
         }
@@ -381,12 +374,19 @@ namespace AutoPilotApp
         {
             if (e.PropertyName == nameof(Config.DroneIP))
             {
+                if (controlsWindow != null)
+                {
+                    controlsWindow.Close();
+                    controlsWindow = null;
+                }
                 configDrone();
             }
         }
 
         private void StreamButton_Click(object sender, RoutedEventArgs e)
         {
+            if (droneClient == null)
+                configDrone();
             droneClient.Start();
         }
 
@@ -411,6 +411,7 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
+                configDrone();
                 controlsWindow = new DroneControls(droneClient, analyzerOutput, config, autoPilot);
                 controlsWindow.Owner = this;
             }
