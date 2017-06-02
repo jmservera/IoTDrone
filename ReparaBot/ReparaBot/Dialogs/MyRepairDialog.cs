@@ -96,12 +96,12 @@ namespace ReparaBot.Dialogs
             {
                 Title = "Tubería rota",
                 Subtitle = "Microsoft Ibérica, Paseo del Club Deportivo, 1",
-                Text = "Localizada una tubería rota en el auditorio de la empresa",
+                Text = "Localizada una tubería rota!",
                 Images = new List<CardImage>()
                 {
                     new CardImage()
                     {
-                        Url = "http://2.bp.blogspot.com/-W7k65vjl6fI/UNR-2B0xuGI/AAAAAAAAKGQ/SXpq6EChzqE/s1600/pipes.jpg"
+                        Url = "https://dronedemoevents900b.blob.core.windows.net/pictures/drone001/picture.jpg"
                     }
                 }
             };
