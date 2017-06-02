@@ -57,17 +57,28 @@ namespace ReparaBot.Dialogs
             if (choice == true)
             {
                 await context.PostAsync("De acuerdo, aquí tienes una foto y detalles:");
-                CreateHeroCard(context);
-                await context.PostAsync("Aqui tienes una serie de incidencias relacionadas con su resolución:");
-                CreateHeroCardCarousel(context);
-                CreateMapHeroCard(context);
-                PromptDialog.Confirm(context, TerminatedIncidenceAsync, "¿Se ha resuelto la incidencia?");
+                await CreateHeroCard(context);
+                context.Wait(ShowIncidences);
             }
             else
             {
                 await context.PostAsync("De acuerdo");
                 ShowOptions(context);
             }
+        }
+
+        public async Task ShowIncidences(IDialogContext context, IAwaitable<object> result)
+        {
+            await context.PostAsync("Aquí tienes una serie de incidencias relacionadas con su resolución:");
+            await CreateHeroCardCarousel(context);
+            context.Wait(ShowMap);
+        }
+
+        public async Task ShowMap(IDialogContext context, IAwaitable<object> result)
+        {
+            await context.PostAsync("Aquí tienes la ruta hasta el destino:");
+            await CreateMapHeroCard(context);
+            PromptDialog.Confirm(context, TerminatedIncidenceAsync, "¿Se ha resuelto la incidencia?");
         }
 
         private async Task TerminatedIncidenceAsync(IDialogContext context, IAwaitable<bool> result)
@@ -86,7 +97,7 @@ namespace ReparaBot.Dialogs
             }
         }
 
-        public async void CreateHeroCard(IDialogContext context)
+        public async Task CreateHeroCard(IDialogContext context)
         {
 
             var reply = context.MakeMessage();
@@ -110,9 +121,8 @@ namespace ReparaBot.Dialogs
             await context.PostAsync(reply);
         }
 
-        public async void CreateHeroCardCarousel(IDialogContext context)
+        public async Task CreateHeroCardCarousel(IDialogContext context)
         {
-
             var reply = context.MakeMessage();
             reply.AttachmentLayout = "carousel";
             reply.Attachments = new List<Attachment>();
@@ -135,7 +145,7 @@ namespace ReparaBot.Dialogs
             {
                 Title = "Tubería rota",
                 Subtitle = "Fecha: 12/02/2017",
-                Text = "Se han unido los dos extremos de la tubería rota y se han unido con cinta aislante.",
+                Text = "Se han juntado los dos extremos de la tubería rota y se han unido con cinta aislante.",
                 Images = new List<CardImage>()
                 {
                     new CardImage()
@@ -162,15 +172,14 @@ namespace ReparaBot.Dialogs
             reply.Attachments.Add(hc1.ToAttachment());
             reply.Attachments.Add(hc2.ToAttachment());
             reply.Attachments.Add(hc3.ToAttachment());
+
             await context.PostAsync(reply);
         }
 
-        public async void CreateMapHeroCard(IDialogContext context)
+        public async Task CreateMapHeroCard(IDialogContext context)
         {
-
             var reply = context.MakeMessage();
             reply.Attachments = new List<Attachment>();
-
             List<CardAction> cardButtons = new List<CardAction>();
 
             CardAction plButton = new CardAction()
@@ -195,7 +204,6 @@ namespace ReparaBot.Dialogs
 
             reply.Attachments.Add(hc.ToAttachment());
             await context.PostAsync(reply);
-
         }
     }
 
