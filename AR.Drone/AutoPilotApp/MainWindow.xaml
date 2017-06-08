@@ -83,7 +83,7 @@
             </Grid>
             <Image Name="First" Source="{Binding First}" Grid.Column="1" MouseDown="Original_MouseDown"/>
             <TextBlock Grid.Column="1"
-                           VerticalAlignment="Top">
+                           VerticalAlignment="Top" HorizontalAlignment="Right">
                 <TextBlock.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Offset="1"/>
