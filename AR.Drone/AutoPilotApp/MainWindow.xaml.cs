@@ -34,6 +34,7 @@ using AutoPilotApp.CV;
 using AutoPilotApp.IoT;
 using AutoPilotApp.Common;
 using System.Configuration;
+using AR.Drone.Client.Configuration;
 
 namespace AutoPilotApp
 {
@@ -82,7 +83,7 @@ namespace AutoPilotApp
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (controlsWindow!=null)
+            if (controlsWindow != null)
             {
                 controlsWindow.Close();
             }
@@ -103,9 +104,9 @@ namespace AutoPilotApp
 
             var analyzerOutObj = Application.Current.Resources["AnalyzerOuput"];
             analyzerOutput = analyzerOutObj as AnalyzerOutput;
-            var useGPUObj= ConfigurationManager.AppSettings["UseGPU"];
+            var useGPUObj = ConfigurationManager.AppSettings["UseGPU"];
             bool useGPU = false;
-            if (useGPUObj!=null)
+            if (useGPUObj != null)
             {
                 bool.TryParse(useGPUObj.ToString(), out useGPU);
             }
@@ -127,27 +128,31 @@ namespace AutoPilotApp
             //if (eventArgs.Level != LogLevel.Info)
             {
                 var dt = DateTime.Now;
-                await logger.Dispatcher.InvokeAsync( () =>
-                {
-                    logger.Text = dt.ToLongTimeString() +" "+ eventArgs.Message + Environment.NewLine + logger.Text;
-                    if (logger.Text.Length > 1500)
-                    {
-                        logger.Text.Substring(0, 1000);
-                    }
-                    if (eventArgs.Level == LogLevel.Event)
-                    {
-                        infoLog.Text = eventArgs.Message + Environment.NewLine + infoLog.Text;
-                    }
-                });
+                await logger.Dispatcher.InvokeAsync(() =>
+               {
+                   logger.Text = dt.ToLongTimeString() + " " + eventArgs.Message + Environment.NewLine + logger.Text;
+                   if (logger.Text.Length > 1500)
+                   {
+                       logger.Text.Substring(0, 1000);
+                   }
+                   if (eventArgs.Level == LogLevel.Event)
+                   {
+                       infoLog.Text = eventArgs.Message + Environment.NewLine + infoLog.Text;
+                   }
+               });
             }
         }
 
 
-        void configDrone()
+        async void configDrone()
         {
             if (droneClient != null)
             {
                 droneClient.VideoPacketAcquired -= OnVideoPacketAcquired;
+            }
+            if (videoPacketDecoderWorker != null)
+            {
+                videoPacketDecoderWorker.UnhandledException -= VideoPacketDecoderWorker_UnhandledException;
             }
             droneClient?.Stop();
             droneClient?.Dispose();
@@ -159,13 +164,112 @@ namespace AutoPilotApp
 
             Logger.LogInfo($"Configuring Drone at {config.DroneIP}");
             droneClient = new DroneClient(config.DroneIP);
+            _settings = new Settings();
+
+            var configTask = droneClient.GetConfigurationTask();
+            configTask.Start();
+            _settings = await configTask;
+
+            await setOutDoor();
+
+            await setVideo();
+
+            configTask = droneClient.GetConfigurationTask();
+            configTask.Start();
+            _settings = await configTask;
+
             droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
             videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
+            videoPacketDecoderWorker.UnhandledException += VideoPacketDecoderWorker_UnhandledException;
             videoPacketDecoderWorker.Start();
 
             iotController = new IoTHubController(droneClient, analyzerOutput, bitmaps);
             autoPilot = new Pilot.Controller(droneClient, analyzerOutput, config, iotController);
         }
+
+        private void VideoPacketDecoderWorker_UnhandledException(object arg1, Exception arg2)
+        {
+            System.Diagnostics.Trace.TraceError(arg2.Message);
+        }
+
+        async Task setOutDoor()
+        {
+            _settings.Control.Outdoor = false;
+            _settings.Control.FlightWithoutShell = false;
+            _settings.Control.AltitudeMax = 3000;
+            await sendConfig();
+        }
+
+        async Task setVideo()
+        {
+            _settings.Video.BitrateCtrlMode = VideoBitrateControlMode.Manual;
+            _settings.Video.Bitrate = 15000;
+            _settings.Video.MaxBitrate = 20000;
+            _settings.Video.OnUsb = false;
+            _settings.General.Video = true;
+            // usage of MP4_360P_H264_720P codec is a requirement for video recording to usb
+            _settings.Video.Codec = VideoCodecType.H264_720P;
+
+            await sendConfig();
+        }
+
+        Settings _settings;
+
+        private Task sendConfig()
+        {
+            return Task.Run(() =>
+            {
+                if (_settings == null) _settings = new Settings();
+                Settings settings = _settings;
+
+                if (string.IsNullOrEmpty(settings.Custom.SessionId) ||
+                    settings.Custom.SessionId == "00000000")
+                {
+                    // set new session, application and profile
+                    droneClient.AckControlAndWaitForConfirmation(); // wait for the control confirmation
+
+                    settings.Custom.SessionId = Settings.NewId();
+                    droneClient.Send(settings);
+
+                    droneClient.AckControlAndWaitForConfirmation();
+
+                    settings.Custom.ProfileId = Settings.NewId();
+                    droneClient.Send(settings);
+
+                    droneClient.AckControlAndWaitForConfirmation();
+
+                    settings.Custom.ApplicationId = Settings.NewId();
+                    droneClient.Send(settings);
+
+                    droneClient.AckControlAndWaitForConfirmation();
+                }
+
+                settings.General.NavdataDemo = false;
+                settings.General.NavdataOptions = NavdataOptions.All;
+
+
+                // usage of MP4_360P_H264_720P codec is a requirement for video recording to usb
+                //_settings.Video.Codec = VideoCodecType.H264_720P;
+
+                //settings.Leds.LedAnimation = new LedAnimation(LedAnimationType.BlinkGreenRed, 2.0f, 2);
+                //settings.Control.FlightAnimation = new FlightAnimation(FlightAnimationType.Wave);
+
+                // record video to usb
+                //settings.Video.OnUsb = true;
+                // usage of MP4_360P_H264_720P codec is a requirement for video recording to usb
+                //settings.Video.Codec = VideoCodecType.MP4_360P_H264_720P;
+                // start
+                //settings.Userbox.Command = new UserboxCommand(UserboxCommandType.Start);
+                // stop
+                //settings.Userbox.Command = new UserboxCommand(UserboxCommandType.Stop);
+
+
+                //send all changes in one pice
+                droneClient.Send(settings);
+            });
+        }
+
+
 
         void timerElapsed(object sender, EventArgs e)
         {
@@ -359,7 +463,7 @@ namespace AutoPilotApp
 
         private void updateConfig(Config newConfig)
         {
-            if (config!=null)
+            if (config != null)
             {
                 config.PropertyChanged -= configChanged;
             }
@@ -393,7 +497,7 @@ namespace AutoPilotApp
         private void collapseColors_Click(object sender, RoutedEventArgs e)
         {
             // ▼
-            if((string)collapseColors.Content== "▼")
+            if ((string)collapseColors.Content == "▼")
             {
                 collapseColors.Content = "▲";
                 colorsGrid.Visibility = Visibility.Collapsed;

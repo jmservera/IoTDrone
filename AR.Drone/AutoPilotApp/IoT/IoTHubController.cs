@@ -176,7 +176,7 @@ namespace AutoPilotApp.IoT
 
             var message = JsonConvert.SerializeObject(new
             {
-                path = "https://iotdronestorage.blob.core.windows.net/pictures/Drone/picture.jpg",
+                path = "https://dronedemoevents900b.blob.core.windows.net/pictures/drone001/picture.jpg",
                 timestamp = DateTime.UtcNow
             });
 
