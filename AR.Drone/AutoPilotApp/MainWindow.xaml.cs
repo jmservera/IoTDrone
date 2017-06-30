@@ -35,6 +35,7 @@ using AutoPilotApp.IoT;
 using AutoPilotApp.Common;
 using System.Configuration;
 using AR.Drone.Client.Configuration;
+using System.Diagnostics;
 
 namespace AutoPilotApp
 {
@@ -165,18 +166,32 @@ namespace AutoPilotApp
             Logger.LogInfo($"Configuring Drone at {config.DroneIP}");
             droneClient = new DroneClient(config.DroneIP);
             _settings = new Settings();
-
             var configTask = droneClient.GetConfigurationTask();
             configTask.Start();
-            _settings = await configTask;
-
+            try
+            {
+                _settings = await configTask;
+            }
+            catch (TimeoutException ex)
+            {
+                Logger.LogException(ex);
+            }
             await setOutDoor();
 
             await setVideo();
 
             configTask = droneClient.GetConfigurationTask();
             configTask.Start();
-            _settings = await configTask;
+            try
+            {
+                _settings = await configTask;
+            }
+            catch(Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+            var value = JsonConvert.SerializeObject(_settings);
+            Trace.WriteLine("Settings: {0}",value);
 
             droneClient.VideoPacketAcquired += OnVideoPacketAcquired;
             videoPacketDecoderWorker = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnVideoPacketDecoded);
@@ -202,13 +217,13 @@ namespace AutoPilotApp
 
         async Task setVideo()
         {
-            _settings.Video.BitrateCtrlMode = VideoBitrateControlMode.Manual;
+            _settings.Video.BitrateCtrlMode = VideoBitrateControlMode.Dynamic;
             _settings.Video.Bitrate = 15000;
             _settings.Video.MaxBitrate = 20000;
             _settings.Video.OnUsb = false;
             _settings.General.Video = true;
             // usage of MP4_360P_H264_720P codec is a requirement for video recording to usb
-            _settings.Video.Codec = VideoCodecType.H264_720P;
+            _settings.Video.Codec = VideoCodecType.H264_360P;
 
             await sendConfig();
         }
@@ -266,6 +281,7 @@ namespace AutoPilotApp
 
                 //send all changes in one pice
                 droneClient.Send(settings);
+                droneClient.AckControlAndWaitForConfirmation();
             });
         }
 
@@ -352,6 +368,9 @@ namespace AutoPilotApp
 
                 //Start recording
                 videoSource.Start();
+
+                iotController = new IoTHubController(droneClient, analyzerOutput, bitmaps);
+
             }
         }
 
@@ -515,7 +534,10 @@ namespace AutoPilotApp
         {
             if (controlsWindow == null)
             {
-                configDrone();
+                if (droneClient == null)
+                {
+                    configDrone();
+                }
                 controlsWindow = new DroneControls(droneClient, analyzerOutput, config, autoPilot);
                 controlsWindow.Owner = this;
             }

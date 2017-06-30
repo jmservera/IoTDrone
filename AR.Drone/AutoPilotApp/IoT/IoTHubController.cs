@@ -30,7 +30,10 @@ namespace AutoPilotApp.IoT
             this.bitmaps = bitmaps;
             droneClient = client;
             this.analyzerOutput = output;
-            droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
+            if (droneClient!=null)
+            {
+                droneClient.NavigationDataAcquired += DroneClient_NavigationDataAcquired;
+            }
             cancelTokenSource = new CancellationTokenSource();
             init(cancelTokenSource.Token);
         }
