@@ -83,7 +83,6 @@ namespace AutoPilotApp
         public async Task getEmotion()
         {
             callAPI = false;
-            await checkKnownFace();
             try
             {
                 using (FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"])) {
@@ -100,8 +99,8 @@ namespace AutoPilotApp
                         FaceAttributeType.Glasses,
                         FaceAttributeType.Emotion
                     };
-                        Debug.WriteLine("Entro a AddFaces");
-                        await AddFaces(sc);
+                        //Debug.WriteLine("Entro a AddFaces");
+                        //await AddFaces(sc);
                         var facesResult = await sc.DetectAsync(imageFileStream,
                             returnFaceLandmarks: true,
                             returnFaceAttributes: requiredFaceAttributes);
