@@ -1,1 +1,312 @@
-[{"id":"6e7ce700.a06b4c","type":"tab","label":"Flow 1"},{"id":"63016c6d.9814e8","type":"azureiothub","z":"6e7ce700.a06b4c","name":"Azure IoT Hub","protocol":"amqp","x":873.0999755859375,"y":615.0299682617187,"wires":[["3116c2de.d1469a"]]},{"id":"f9ef4283.7a72d","type":"ui_slider","z":"6e7ce700.a06b4c","name":"level1","label":"Level1","group":"352e873a.eb908c","order":2,"width":0,"height":0,"passthru":false,"topic":"level1","min":0,"max":"100","step":1,"x":166.0999755859375,"y":130.4585886001587,"wires":[["7628c9a1.890548","42dbb8e.2250448"]]},{"id":"9bd3a2c1.ab19f8","type":"inject","z":"6e7ce700.a06b4c","name":"","topic":"","payload":"","payloadType":"date","repeat":"2","crontab":"","once":false,"x":289.02833557128906,"y":521.8871955871582,"wires":[["baeb839a.b9749"]]},{"id":"a306ea83.17af1","type":"debug","z":"6e7ce700.a06b4c","name":"","active":true,"console":"false","complete":"false","x":989.099796295166,"y":187.31564617156982,"wires":[]},{"id":"baeb839a.b9749","type":"function","z":"6e7ce700.a06b4c","name":"","func":"var level1 = global.get('level1');\nvar level2 = global.get('level2');\nvar level3 = global.get('level3');\nvar level4 = global.get('level4');\nvar time = new Date();\n//msg.payload = {\"DeviceId\":\"Pipe\", \"level\": level, \"timestamp\" : time, }\n//return msg;\n\nvar msg1 = {payload:{\"DeviceId\":\"Pipe01\", \"level\": level1, \"timestamp\" : time, \"lat\": 40.418274, \"lon\" : -3.797990}};\nvar msg2 = {payload:{\"DeviceId\":\"Pipe02\", \"level\": level2, \"timestamp\" : time, \"lat\": 40.418523, \"lon\" : -3.804565}};\nvar msg3 = {payload:{\"DeviceId\":\"Pipe03\", \"level\": level3, \"timestamp\" : time, \"lat\": 40.419131, \"lon\" : -3.792798}};\nvar msg4 = {payload:{\"DeviceId\":\"Pipe04\", \"level\": level4, \"timestamp\" : time, \"lat\": 40.410599, \"lon\" : -3.798039}};\n\n\nmsg.payload=[msg1, msg2, msg3, msg4 ];\nreturn msg;","outputs":"1","noerr":0,"x":530.0999069213867,"y":523.4586420059204,"wires":[["f9a3f776.d17498"]]},{"id":"f9a3f776.d17498","type":"json","z":"6e7ce700.a06b4c","name":"","x":704.0998001098633,"y":517.315806388855,"wires":[["63016c6d.9814e8","3116c2de.d1469a"]]},{"id":"a1ea9c48.7fb8a","type":"ui_slider","z":"6e7ce700.a06b4c","name":"level2","label":"Level2","group":"352e873a.eb908c","order":4,"width":0,"height":0,"passthru":true,"topic":"level2","min":0,"max":"100","step":1,"x":150.09981155395508,"y":177.0299367904663,"wires":[["6f24008d.a33b3","42dbb8e.2250448"]]},{"id":"b696466b.7a5478","type":"ui_slider","z":"6e7ce700.a06b4c","name":"level3","label":"Level3","group":"865fe194.7a7b6","order":2,"width":0,"height":0,"passthru":true,"topic":"level3","min":0,"max":"100","step":1,"x":173.45687103271484,"y":238.74419975280762,"wires":[["93705568.037fb","42dbb8e.2250448"]]},{"id":"6f24008d.a33b3","type":"ui_gauge","z":"6e7ce700.a06b4c","name":"gauge2","group":"352e873a.eb908c","order":3,"width":0,"height":0,"gtype":"wave","title":"","label":"%","format":"{{value}}","min":0,"max":"100","colors":["#00b500","#e6e600","#ca3838"],"seg1":"","seg2":"","x":353.0997619628906,"y":155.02996730804443,"wires":[]},{"id":"93705568.037fb","type":"ui_gauge","z":"6e7ce700.a06b4c","name":"gauge3","group":"865fe194.7a7b6","order":1,"width":0,"height":0,"gtype":"wave","title":"","label":"%","format":"{{value}}","min":0,"max":"100","colors":["#00b500","#e6e600","#ca3838"],"seg1":"","seg2":"","x":351.4568634033203,"y":254.7442865371704,"wires":[]},{"id":"b28180be.d2ed3","type":"ui_slider","z":"6e7ce700.a06b4c","name":"level4","label":"Level4","group":"865fe194.7a7b6","order":4,"width":0,"height":0,"passthru":false,"topic":"level4","min":0,"max":"100","step":1,"x":183.0283088684082,"y":320.7442274093628,"wires":[["42dbb8e.2250448","12f91742.390759"]]},{"id":"42dbb8e.2250448","type":"function","z":"6e7ce700.a06b4c","name":"","func":"global.set(msg.topic,msg.payload);\nreturn msg;","outputs":1,"noerr":0,"x":582.4568786621094,"y":196.7441873550415,"wires":[["a0a0a8ff.4f8908"]]},{"id":"12f91742.390759","type":"ui_gauge","z":"6e7ce700.a06b4c","name":"gauge4","group":"865fe194.7a7b6","order":3,"width":0,"height":0,"gtype":"wave","title":"","label":"%","format":"{{value}}","min":0,"max":"100","colors":["#00b500","#e6e600","#ca3838"],"seg1":"","seg2":"","x":367.4569282531738,"y":387.74431228637695,"wires":[]},{"id":"7628c9a1.890548","type":"ui_gauge","z":"6e7ce700.a06b4c","name":"gauge1","group":"352e873a.eb908c","order":1,"width":0,"height":0,"gtype":"wave","title":"","label":"%","format":"{{value}}","min":0,"max":"100","colors":["#00b500","#e6e600","#ca3838"],"seg1":"","seg2":"","x":357.45687103271484,"y":94.74427795410156,"wires":[]},{"id":"3116c2de.d1469a","type":"debug","z":"6e7ce700.a06b4c","name":"","active":false,"console":"false","complete":"false","x":998.861701965332,"y":447.9823303222656,"wires":[]},{"id":"a0a0a8ff.4f8908","type":"switch","z":"6e7ce700.a06b4c","name":"","property":"payload","propertyType":"msg","rules":[{"t":"gt","v":"80","vt":"str"},{"t":"else"}],"checkall":"true","outputs":2,"x":725.1950073242187,"y":269.31563663482666,"wires":[["5aae3ddb.dfb2a"],[]]},{"id":"5aae3ddb.dfb2a","type":"function","z":"6e7ce700.a06b4c","name":"","func":"msg.payload={data:'DroneStart'};\nreturn msg;","outputs":1,"noerr":0,"x":885.1949920654297,"y":281.31562519073486,"wires":[["f9a3f776.d17498","a306ea83.17af1"]]},{"id":"352e873a.eb908c","type":"ui_group","z":"","name":"Default","tab":"b40ff95f.81216","disp":true,"width":"6"},{"id":"865fe194.7a7b6","type":"ui_group","z":"","name":"Beer","tab":"b40ff95f.81216","order":2,"disp":true,"width":"6"},{"id":"b40ff95f.81216","type":"ui_tab","z":"","name":"Home","icon":"dashboard"}]
+[{
+    "id": "6e7ce700.a06b4c",
+    "type": "tab",
+    "label": "Flow 1"
+}, {
+    "id": "63016c6d.9814e8",
+    "type": "azureiothub",
+    "z": "6e7ce700.a06b4c",
+    "name": "Azure IoT Hub",
+    "protocol": "amqp",
+    "x": 873.0999755859375,
+    "y": 615.0299682617187,
+    "wires": [
+        ["3116c2de.d1469a"]
+    ]
+}, {
+    "id": "f9ef4283.7a72d",
+    "type": "ui_slider",
+    "z": "6e7ce700.a06b4c",
+    "name": "level1",
+    "label": "Level1",
+    "group": "352e873a.eb908c",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "passthru": false,
+    "topic": "level1",
+    "min": 0,
+    "max": "100",
+    "step": 1,
+    "x": 166.0999755859375,
+    "y": 130.4585886001587,
+    "wires": [
+        ["7628c9a1.890548", "42dbb8e.2250448"]
+    ]
+}, {
+    "id": "9bd3a2c1.ab19f8",
+    "type": "inject",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "repeat": "2",
+    "crontab": "",
+    "once": false,
+    "x": 289.02833557128906,
+    "y": 521.8871955871582,
+    "wires": [
+        ["baeb839a.b9749"]
+    ]
+}, {
+    "id": "a306ea83.17af1",
+    "type": "debug",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "false",
+    "x": 989.099796295166,
+    "y": 187.31564617156982,
+    "wires": []
+}, {
+    "id": "baeb839a.b9749",
+    "type": "function",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "func": "var level1 = global.get('level1');\nvar level2 = global.get('level2');\nvar level3 = global.get('level3');\nvar level4 = global.get('level4');\nvar time = new Date();\n//msg.payload = {\"DeviceId\":\"Pipe\", \"level\": level, \"timestamp\" : time, }\n//return msg;\n\nvar msg1 = {payload:{\"DeviceId\":\"Pipe01\", \"level\": level1, \"timestamp\" : time, \"lat\": 40.418274, \"lon\" : -3.797990}};\nvar msg2 = {payload:{\"DeviceId\":\"Pipe02\", \"level\": level2, \"timestamp\" : time, \"lat\": 40.418523, \"lon\" : -3.804565}};\nvar msg3 = {payload:{\"DeviceId\":\"Pipe03\", \"level\": level3, \"timestamp\" : time, \"lat\": 40.419131, \"lon\" : -3.792798}};\nvar msg4 = {payload:{\"DeviceId\":\"Pipe04\", \"level\": level4, \"timestamp\" : time, \"lat\": 40.410599, \"lon\" : -3.798039}};\n\n\nmsg.payload=[msg1, msg2, msg3, msg4 ];\nreturn msg;",
+    "outputs": "1",
+    "noerr": 0,
+    "x": 530.0999069213867,
+    "y": 523.4586420059204,
+    "wires": [
+        ["f9a3f776.d17498"]
+    ]
+}, {
+    "id": "f9a3f776.d17498",
+    "type": "json",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "x": 704.0998001098633,
+    "y": 517.315806388855,
+    "wires": [
+        ["63016c6d.9814e8", "3116c2de.d1469a"]
+    ]
+}, {
+    "id": "a1ea9c48.7fb8a",
+    "type": "ui_slider",
+    "z": "6e7ce700.a06b4c",
+    "name": "level2",
+    "label": "Level2",
+    "group": "352e873a.eb908c",
+    "order": 4,
+    "width": 0,
+    "height": 0,
+    "passthru": true,
+    "topic": "level2",
+    "min": 0,
+    "max": "100",
+    "step": 1,
+    "x": 150.09981155395508,
+    "y": 177.0299367904663,
+    "wires": [
+        ["6f24008d.a33b3", "42dbb8e.2250448"]
+    ]
+}, {
+    "id": "b696466b.7a5478",
+    "type": "ui_slider",
+    "z": "6e7ce700.a06b4c",
+    "name": "level3",
+    "label": "Level3",
+    "group": "865fe194.7a7b6",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "passthru": true,
+    "topic": "level3",
+    "min": 0,
+    "max": "100",
+    "step": 1,
+    "x": 173.45687103271484,
+    "y": 238.74419975280762,
+    "wires": [
+        ["93705568.037fb", "42dbb8e.2250448"]
+    ]
+}, {
+    "id": "6f24008d.a33b3",
+    "type": "ui_gauge",
+    "z": "6e7ce700.a06b4c",
+    "name": "gauge2",
+    "group": "352e873a.eb908c",
+    "order": 3,
+    "width": 0,
+    "height": 0,
+    "gtype": "wave",
+    "title": "",
+    "label": "%",
+    "format": "{{value}}",
+    "min": 0,
+    "max": "100",
+    "colors": ["#00b500", "#e6e600", "#ca3838"],
+    "seg1": "",
+    "seg2": "",
+    "x": 353.0997619628906,
+    "y": 155.02996730804443,
+    "wires": []
+}, {
+    "id": "93705568.037fb",
+    "type": "ui_gauge",
+    "z": "6e7ce700.a06b4c",
+    "name": "gauge3",
+    "group": "865fe194.7a7b6",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "gtype": "wave",
+    "title": "",
+    "label": "%",
+    "format": "{{value}}",
+    "min": 0,
+    "max": "100",
+    "colors": ["#00b500", "#e6e600", "#ca3838"],
+    "seg1": "",
+    "seg2": "",
+    "x": 351.4568634033203,
+    "y": 254.7442865371704,
+    "wires": []
+}, {
+    "id": "b28180be.d2ed3",
+    "type": "ui_slider",
+    "z": "6e7ce700.a06b4c",
+    "name": "level4",
+    "label": "Level4",
+    "group": "865fe194.7a7b6",
+    "order": 4,
+    "width": 0,
+    "height": 0,
+    "passthru": false,
+    "topic": "level4",
+    "min": 0,
+    "max": "100",
+    "step": 1,
+    "x": 183.0283088684082,
+    "y": 320.7442274093628,
+    "wires": [
+        ["42dbb8e.2250448", "12f91742.390759"]
+    ]
+}, {
+    "id": "42dbb8e.2250448",
+    "type": "function",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "func": "global.set(msg.topic,msg.payload);\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 582.4568786621094,
+    "y": 196.7441873550415,
+    "wires": [
+        ["a0a0a8ff.4f8908"]
+    ]
+}, {
+    "id": "12f91742.390759",
+    "type": "ui_gauge",
+    "z": "6e7ce700.a06b4c",
+    "name": "gauge4",
+    "group": "865fe194.7a7b6",
+    "order": 3,
+    "width": 0,
+    "height": 0,
+    "gtype": "wave",
+    "title": "",
+    "label": "%",
+    "format": "{{value}}",
+    "min": 0,
+    "max": "100",
+    "colors": ["#00b500", "#e6e600", "#ca3838"],
+    "seg1": "",
+    "seg2": "",
+    "x": 367.4569282531738,
+    "y": 387.74431228637695,
+    "wires": []
+}, {
+    "id": "7628c9a1.890548",
+    "type": "ui_gauge",
+    "z": "6e7ce700.a06b4c",
+    "name": "gauge1",
+    "group": "352e873a.eb908c",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "gtype": "wave",
+    "title": "",
+    "label": "%",
+    "format": "{{value}}",
+    "min": 0,
+    "max": "100",
+    "colors": ["#00b500", "#e6e600", "#ca3838"],
+    "seg1": "",
+    "seg2": "",
+    "x": 357.45687103271484,
+    "y": 94.74427795410156,
+    "wires": []
+}, {
+    "id": "3116c2de.d1469a",
+    "type": "debug",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "active": false,
+    "console": "false",
+    "complete": "false",
+    "x": 998.861701965332,
+    "y": 447.9823303222656,
+    "wires": []
+}, {
+    "id": "a0a0a8ff.4f8908",
+    "type": "switch",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [{
+        "t": "gt",
+        "v": "80",
+        "vt": "str"
+    }, {
+        "t": "else"
+    }],
+    "checkall": "true",
+    "outputs": 2,
+    "x": 725.1950073242187,
+    "y": 269.31563663482666,
+    "wires": [
+        ["5aae3ddb.dfb2a"],
+        []
+    ]
+}, {
+    "id": "5aae3ddb.dfb2a",
+    "type": "function",
+    "z": "6e7ce700.a06b4c",
+    "name": "",
+    "func": "msg.payload={data:'DroneStart'};\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 885.1949920654297,
+    "y": 281.31562519073486,
+    "wires": [
+        ["f9a3f776.d17498", "a306ea83.17af1"]
+    ]
+}, {
+    "id": "352e873a.eb908c",
+    "type": "ui_group",
+    "z": "",
+    "name": "Default",
+    "tab": "b40ff95f.81216",
+    "disp": true,
+    "width": "6"
+}, {
+    "id": "865fe194.7a7b6",
+    "type": "ui_group",
+    "z": "",
+    "name": "Beer",
+    "tab": "b40ff95f.81216",
+    "order": 2,
+    "disp": true,
+    "width": "6"
+}, {
+    "id": "b40ff95f.81216",
+    "type": "ui_tab",
+    "z": "",
+    "name": "Home",
+    "icon": "dashboard"
+}]
