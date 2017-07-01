@@ -23,7 +23,6 @@ namespace AutoPilotApp
         CognitiveData output;
         Boolean callAPI = true;
         IEnumerable<IdentifiedPerson> IdentifiedPersons { get; set; }
-        private static FaceServiceClient faceClient { get; set; }
 
 
         private static readonly VisualFeature[] VisualFeatures = { VisualFeature.Description, VisualFeature.Faces };
@@ -61,8 +60,6 @@ namespace AutoPilotApp
                         {
                             foreach (var face in faces)
                             {
-                                // Here we check if the image is known
-                                //String name = checkKnownFace(bmp);
                                 var faceRec = face.FaceRectangle;
                                 var emotions = face.FaceAttributes.Emotion.ToRankedList();
                                 var emotion = emotions.OrderByDescending(f => f.Value).FirstOrDefault().Key;
@@ -86,15 +83,15 @@ namespace AutoPilotApp
         public async Task getEmotion()
         {
             callAPI = false;
-            //await checkKnownFace();
+            await checkKnownFace();
             try
             {
-                FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"]);
-
-                Byte[] byteArray = ImageToByte2(input.Bitmap);
-                using (Stream imageFileStream = new MemoryStream(byteArray))
-                {
-                    var requiredFaceAttributes = new FaceAttributeType[] {
+                using (FaceServiceClient sc = new FaceServiceClient(ConfigurationManager.AppSettings["CognitiveKey"])) {
+                    //await checkKnownFace(sc);
+                    Byte[] byteArray = ImageToByte2(input.Bitmap);
+                    using (Stream imageFileStream = new MemoryStream(byteArray))
+                    {
+                        var requiredFaceAttributes = new FaceAttributeType[] {
                         FaceAttributeType.Age,
                         FaceAttributeType.Gender,
                         FaceAttributeType.Smile,
@@ -103,40 +100,42 @@ namespace AutoPilotApp
                         FaceAttributeType.Glasses,
                         FaceAttributeType.Emotion
                     };
-
-                    var facesResult = await sc.DetectAsync(imageFileStream,
-                        returnFaceLandmarks: true,
-                        returnFaceAttributes: requiredFaceAttributes);
-                    lock (facesLock)
-                    {
-                        faces = facesResult;
-                    }
-                    output.HeadCount = faces.Length;
-                    output.Age = 0;
-                    if (faces.Length > 0)
-                    {
-                        foreach (var face in faces)
+                        Debug.WriteLine("Entro a AddFaces");
+                        await AddFaces(sc);
+                        var facesResult = await sc.DetectAsync(imageFileStream,
+                            returnFaceLandmarks: true,
+                            returnFaceAttributes: requiredFaceAttributes);
+                        lock (facesLock)
                         {
-                            var faceRec = face.FaceRectangle;
-                            var attributes = face.FaceAttributes;
-                            var rec = new Models.Rectangle(face.FaceRectangle.Width * 0.6, faceRec.Height * 0.6, faceRec.Left, faceRec.Top);
-                            output.Square = rec;
-
-                            var age = attributes.Age;
-                            output.Age = output.Age > 0 ? (output.Age + age) / 2 : age;
-
-                            var gender = attributes.Gender;
-                            output.Gender = gender;
-
-                            var glasses = attributes.Glasses;
-                            output.Glasses = glasses.ToString();
-
-                            var smile = face.FaceAttributes.Smile;
-                            output.Smiling = smile;
-
+                            faces = facesResult;
                         }
-                    }
+                        output.HeadCount = faces.Length;
+                        output.Age = 0;
+                        if (faces.Length > 0)
+                        {
+                            foreach (var face in faces)
+                            {
+                                var faceRec = face.FaceRectangle;
+                                var attributes = face.FaceAttributes;
+                                var rec = new Models.Rectangle(face.FaceRectangle.Width * 0.6, faceRec.Height * 0.6, faceRec.Left, faceRec.Top);
+                                output.Square = rec;
 
+                                var age = attributes.Age;
+                                output.Age = output.Age > 0 ? (output.Age + age) / 2 : age;
+
+                                var gender = attributes.Gender;
+                                output.Gender = gender;
+
+                                var glasses = attributes.Glasses;
+                                output.Glasses = glasses.ToString();
+
+                                var smile = face.FaceAttributes.Smile;
+                                output.Smiling = smile;
+
+                            }
+                        }
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -158,31 +157,42 @@ namespace AutoPilotApp
             }
         }
 
-        public async Task<String> checkKnownFace()
+        public async Task<String> checkKnownFace(FaceServiceClient sc)
         {
-
-            Person[] persons = await faceClient.GetPersonsAsync("Dani");
-            Debug.WriteLine("Nombre personas: " + persons[0].Name);
-            return persons[0].Name;
-            /*
-
-                        if (IdentifiedPersons.Any())
-                        {
-                            string names = IdentifiedPersons.Count() > 1 ? string.Join(", ", IdentifiedPersons.Select(p => p.Person.Name)) : IdentifiedPersons.First().Person.Name;
-                            return string.Format("Welcome back, {0}!", names);
-                        }
-                        else
-                        {
-                            return "";
-                        }
-                        return "";*/
+            Debug.WriteLine("Entro en checkKnownFaces");
+            try
+            {
+                Person[] persons = await sc.GetPersonsAsync("Dani");
+                Debug.WriteLine("Numero de personas: " + persons.Count());
+                Debug.WriteLine("Nombre personas: " + persons[0].Name);
+                return persons[0].Name;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+            return "Nada";
         }
 
-        /*public async Task IdentifyFacesAsync()
+        public async Task AddFaces(FaceServiceClient sc)
         {
-            this.IdentifiedPersons = Enumerable.Empty<IdentifiedPerson>();
-            List<IdentifiedPerson> result = new List<IdentifiedPerson>();
+            String workspace = "3d8633fe-7b6d-4faa-85e1-fd9d09e73f51";
+            PersonGroup pg = await sc.GetPersonGroupAsync(workspace);
+            Debug.WriteLine("PersonGroup: " + pg.Name);
 
-        }*/
+
+            Guid guid = new Guid("cfadcd8a-0bb2-4c93-a03a-264763ca748f");
+            Person per = await sc.GetPersonAsync("3dd9f493-8e7e-4703-86a7-0eb0b628ebfd", guid);
+            Debug.WriteLine("Termino de entrenar: " + per.Name);
+
+            /*await sc.CreateFaceListAsync("face", "face");
+            Guid personGuid = new Guid();
+            await sc.AddPersonFaceAsync("personGroupId", personGuid, "C:/Users/t-daorti/Pictures/Camera Roll/WIN_20170412_11_16_54_Pro");
+            await sc.TrainPersonGroupAsync("personGroupId");
+            Person[] per = await sc.GetPersonsAsync("personGroupId");*/
+
+        }
+
+
     }
 }
