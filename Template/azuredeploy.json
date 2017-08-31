@@ -1,0 +1,1465 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_pipebot_name": {
+            "defaultValue": "pipebot",
+            "type": "String"
+        },
+        "sites_repairbot_name": {
+            "defaultValue": "repairbot",
+            "type": "String"
+        },
+        "sites_pipesimulator_name": {
+            "defaultValue": "pipesimulator",
+            "type": "String"
+        },
+        "connections_office365_name": {
+            "defaultValue": "office365",
+            "type": "String"
+        },
+        "connections_servicebus_name": {
+            "defaultValue": "servicebus",
+            "type": "String"
+        },
+        "IotHubs_iotdronehub_name": {
+            "defaultValue": "iotdronehub",
+            "type": "String"
+        },
+        "components_pipebot_name": {
+            "defaultValue": "pipebot",
+            "type": "String"
+        },
+        "sites_dronedemomessages_name": {
+            "defaultValue": "dronedemomessages",
+            "type": "String"
+        },
+        "config_web_name": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "workflows_dronedemologic_name": {
+            "defaultValue": "dronedemologic",
+            "type": "String"
+        },
+        "config_web_name_1": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "serverfarms_NorthEuropePlan_name": {
+            "defaultValue": "NorthEuropePlan",
+            "type": "String"
+        },
+        "namespaces_dronemessages_name": {
+            "defaultValue": "dronemessages",
+            "type": "String"
+        },
+        "config_web_name_2": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "namespaces_dronemessagesq_name": {
+            "defaultValue": "dronemessagesq",
+            "type": "String"
+        },
+        "serverfarms_pipesimulatorHosting_name": {
+            "defaultValue": "pipesimulatorHosting",
+            "type": "String"
+        },
+        "components_dronedemomessages_name": {
+            "defaultValue": "dronedemomessages",
+            "type": "String"
+        },
+        "config_web_name_3": {
+            "defaultValue": "web",
+            "type": "String"
+        },
+        "storageAccounts_dronedemoevents900b_name": {
+            "defaultValue": "dronedemoevents900b",
+            "type": "String"
+        },
+        "queues_pictures_name": {
+            "defaultValue": "pictures",
+            "type": "String"
+        },
+        "alertrules_Failure_Anomalies___dronedemomessages_name": {
+            "defaultValue": "Failure Anomalies - dronedemomessages",
+            "type": "String"
+        },
+        "eventhubs_picturemesssages_name": {
+            "defaultValue": "picturemesssages",
+            "type": "String"
+        },
+        "hostNameBindings_pipebot.azurewebsites.net_name": {
+            "defaultValue": "pipebot.azurewebsites.net",
+            "type": "String"
+        },
+        "hostNameBindings_repairbot.azurewebsites.net_name": {
+            "defaultValue": "repairbot.azurewebsites.net",
+            "type": "String"
+        },
+        "hostNameBindings_pipesimulator.azurewebsites.net_name": {
+            "defaultValue": "pipesimulator.azurewebsites.net",
+            "type": "String"
+        },
+        "deployments_9383e96ef123815d9a64d2bd28c386377dc39b34_name": {
+            "defaultValue": "9383e96ef123815d9a64d2bd28c386377dc39b34",
+            "type": "String"
+        },
+        "AuthorizationRules_RootManageSharedAccessKey_name": {
+            "defaultValue": "RootManageSharedAccessKey",
+            "type": "String"
+        },
+        "hostNameBindings_dronedemomessages.azurewebsites.net_name": {
+            "defaultValue": "dronedemomessages.azurewebsites.net",
+            "type": "String"
+        },
+        "AuthorizationRules_RootManageSharedAccessKey_name_1": {
+            "defaultValue": "RootManageSharedAccessKey",
+            "type": "String"
+        },
+        "authorizationRules_root_name": {
+            "defaultValue": "root",
+            "type": "String"
+        },
+        "consumergroups_$Default_name": {
+            "defaultValue": "$Default",
+            "type": "String"
+        },
+        "authorizationRules_iothubroutes_iotdronehub_name": {
+            "defaultValue": "iothubroutes_iotdronehub",
+            "type": "String"
+        },
+        "authorizationRules_iothubroutes_iotdronehub_name_1": {
+            "defaultValue": "iothubroutes_iotdronehub",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Devices/IotHubs/iotdronehub'.",
+            "type": "Microsoft.Devices/IotHubs",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "name": "[parameters('IotHubs_iotdronehub_name')]",
+            "apiVersion": "2016-02-03",
+            "location": "northeurope",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "operationsMonitoringProperties": {
+                    "events": {
+                        "None": "None",
+                        "Connections": "None",
+                        "DeviceTelemetry": "None",
+                        "C2DCommands": "None",
+                        "DeviceIdentityOperations": "None",
+                        "FileUploadOperations": "None",
+                        "Routes": "None"
+                    }
+                },
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4,
+                        "partitionIds": [
+                            "0",
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "path": "[parameters('IotHubs_iotdronehub_name')]",
+                        "endpoint": "sb://iothub-ns-iotdronehu-168574-4875c11573.servicebus.windows.net/"
+                    },
+                    "operationsMonitoringEvents": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4,
+                        "partitionIds": [
+                            "0",
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "path": "[concat(parameters('IotHubs_iotdronehub_name'),'-operationmonitoring')]",
+                        "endpoint": "sb://iothub-ns-iotdronehu-168574-4875c11573.servicebus.windows.net/"
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [
+                            {
+                                "connectionString": "[concat('Endpoint=sb://dronemessagesq.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', parameters('IotHubs_iotdronehub_name'),';SharedAccessKey=****;EntityPath=pictures')]",
+                                "name": "picturesq",
+                                "id": "c41c729d-ce26-4b9c-8a6a-8603d6711d5f",
+                                "subscriptionId": "f19b7695-9685-461e-9700-2d9674197593",
+                                "resourceGroup": "dronedemo"
+                            }
+                        ],
+                        "serviceBusTopics": [],
+                        "eventHubs": [
+                            {
+                                "connectionString": "[concat('Endpoint=sb://dronemessages.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', parameters('IotHubs_iotdronehub_name'),';SharedAccessKey=****;EntityPath=picturemesssages')]",
+                                "name": "pictures",
+                                "id": "d3ec5b35-4822-493e-bd17-8c2f2cc8bdc4",
+                                "subscriptionId": "f19b7695-9685-461e-9700-2d9674197593",
+                                "resourceGroup": "dronedemo"
+                            }
+                        ]
+                    },
+                    "routes": [
+                        {
+                            "name": "picturetaken",
+                            "source": "DeviceMessages",
+                            "condition": "process=\"defectq\"",
+                            "endpointNames": [
+                                "picturesq"
+                            ],
+                            "isEnabled": true
+                        }
+                    ],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "DefaultEndpointsProtocol=https;AccountName=dronedemoevents900b;AccountKey=****",
+                        "containerName": "pictures"
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.EventHub/namespaces/dronemessages'.",
+            "type": "Microsoft.EventHub/namespaces",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "kind": "EventHub",
+            "name": "[parameters('namespaces_dronemessages_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "status": "Active",
+                "createdAt": "2017-06-08T06:35:07.39Z",
+                "serviceBusEndpoint": "[concat('https://', parameters('namespaces_dronemessages_name'),'.servicebus.windows.net:443/')]",
+                "enabled": true,
+                "updatedAt": "2017-06-08T06:35:33.203Z"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/microsoft.insights/alertrules/Failure Anomalies - dronedemomessages'.",
+            "type": "microsoft.insights/alertrules",
+            "name": "[parameters('alertrules_Failure_Anomalies___dronedemomessages_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-link:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/microsoft.insights/components/dronedemomessages": "Resource"
+            },
+            "scale": null,
+            "properties": {
+                "name": "[parameters('alertrules_Failure_Anomalies___dronedemomessages_name')]",
+                "description": "",
+                "isEnabled": true,
+                "condition": {
+                    "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+                    "dataSource": {
+                        "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+                        "resourceUri": "[resourceId('microsoft.insights/components', parameters('components_dronedemomessages_name'))]",
+                        "metricNamespace": null,
+                        "metricName": "advanced::A3108E3D-5E26-44CF-B232-783F5E20EF10::ewAiAEgAeQBwAGUAcgBpAG8AbgBBAHAAcABsAGkAYwBhAHQAaQBvAG4AUwBpAGQAIgA6AG4AdQBsAGwALAAiAEgAeQBwAGUAcgBpAG8AbgBTAHUAYgBqAGUAYwB0AFMAaQBkACIAOgBuAHUAbABsACwAIgBIAHkAcABlAHIAaQBvAG4ATwBiAHMAZQByAHYAZQByAFMAaQBkACIAOgBuAHUAbABsACwAIgBDAHUAcwB0AG8AbQBlAHIAQQBjAGMAbwB1AG4AdABJAGQAIgA6ACIAMAAwADAAMAAwADAAMAAwAC0AMAAwADAAMAAtADAAMAAwADAALQAwADAAMAAwAC0AMAAwADAAMAAwADAAMAAwADAAMAAwADAAIgAsACIAQQBwAHAAbABpAGMAYQB0AGkAbwBuAE4AYQBtAGUAIgA6AG4AdQBsAGwALAAiAEEAcABwAGwAaQBjAGEAdABpAG8AbgBJAGQAIgA6AG4AdQBsAGwALAAiAFAAcgBvAGYAaQBsAGUASQBkACIAOgAwACwAIgBXAGkAbgBkAG8AdwBTAGkAegBlAEkAbgBNAGkAbgB1AHQAZQBzACIAOgA2ADAALAAiAE0AZQB0AHIAaQBjAE4AYQBtAGUAIgA6ACIAIgAsACIAVABoAHIAZQBzAGgAbwBsAGQAIgA6ADIALgAwACwAIgBBAGwAZQByAHQAVABlAG0AcABsAGEAdABlAEkAZAAiADoAIgAiACwAIgBSAHUAbABlAEkAZAAiADoAIgAiACwAIgBSAHUAbABlAE4AYQBtAGUAIgA6ACIAIgAsACIAUgB1AGwAZQBEAGUAcwBjAHIAaQBwAHQAaQBvAG4AIgA6ACIAIgAsACIAUgBlAHMAbwB1AHIAYwBlAEkAZAAiADoAbgB1AGwAbAAsACIAUwB1AGIAcwBjAHIAaQBwAHQAaQBvAG4ASQBkACIAOgBuAHUAbABsACwAIgBBAGcAZwByAGUAZwBhAHQAZQBGAHUAbgBjAHQAaQBvAG4AIgA6ACIAIgAsACIAQwBvAG0AcABhAHIAaQBzAG8AbgBPAHAAZQByAGEAdABvAHIAIgA6ACIAewBcACIAQgBhAHMAZQBsAGkAbgBlAFQAaQBtAGUAcwBwAGEAbgBcACIAOgBcACIAMAAwADoANAAwADoAMAAwAFwAIgAsAFwAIgBJAG4AcwBpAGcAaAB0AHMAUwBlAHIAdgBpAGMAZQBMAGEAZwBcACIAOgBcACIAMAAwADoAMAAwADoAMAAwAFwAIgAsAFwAIgBCAHUAZgBmAGUAcgBUAGkAbQBlAFwAIgA6AFwAIgAwADAAOgAwADEAOgAwADAAXAAiACwAXAAiAEIAbABvAGIAUwB0AG8AcgBhAGcAZQBMAG8AZwBnAGkAbgBnAEUAbgBhAGIAbABlAGQAXAAiADoAZgBhAGwAcwBlACwAXAAiAFUAcwBlAHIAUwB1AHAAcAByAGUAcwBzAGkAbwBuAHMAXAAiADoAbgB1AGwAbAAsAFwAIgBQAHIAbwBmAGkAbABlAEkAZABcACIAOgAwACwAXAAiAEUAbQBhAGkAbABUAHkAcABlAFwAIgA6ADAALABcACIAUgBkAGQARgBhAGkAbAB1AHIAZQBzAFMAcABpAGsAZQBUAGgAcgBlAHMAaABvAGwAZABcACIAOgAzAC4AMAAsAFwAIgBSAGEAdwBQAHIAbwBhAGMAdABpAHYAZQBSAHUAbABlAEMAbwBuAGYAaQBnAFwAIgA6AG4AdQBsAGwAfQAiACwAIgBFAG4AYQBiAGwAZQBTAGUAbgBkAEUAbQBhAGkAbABUAG8AQwB1AHMAdABvAG0AIgA6AGYAYQBsAHMAZQAsACIAQwB1AHMAdABvAG0ARQBtAGEAaQBsAHMARQBuAGMAbwBkAGUAZAAiADoAIgAiACwAIgBFAG4AYQBiAGwAZQBTAGUAbgBkAEUAbQBhAGkAbABUAG8ATwB3AG4AZQByAHMAIgA6AGYAYQBsAHMAZQB9AA=="
+                    },
+                    "operator": "GreaterThan",
+                    "threshold": 2,
+                    "windowSize": "PT1H"
+                },
+                "action": {
+                    "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+                    "sendToServiceOwners": true,
+                    "customEmails": []
+                }
+            },
+            "dependsOn": [
+                "[resourceId('microsoft.insights/components', parameters('components_dronedemomessages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/microsoft.insights/components/pipebot'.",
+            "type": "microsoft.insights/components",
+            "kind": "web",
+            "name": "[parameters('components_pipebot_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "northeurope",
+            "tags": {
+                "hidden-link:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipebot": "Resource"
+            },
+            "scale": null,
+            "properties": {
+                "ApplicationId": "[parameters('components_pipebot_name')]"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/microsoft.insights/components/dronedemomessages'.",
+            "type": "microsoft.insights/components",
+            "kind": "web",
+            "name": "[parameters('components_dronedemomessages_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "northeurope",
+            "tags": {
+                "hidden-link:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/dronedemomessages": "Resource"
+            },
+            "scale": null,
+            "properties": {
+                "ApplicationId": "[parameters('components_dronedemomessages_name')]"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Logic/workflows/dronedemologic'.",
+            "type": "Microsoft.Logic/workflows",
+            "name": "[parameters('workflows_dronedemologic_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_message_is_received_in_a_queue_(auto-complete)": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 3
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "api": {
+                                        "runtimeUrl": "https://logic-apis-northeurope.azure-apim.net/apim/servicebus"
+                                    },
+                                    "connection": {
+                                        "name": "@parameters('$connections')['servicebus']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/@{encodeURIComponent('pictures')}/messages/head",
+                                "queries": {
+                                    "queueType": "Main"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Send_an_email": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Body": "Tienes una nueva incidencia, consulta con tu <a href=\"http://repairbot.azurewebsites.net/\">Bot</a>\nAquí tienes una imagen:\n\n\n@{base64ToString(triggerBody()?['ContentData'])}",
+                                    "IsHtml": true,
+                                    "Subject": "Tienes una nueva incidencia",
+                                    "To": "juanserv@microsoft.com"
+                                },
+                                "host": {
+                                    "api": {
+                                        "runtimeUrl": "https://logic-apis-northeurope.azure-apim.net/apim/office365"
+                                    },
+                                    "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/Mail"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "office365": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                                "connectionName": "office365",
+                                "id": "/subscriptions/f19b7695-9685-461e-9700-2d9674197593/providers/Microsoft.Web/locations/northeurope/managedApis/office365"
+                            },
+                            "servicebus": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_servicebus_name'))]",
+                                "connectionName": "servicebus",
+                                "id": "/subscriptions/f19b7695-9685-461e-9700-2d9674197593/providers/Microsoft.Web/locations/northeurope/managedApis/servicebus"
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_servicebus_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.ServiceBus/namespaces/dronemessagesq'.",
+            "type": "Microsoft.ServiceBus/namespaces",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "kind": "Messaging",
+            "name": "[parameters('namespaces_dronemessagesq_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "status": "Active",
+                "createdAt": "2017-06-08T06:45:57.047Z",
+                "serviceBusEndpoint": "[concat('https://', parameters('namespaces_dronemessagesq_name'),'.servicebus.windows.net:443/')]",
+                "enabled": true,
+                "updatedAt": "2017-06-08T06:46:21.037Z"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/dronedemo/providers/Microsoft.Storage/storageAccounts/dronedemoevents900b'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_dronedemoevents900b_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "northeurope",
+            "tags": {},
+            "scale": null,
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/connections/office365'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_office365_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "displayName": "juanserv@microsoft.com",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/f19b7695-9685-461e-9700-2d9674197593/providers/Microsoft.Web/locations/northeurope/managedApis/', parameters('connections_office365_name'))]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/connections/servicebus'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_servicebus_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "displayName": "dronemessage",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/f19b7695-9685-461e-9700-2d9674197593/providers/Microsoft.Web/locations/northeurope/managedApis/', parameters('connections_servicebus_name'))]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/serverfarms/NorthEuropePlan'.",
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "name": "[parameters('serverfarms_NorthEuropePlan_name')]",
+            "apiVersion": "2016-09-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "name": "[parameters('serverfarms_NorthEuropePlan_name')]",
+                "workerTierName": null,
+                "adminSiteName": null,
+                "hostingEnvironmentProfile": null,
+                "perSiteScaling": false,
+                "reserved": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting'.",
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "B1",
+                "tier": "Basic",
+                "size": "B1",
+                "family": "B",
+                "capacity": 1
+            },
+            "kind": "app",
+            "name": "[parameters('serverfarms_pipesimulatorHosting_name')]",
+            "apiVersion": "2016-09-01",
+            "location": "North Europe",
+            "tags": {
+                "displayName": "hosting"
+            },
+            "scale": null,
+            "properties": {
+                "name": "[parameters('serverfarms_pipesimulatorHosting_name')]",
+                "workerTierName": null,
+                "adminSiteName": null,
+                "hostingEnvironmentProfile": null,
+                "perSiteScaling": false,
+                "reserved": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipesimulator'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "app",
+            "name": "[parameters('sites_pipesimulator_name')]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "displayName": "site"
+            },
+            "scale": null,
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_pipesimulator_name'),'.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_pipesimulator_name'),'.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]",
+                "reserved": false,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/repairbot'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "api",
+            "name": "[parameters('sites_repairbot_name')]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-related:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_repairbot_name'),'.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_repairbot_name'),'.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]",
+                "reserved": false,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipebot'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "app",
+            "name": "[parameters('sites_pipebot_name')]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-related:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_pipebot_name'),'.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_pipebot_name'),'.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]",
+                "reserved": false,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/dronedemomessages'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "functionapp",
+            "name": "[parameters('sites_dronedemomessages_name')]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-related:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_dronedemomessages_name'),'.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_dronedemomessages_name'),'.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]",
+                "reserved": false,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_pipesimulatorHosting_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.EventHub/namespaces/dronemessages/AuthorizationRules/RootManageSharedAccessKey'.",
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "name": "[concat(parameters('namespaces_dronemessages_name'), '/', parameters('AuthorizationRules_RootManageSharedAccessKey_name'))]",
+            "apiVersion": "2015-08-01",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_dronemessages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.EventHub/namespaces/dronemessages/eventhubs/picturemesssages'.",
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "name": "[concat(parameters('namespaces_dronemessages_name'), '/', parameters('eventhubs_picturemesssages_name'))]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "messageRetentionInDays": 1,
+                "status": "Active",
+                "createdAt": "2017-06-08T06:36:28.64",
+                "updatedAt": "2017-06-09T12:21:35.23",
+                "partitionCount": 2,
+                "partitionIds": [
+                    "0",
+                    "1"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_dronemessages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.EventHub/namespaces/dronemessages/eventhubs/picturemesssages/authorizationRules/iothubroutes_iotdronehub'.",
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "name": "[concat(parameters('namespaces_dronemessages_name'), '/', parameters('eventhubs_picturemesssages_name'), '/', parameters('authorizationRules_iothubroutes_iotdronehub_name_1'))]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_dronemessages_name'))]",
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_dronemessages_name'), parameters('eventhubs_picturemesssages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.EventHub/namespaces/dronemessages/eventhubs/picturemesssages/authorizationRules/root'.",
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "name": "[concat(parameters('namespaces_dronemessages_name'), '/', parameters('eventhubs_picturemesssages_name'), '/', parameters('authorizationRules_root_name'))]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Manage",
+                    "Send",
+                    "Listen"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_dronemessages_name'))]",
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_dronemessages_name'), parameters('eventhubs_picturemesssages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.EventHub/namespaces/dronemessages/eventhubs/picturemesssages/consumergroups/$Default'.",
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "name": "[concat(parameters('namespaces_dronemessages_name'), '/', parameters('eventhubs_picturemesssages_name'), '/', parameters('consumergroups_$Default_name'))]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "eventHubPath": "picturemesssages",
+                "createdAt": "2017-06-08T06:36:32.7757243",
+                "updatedAt": "2017-06-08T06:36:32.7757243"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_dronemessages_name'))]",
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_dronemessages_name'), parameters('eventhubs_picturemesssages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.ServiceBus/namespaces/dronemessagesq/AuthorizationRules/RootManageSharedAccessKey'.",
+            "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+            "name": "[concat(parameters('namespaces_dronemessagesq_name'), '/', parameters('AuthorizationRules_RootManageSharedAccessKey_name_1'))]",
+            "apiVersion": "2015-08-01",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_dronemessagesq_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.ServiceBus/namespaces/dronemessagesq/queues/pictures'.",
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "name": "[concat(parameters('namespaces_dronemessagesq_name'), '/', parameters('queues_pictures_name'))]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "maxSizeInMegabytes": 16384,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "14.00:00:00",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "isAnonymousAccessible": false,
+                "status": "Active",
+                "createdAt": "2017-06-08T06:46:38.251317Z",
+                "updatedAt": "2017-06-08T06:47:21.6001315Z",
+                "accessedAt": "2017-08-30T08:16:41.7544642Z",
+                "supportOrdering": false,
+                "countDetails": {
+                    "activeMessageCount": 0,
+                    "deadLetterMessageCount": 0,
+                    "scheduledMessageCount": 0,
+                    "transferMessageCount": 0,
+                    "transferDeadLetterMessageCount": 0
+                },
+                "autoDeleteOnIdle": "10675199.02:48:05.4775807",
+                "enablePartitioning": true,
+                "enableExpress": false
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_dronemessagesq_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.ServiceBus/namespaces/dronemessagesq/queues/pictures/authorizationRules/iothubroutes_iotdronehub'.",
+            "type": "Microsoft.ServiceBus/namespaces/queues/authorizationRules",
+            "name": "[concat(parameters('namespaces_dronemessagesq_name'), '/', parameters('queues_pictures_name'), '/', parameters('authorizationRules_iothubroutes_iotdronehub_name'))]",
+            "apiVersion": "2015-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_dronemessagesq_name'))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/queues', parameters('namespaces_dronemessagesq_name'), parameters('queues_pictures_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipesimulator/config/web'.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('sites_pipesimulator_name'), '/', parameters('config_web_name_2'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "displayName": "site"
+            },
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": null,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 40,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$pipesimulator",
+                "publishingPassword": null,
+                "appSettings": null,
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "ExternalGit",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": true,
+                "alwaysOn": true,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": {
+                    "triggers": null,
+                    "actions": null
+                },
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": null,
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pipesimulator_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.Web/sites/pipesimulator/deployments/9383e96ef123815d9a64d2bd28c386377dc39b34'.",
+            "type": "Microsoft.Web/sites/deployments",
+            "name": "[concat(parameters('sites_pipesimulator_name'), '/', parameters('deployments_9383e96ef123815d9a64d2bd28c386377dc39b34_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "id": "[parameters('deployments_9383e96ef123815d9a64d2bd28c386377dc39b34_name')]",
+                "status": 4,
+                "author_email": "jmservera@outlook.com",
+                "author": "Juan Manuel Servera",
+                "deployer": "GitHub",
+                "message": "add postinstall and change home folder, now delete nodes is enabled\n",
+                "start_time": "2017-05-31T14:15:22.0210413Z",
+                "end_time": "2017-05-31T14:21:29.4542255Z",
+                "active": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pipesimulator_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipesimulator/hostNameBindings/pipesimulator.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "name": "[concat(parameters('sites_pipesimulator_name'), '/', parameters('hostNameBindings_pipesimulator.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "siteName": "pipesimulator",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pipesimulator_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/repairbot/config/web'.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('sites_repairbot_name'), '/', parameters('config_web_name_1'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-related:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": null,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$repairbot",
+                "publishingPassword": null,
+                "appSettings": null,
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": {
+                    "triggers": null,
+                    "actions": null
+                },
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": null,
+                "push": null,
+                "apiDefinition": {
+                    "url": "[concat('https://repairbot.azure', parameters('config_web_name_1'),'sites.net/swagger/docs/v1')]"
+                },
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_repairbot_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/repairbot/hostNameBindings/repairbot.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "name": "[concat(parameters('sites_repairbot_name'), '/', parameters('hostNameBindings_repairbot.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "siteName": "repairbot",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_repairbot_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipebot/config/web'.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('sites_pipebot_name'), '/', parameters('config_web_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-related:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2012",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$pipebot",
+                "publishingPassword": null,
+                "appSettings": null,
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": true,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": {
+                    "triggers": null,
+                    "actions": null
+                },
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": null,
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pipebot_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/pipebot/hostNameBindings/pipebot.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "name": "[concat(parameters('sites_pipebot_name'), '/', parameters('hostNameBindings_pipebot.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "siteName": "pipebot",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_pipebot_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/dronedemomessages/config/web'.",
+            "type": "Microsoft.Web/sites/config",
+            "name": "[concat(parameters('sites_dronedemomessages_name'), '/', parameters('config_web_name_3'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "tags": {
+                "hidden-related:/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourcegroups/DroneDemo/providers/Microsoft.Web/serverfarms/pipesimulatorHosting": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2012",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$dronedemomessages",
+                "publishingPassword": null,
+                "appSettings": null,
+                "metadata": null,
+                "connectionStrings": null,
+                "machineKey": null,
+                "handlerMappings": null,
+                "documentRoot": null,
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": true,
+                "javaVersion": null,
+                "javaContainer": null,
+                "javaContainerVersion": null,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true,
+                        "virtualDirectories": null
+                    }
+                ],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "runtimeADUser": null,
+                "runtimeADUserPassword": null,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "limits": null,
+                "autoHealEnabled": false,
+                "autoHealRules": {
+                    "triggers": null,
+                    "actions": null
+                },
+                "tracingOptions": null,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": {
+                    "allowedOrigins": [
+                        "https://functions.azure.com",
+                        "https://functions-staging.azure.com",
+                        "https://functions-next.azure.com"
+                    ]
+                },
+                "push": null,
+                "apiDefinition": null,
+                "autoSwapSlotName": null,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_dronedemomessages_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/f19b7695-9685-461e-9700-2d9674197593/resourceGroups/DroneDemo/providers/Microsoft.Web/sites/dronedemomessages/hostNameBindings/dronedemomessages.azurewebsites.net'.",
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "name": "[concat(parameters('sites_dronedemomessages_name'), '/', parameters('hostNameBindings_dronedemomessages.azurewebsites.net_name'))]",
+            "apiVersion": "2016-08-01",
+            "location": "North Europe",
+            "scale": null,
+            "properties": {
+                "siteName": "dronedemomessages",
+                "domainId": null,
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_dronedemomessages_name'))]"
+            ]
+        }
+    ]
+}
